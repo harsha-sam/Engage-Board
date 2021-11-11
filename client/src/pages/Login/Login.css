@@ -1,0 +1,16 @@
+.flex-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 8% 6%;
+}
+
+.login-form-button {
+  margin-right: 5px;
+}
+
+.bg{
+  height: 80%;
+  width: 100%;
+}

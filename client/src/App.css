@@ -1,0 +1,10 @@
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -25px 0 0 -25px;
+}
+
+.ant-menu-dark.ant-menu-horizontal {
+  flex-direction: row-reverse;
+}
