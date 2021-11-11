@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'team_id',
       })
       this.belongsTo(User, {
-        as: 'user_id',
+        as: 'user',
         foreignKey: 'user_id',
       })
     }
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     user_id: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
