@@ -60,12 +60,12 @@ router.post('/signin', async (req, res) => {
       }
       const accessToken = generateAccessToken(userInfo);
       const refreshToken = jwt.sign(userInfo, process.env.REFRESH_TOKEN_SECRET)
-      userInfo.email = usr.email;
-      userInfo.teams = usr.teams;
       await Session.create({
         user_id: usr.id,
         refresh_token: refreshToken
       });
+      userInfo.email = usr.email;
+      userInfo.teams = usr.teams;
       res.header('access-token', accessToken)
       res.header('refresh-token', refreshToken)
       res.header('expires-in', process.env.EXPIRE_TIME)

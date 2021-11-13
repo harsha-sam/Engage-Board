@@ -1,0 +1,4 @@
+.teams-card-container{
+  height: 65vh;
+  overflow-Y: scroll;
+}

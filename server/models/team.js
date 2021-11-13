@@ -64,6 +64,53 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     }
   }, {
+    hooks: {
+      afterCreate: async (team) => {
+        const { Category, Channel } = sequelize.models;
+        const team_id = team.id;
+        let categories = await Category.bulkCreate([{
+          name: 'important',
+          team_id,
+        },
+        {
+          name: 'general',
+          team_id
+        },
+        {
+          name: 'classes',
+          team_id
+        },
+        ], {
+          returning: true
+        })
+        await Channel.bulkCreate([{
+          name: 'announcements',
+          team_id,
+          category_id: categories[0].id
+        },
+        {
+          name: 'general',
+          team_id,
+          category_id: categories[1].id
+        },
+        {
+          name: 'helpMe',
+          team_id,
+          category_id: categories[1].id
+        },
+        {
+          name: 'lectures',
+          team_id,
+          category_id: categories[2].id
+        },
+        {
+          name: 'doubts',
+          team_id,
+          category_id: categories[2].id
+        }
+        ])
+      }
+    },
     sequelize,
     tableName: 'teams',
     modelName: 'Team',

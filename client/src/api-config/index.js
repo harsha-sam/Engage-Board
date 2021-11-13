@@ -20,5 +20,7 @@ export const user_URL = `/users/me`;
 export const teams_URL = `/teams`;
 export const team_users_URL = `/teams/users`;
 
+export const requests_URL = '/requests';
+
 export const chat_URL = `/chat`;
 export const channels_chat_URL = '/chat/channels'

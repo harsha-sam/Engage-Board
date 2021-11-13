@@ -5,9 +5,12 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import {
   Login,
-  Register
+  Register,
+  AvatarUploader,
+  Teams
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
+import { TeamsProvider } from './contexts/TeamContext';
 import 'antd/dist/antd.css';
 import './App.css';
 
@@ -30,12 +33,18 @@ const App = () => {
     return (<>
       <Navigation>
         <Routes>
-          <Route exact path="/login" element={<Navigate to="/"/>} />
-          <Route exact path="/register" element={<Navigate to="/"/>} />
-          <Route exact path="/" element={<h1>Hello</h1>} />
+          <Route exact path="/login" element={<Navigate to="/teams" />} />
+          <Route exact path="/register" element={<Navigate to="/teams" />} />
+          <Route exact path="/teams" element={
+            <TeamsProvider>
+              <Teams />
+            </TeamsProvider>
+          } />
+          <Route exact path="/avatar" element={<AvatarUploader />}>
+          </Route>
         </Routes>
       </Navigation>
-     </> 
+    </>
     )
   }
 }

@@ -50,7 +50,7 @@ export const AuthProvider = ({
         message.success('Registered !');
       })
       .catch((err) => {
-        message.error(err.response.data.error);
+        message.error(err?.response?.data?.error || 'something went wrong');
       })
   }
 
@@ -66,7 +66,7 @@ export const AuthProvider = ({
         message.success('Logged in !');
       })
       .catch((err) => {
-        message.error(err.response.data.error);
+        message.error(err?.response?.data?.error || 'something went wrong');
       })
   }
 
@@ -80,7 +80,7 @@ export const AuthProvider = ({
         window.location.reload(false);
       })
       .catch((err) => {
-        message.error(err.response.data.error);
+        message.error(err?.response?.data?.error || 'something went wrong');
       })
   }
 

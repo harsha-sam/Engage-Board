@@ -8,3 +8,8 @@
 .ant-menu-dark.ant-menu-horizontal {
   flex-direction: row-reverse;
 }
+
+.ant-empty{
+  position: absolute;
+  left: 50%;
+}
