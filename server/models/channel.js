@@ -6,10 +6,10 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Channel extends Model {
     static associate(models) {
-      const { Team, Category, Message } = models;
-      this.belongsTo(Team, {
-        as: 'team',
-        foreignKey: 'team_id',
+      const { Classroom, Category, Message } = models;
+      this.belongsTo(Classroom, {
+        as: 'classroom',
+        foreignKey: 'classroom_id',
       })
       this.belongsTo(Category, {
         as: 'category',
@@ -34,12 +34,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    team_id: {
+    classroom_id: {
       type: DataTypes.UUID,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
-        model: 'Team',
+        model: 'Classroom',
         key: 'id'
       },
       allowNull: false

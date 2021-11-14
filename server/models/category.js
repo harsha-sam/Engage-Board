@@ -6,16 +6,16 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Category extends Model {
     static associate(models) {
-      const { Channel, Team } = models;
+      const { Channel, Classroom } = models;
       this.hasMany(Channel, {
         as: 'channels',
         foreignKey: 'category_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       })
-      this.belongsTo(Team, {
-        as: 'team',
-        foreignKey: 'team_id',
+      this.belongsTo(Classroom, {
+        as: 'classroom',
+        foreignKey: 'classroom_id',
       })
     }
   };
@@ -33,12 +33,12 @@ module.exports = (sequelize, DataTypes) => {
         this.setDataValue('name', value.toUpperCase())
       }
     },
-    team_id: {
+    classroom_id: {
       type: DataTypes.UUID,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
-        model: 'Team',
+        model: 'Classroom',
         key: 'id'
       },
       allowNull: false,

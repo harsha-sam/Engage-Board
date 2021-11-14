@@ -4,18 +4,18 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Team extends Model {
+  class Classroom extends Model {
     static associate(models) {
       const { Category, Channel, User } = models;
       this.hasMany(Category, {
         as: 'categories',
-        foreignKey: 'team_id',
+        foreignKey: 'classroom_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       })
       this.hasMany(Channel, {
         as: 'channels',
-        foreignKey: 'team_id',
+        foreignKey: 'classroom_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       })
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
   };
-  Team.init({
+  Classroom.init({
     id: {
       allowNull: false,
       primaryKey: true,
@@ -65,55 +65,55 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     hooks: {
-      afterCreate: async (team) => {
+      afterCreate: async (classroom) => {
         const { Category, Channel } = sequelize.models;
-        const team_id = team.id;
+        const classroom_id = classroom.id;
         let categories = await Category.bulkCreate([{
           name: 'important',
-          team_id,
+          classroom_id,
         },
         {
           name: 'general',
-          team_id
+          classroom_id
         },
         {
           name: 'classes',
-          team_id
+          classroom_id
         },
         ], {
           returning: true
         })
         await Channel.bulkCreate([{
           name: 'announcements',
-          team_id,
+          classroom_id,
           category_id: categories[0].id
         },
         {
           name: 'general',
-          team_id,
+          classroom_id,
           category_id: categories[1].id
         },
         {
           name: 'helpMe',
-          team_id,
+          classroom_id,
           category_id: categories[1].id
         },
         {
           name: 'lectures',
-          team_id,
+          classroom_id,
           category_id: categories[2].id
         },
         {
           name: 'doubts',
-          team_id,
+          classroom_id,
           category_id: categories[2].id
         }
         ])
       }
     },
     sequelize,
-    tableName: 'teams',
-    modelName: 'Team',
+    tableName: 'classrooms',
+    modelName: 'Classroom',
   });
-  return Team;
+  return Classroom;
 };

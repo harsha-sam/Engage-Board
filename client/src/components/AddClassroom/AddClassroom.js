@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Modal, Form, Input } from 'antd';
 
-const AddTeam = ({ handleSubmit }) => {
+const AddClassroom = ({ handleSubmit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
@@ -11,10 +11,12 @@ const AddTeam = ({ handleSubmit }) => {
 
   const handleOk = () => {
     handleSubmit(form.getFieldsValue())
+    form.resetFields();
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
+    form.resetFields();
     setIsModalVisible(false);
   };
 
@@ -43,23 +45,24 @@ const AddTeam = ({ handleSubmit }) => {
           <Form.Item
             name="name"
             label="Class Name"
+            tooltip="Class Name can only be upto 30 characters"
             rules={[
               {
                 required: true,
-                message: 'Please input team name!',
+                message: 'Please input class name!',
               },
             ]}
           >
-            <Input/>
+            <Input maxLength={30}/>
           </Form.Item>
           <Form.Item
             name="description"
-            label="Class Description"
+            label="Class Description / Info"
             tooltip="Description can only be upto 300 characters"
             rules={[
               {
                 required: true,
-                message: 'Please input team description!',
+                message: 'Please input class description!',
               },
             ]}
           >
@@ -71,4 +74,4 @@ const AddTeam = ({ handleSubmit }) => {
   )
 }
 
-export default AddTeam
+export default AddClassroom

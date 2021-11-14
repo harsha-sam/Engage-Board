@@ -2,23 +2,56 @@ import axios from "axios";
 
 export const axiosInstance = axios.create({ baseURL: 'http://localhost:4000' })
 // Add a request interceptor
-axiosInstance.interceptors.request.use(function (config) {
+axiosInstance.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('access-token');
   const refreshToken = localStorage.getItem('refresh-token');
   if (accessToken) config.headers['access-token'] = accessToken;
   if (refreshToken) config.headers['refresh-token'] = refreshToken;
   return config;
-});
+},
+  (error) => {
+    Promise.reject(error);
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (err) => {
+    const request = err.config;
+    const refreshToken = localStorage.getItem('refresh-token');
+    if (refreshToken &&
+      err.response.status === 401 &&
+      !request._retry
+    ) {
+      request._retry = true;
+      return axios.get(`http://localhost:4000/auth/token`, {
+        headers: {
+          'refresh-token': refreshToken
+        }
+      })
+        .then((res) => {
+          if (res.status === 204) {
+            localStorage.setItem("access-token", res.headers['access-token']);
+            console.log("access token is refreshed")
+            return axiosInstance(request);
+          }
+        })
+        .catch((err) => {
+          return Promise.reject(err);
+        })
+    }
+    return Promise.reject(err);
+  }
+)
 
 // api endpoints
 export const signin_URL = `/auth/signin`;
 export const signup_URL = `/auth/signup`;
-export const signout_URL = `/auth/signout`;
 
 export const user_URL = `/users/me`;
 
-export const teams_URL = `/teams`;
-export const team_users_URL = `/teams/users`;
+export const classrooms_URL = `/classrooms`;
+export const classroom_users_URL = `/classrooms/users`;
 
 export const requests_URL = '/requests';
 

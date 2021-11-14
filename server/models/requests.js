@@ -6,10 +6,10 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Request extends Model {
     static associate(models) {
-      const { Team, User} = models;
-      this.belongsTo(Team, {
-        as: 'team',
-        foreignKey: 'team_id',
+      const { Classroom, User} = models;
+      this.belongsTo(Classroom, {
+        as: 'classroom',
+        foreignKey: 'classroom_id',
       })
       this.belongsTo(User, {
         as: 'user',
@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
-    team_id: {
+    classroom_id: {
       type: DataTypes.UUID,
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
       references: {
-        model: 'Team',
+        model: 'Classroom',
         key: 'id'
       },
       allowNull: false

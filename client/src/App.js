@@ -7,10 +7,10 @@ import {
   Login,
   Register,
   AvatarUploader,
-  Teams
+  Classrooms
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
-import { TeamsProvider } from './contexts/TeamContext';
+import { ClassroomsProvider } from './contexts/ClassroomsContext';
 import 'antd/dist/antd.css';
 import './App.css';
 
@@ -33,12 +33,12 @@ const App = () => {
     return (<>
       <Navigation>
         <Routes>
-          <Route exact path="/login" element={<Navigate to="/teams" />} />
-          <Route exact path="/register" element={<Navigate to="/teams" />} />
-          <Route exact path="/teams" element={
-            <TeamsProvider>
-              <Teams />
-            </TeamsProvider>
+          <Route exact path="/login" element={<Navigate to="/classrooms" />} />
+          <Route exact path="/register" element={<Navigate to="/classrooms" />} />
+          <Route exact path="/classrooms" element={
+            <ClassroomsProvider>
+              <Classrooms />
+            </ClassroomsProvider>
           } />
           <Route exact path="/avatar" element={<AvatarUploader />}>
           </Route>

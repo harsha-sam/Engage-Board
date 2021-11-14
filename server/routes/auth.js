@@ -1,16 +1,10 @@
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
-const { User, Session } = require('../models');
+const { User } = require('../models');
 const {
   verifyRefreshToken,
 } = require('../middleware/auth');
-
-const generateAccessToken = (usr) => {
-  return jwt.sign(usr, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.EXPIRE_TIME
-  })
-}
 
 router.post('/signup', async (req, res) => {
   try {
@@ -58,17 +52,17 @@ router.post('/signin', async (req, res) => {
         full_name: usr.full_name,
         role: usr.role
       }
-      const accessToken = generateAccessToken(userInfo);
-      const refreshToken = jwt.sign(userInfo, process.env.REFRESH_TOKEN_SECRET)
-      await Session.create({
-        user_id: usr.id,
-        refresh_token: refreshToken
-      });
+      const accessToken = jwt.sign(userInfo,
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+      )
+      const refreshToken = jwt.sign(userInfo,
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
+      )
       userInfo.email = usr.email;
-      userInfo.teams = usr.teams;
       res.header('access-token', accessToken)
       res.header('refresh-token', refreshToken)
-      res.header('expires-in', process.env.EXPIRE_TIME)
       res.json(userInfo);
     } else {
       throw new Error("Wrong Password. Please enter correct password to log in.");
@@ -85,25 +79,17 @@ router.get('/token', verifyRefreshToken, async (req, res) => {
     const refresh_token = req.get('refresh-token');
     if (refresh_token) {
       const usr = req.user;
-      let session = await Session.findOne({
-        where: {
-          user_id: usr.id,
-          refresh_token
-        }
-      });
-      if (session) {
-        let userInfo = {
-          id: usr.id,
-          full_name: usr.full_name,
-          role: usr.role
-        }
-        const accessToken = generateAccessToken(userInfo);
-        res.header('access-token', accessToken)
-        res.header('expires-in', process.env.EXPIRE_TIME)
-        res.sendStatus(204);
-      } else {
-        throw new Error('Forbidden: refresh-token is expired')
+      let userInfo = {
+        id: usr.id,
+        full_name: usr.full_name,
+        role: usr.role
       }
+      const accessToken = jwt.sign(userInfo,
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+      )
+      res.header('access-token', accessToken)
+      res.sendStatus(204);
     } else {
       throw new Error('Forbidden: refresh-token is required')
     }
@@ -111,26 +97,6 @@ router.get('/token', verifyRefreshToken, async (req, res) => {
     res.status(403).json({
       error: error.message
     });
-  }
-})
-
-router.delete('/signout', async (req, res) => {
-  try {
-    const refresh_token = req.get('refresh-token');
-    if (refresh_token) {
-      await Session.destroy({
-        where: {
-          refresh_token
-        }
-      });
-      res.sendStatus(204);
-    } else {
-      throw new Error('Forbidden: refresh-token is required')
-    }
-  } catch (err) {
-    res.status(403).json({
-      error: err.message
-    })
   }
 })
 

@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('student', 'faculty'),
       allowNull: false
     },
-    teams: {
+    classrooms: {
       type: DataTypes.ARRAY(DataTypes.UUID),
       defaultValue: []
     },

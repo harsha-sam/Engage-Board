@@ -12,12 +12,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      team_id: {
+      classroom_id: {
         type: Sequelize.UUID,
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
         references: {
-          model: 'teams',
+          model: 'classrooms',
           key: 'id'
         },
         allowNull: false

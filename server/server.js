@@ -21,7 +21,7 @@ main = async () => {
 
     app.use('/auth', require('./routes/auth'))
     app.use('/users', require('./routes/users'))
-    app.use('/teams', require('./routes/teams'))
+    app.use('/classrooms', require('./routes/classrooms'))
     app.use('/requests', require('./routes/requests'))
 
     await sequelize.authenticate();

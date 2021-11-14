@@ -11,7 +11,7 @@ import {
   SET_IS_LOADING,
   SET_USER,
 } from './actionTypes';
-import { axiosInstance, user_URL, signin_URL, signup_URL, signout_URL } from '../api-config/';
+import { axiosInstance, user_URL, signin_URL, signup_URL } from '../api-config/';
 import { message } from 'antd'
 
 
@@ -40,7 +40,6 @@ export const AuthProvider = ({
   const setUser = (payload) => {
     localStorage.setItem("access-token", payload.accessToken);
     localStorage.setItem("refresh-token", payload.refreshToken);
-    localStorage.setItem("expires-in", payload.expiresIn);
     return authDispatch({ type: SET_USER, payload: payload.user })
   }
 
@@ -60,8 +59,7 @@ export const AuthProvider = ({
         setUser({
           user: response.data,
           accessToken: response.headers['access-token'],
-          refreshToken: response.headers['refresh-token'],
-          expiresIn: response.headers['expires-in'],
+          refreshToken:  response.headers['refresh-token']
         })
         message.success('Logged in !');
       })
@@ -70,18 +68,11 @@ export const AuthProvider = ({
       })
   }
 
-  const signout = (payload) => {
-    axiosInstance.delete(signout_URL, payload)
-      .then(() => {
-        localStorage.removeItem("access-token");
-        localStorage.removeItem("refresh-token");
-        localStorage.removeItem("expires-in");
-        message.success('Logged out !');
-        window.location.reload(false);
-      })
-      .catch((err) => {
-        message.error(err?.response?.data?.error || 'something went wrong');
-      })
+  const signout = () => {
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("refresh-token");
+    message.success('Logged out !');
+    window.location.reload(false);
   }
 
   return <AuthContext.Provider

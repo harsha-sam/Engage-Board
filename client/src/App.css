@@ -9,7 +9,12 @@
   flex-direction: row-reverse;
 }
 
+.ant-card-meta-description {
+  height: 60px;
+}
+
 .ant-empty{
   position: absolute;
   left: 50%;
+  top: 40%;
 }

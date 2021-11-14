@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Avatar, Affix, Input } from 'antd';
+import { Layout, Avatar, Affix } from 'antd';
 import { useNavigate } from 'react-router';
 import MenuCustom from '../../components/MenuCustom/MenuCustom';
 import {
@@ -9,8 +9,6 @@ import {
   UserOutlined,
   EditOutlined,
   BookOutlined,
-  RocketOutlined,
-  SettingOutlined
 } from '@ant-design/icons';
 import { useAuthContext } from '../../contexts/AuthContext';
 
@@ -48,20 +46,7 @@ const Navigation = ({ children }) => {
       icon: <TeamOutlined />,
       name: 'Classrooms',
       id: 'Classrooms',
-      channels: [
-        {
-          icon: <RocketOutlined />,
-          name: 'All Classrooms',
-          id: 'All Classrooms',
-          onClick: (() => navigate('/teams'))
-        },
-        {
-          icon: <SettingOutlined />,
-          name: 'Manage Classrooms',
-          id: 'Manage Classrooms',
-          onClick: (() => navigate('/manage-teams'))
-        }
-      ]
+      onClick: (() => navigate('/classrooms'))
     },
     {
       icon: <MessageOutlined />,
@@ -80,11 +65,13 @@ const Navigation = ({ children }) => {
   return <Affix>
     <Layout>
       <Header>
-        <MenuCustom items={headerOptions} mode="horizontal" />
+        <MenuCustom items={headerOptions} mode="horizontal" selectable={false}/>
       </Header>
       <Layout>
         <Sider collapsible width={240} style={{ height: '100vh' }}>
-          <MenuCustom items={siderOptions} mode="inline" defaultOpenKeys={['Classrooms']} />
+          <MenuCustom items={siderOptions} mode="inline"
+            defaultSelectedKeys={['Classrooms']}
+          />
         </Sider>
         <Content style={{ margin: '3% 5%', height: '100vh' }}>
           {children}

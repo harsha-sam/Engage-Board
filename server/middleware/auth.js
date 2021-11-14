@@ -52,7 +52,7 @@ module.exports.verifyRefreshToken = async (req, res, next) => {
 module.exports.verifyFaculty = async (req, res, next) => {
   try {
     if (req.user.role !== 'faculty') {
-      throw new Error("User is forbidden")
+      throw new Error('User is forbidden')
     }
     next();
   } catch (error) {
@@ -66,7 +66,7 @@ module.exports.verifyFaculty = async (req, res, next) => {
 module.exports.verifyStudent = async (req, res, next) => {
   try {
     if (req.user.role !== 'student') {
-      throw new Error("User is forbidden")
+      throw new Error('User is forbidden')
     }
     next();
   } catch (error) {

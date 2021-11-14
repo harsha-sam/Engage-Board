@@ -8,12 +8,12 @@ module.exports = {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      team_id: {
+      classroom_id: {
         type: Sequelize.UUID,
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
         references: {
-          model: 'teams',
+          model: 'classrooms',
           key: 'id'
         },
         allowNull: false

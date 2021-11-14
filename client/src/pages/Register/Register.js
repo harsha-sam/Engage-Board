@@ -28,9 +28,9 @@ const Register = () => {
         >
           <Form.Item
             name="id"
-            rules={[{ required: true, message: 'Please input your User Id!' }]}
+            rules={[{ required: true, message: 'Please input your University ID number!' }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="User Id" />
+            <Input prefix={<UserOutlined />} placeholder="University ID" />
           </Form.Item>
           <Form.Item
             name="full_name"
