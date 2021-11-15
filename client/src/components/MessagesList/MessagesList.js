@@ -1,18 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react'
 import moment from 'moment';
-import { List, Avatar, Button, Divider, Typography } from 'antd';
+import { Avatar, Button, Divider, Typography, Skeleton, Empty, Popconfirm } from 'antd';
 import Message from '../Message/Message';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useChatContext } from '../../contexts/ChatContext';
 import InputEmoji from 'react-input-emoji'
-import { SendOutlined } from '@ant-design/icons'
+import { SendOutlined, DeleteOutlined } from '@ant-design/icons'
 
 const { Paragraph } = Typography;
 const MessagesList = () => {
   let { authState: { user } } = useAuthContext();
-  const { chatState: { isLoading, messagesList }, chatActions: { addNewMessage } } = useChatContext();
+  const { chatState: { isLoading, messagesList }, chatActions: { addNewMessage, editMessage, deleteMessage } } = useChatContext();
   const [newMessage, setNewMessage] = useState('');
+  const messagesListRef = useRef(null);
 
+  const scrollToBottom = () => {
+    const scroll =
+      messagesListRef.current.scrollHeight -
+      messagesListRef.current.clientHeight;
+    messagesListRef.current.scrollTo(0, scroll);
+  }
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messagesList.length])
+  
   const handleSendMessage = () => {
     if (newMessage) {
       addNewMessage(newMessage);
@@ -20,49 +32,94 @@ const MessagesList = () => {
     setNewMessage("");
   };
 
+  const handleEditMessage = (msg_id, content) => {
+    editMessage({ message_id: msg_id, new_content: content })
+  }
+
+  const handleDeleteMessage = (msg_id) => {
+    deleteMessage({ message_id: msg_id })
+  }
+
   return <>
-    <List className="messages-list"
-      loading={isLoading}
-      itemLayout="horizontal"
-      dataSource={messagesList}
-      renderItem={msg => {
-        let author = msg.sender.full_name
-        let avatar = <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
-        if (msg.sender.id === user.id) {
-          author = 'You'
-          avatar = <>
-            <Divider
-              type="vertical"
-              style={{
-                borderColor: '#1890ff',
-                height: '50%'
-              }}
-            />
-            <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
-          </>
-        }
-        return <Message
-          key={msg.id}
-          messageId={msg.id}
-          author={author}
-          avatar={avatar}
-          content={
-            <Paragraph
-              editable
-              ellipsis={{
-                rows: 2,
-                expandable: true,
-                symbol: "see more"
-              }}
-            >
-              {msg.content}
-            </Paragraph>
+    <div className="messages-list" ref={messagesListRef}>
+      {
+        isLoading && <DummyMessages />
+      }
+      {
+        !isLoading && messagesList.length === 0 ?
+          <Empty
+          image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+          imageStyle={{
+            height: 60,
+          }}
+          description={
+            <span>
+              No messages found in this channel
+            </span>
           }
-          time={moment(msg.createdAt)}
-          reactions={msg.reactions}
-        />
-      }}
-    />
+        /> :
+          messagesList.map((msg) => {
+            let author = msg.sender.full_name
+            let avatar = <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
+            if (msg.sender.id === user.id) {
+              author = 'You'
+              avatar = <>
+                <Divider
+                  type="vertical"
+                  style={{
+                    borderColor: '#1890ff',
+                    height: '50%'
+                  }}
+                />
+                <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
+              </>
+            }
+            return <Message
+              key={msg.id}
+              messageId={msg.id}
+              author={author}
+              avatar={avatar}
+              content={
+                <Paragraph
+                  editable = { msg.sender.id === user.id ? {
+                    onChange: (val) => handleEditMessage(msg.id, val),
+                  }: false}
+                  ellipsis={{
+                    rows: 2,
+                    expandable: true,
+                    symbol: "see more"
+                  }}
+                  copyable = { msg.sender.id === user.id ? {
+                    icon: [
+                      <Popconfirm
+                        title="Are you sure to delete this message?"
+                        onConfirm={() => handleDeleteMessage(msg.id)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <DeleteOutlined />
+                      </Popconfirm>,
+                      <Popconfirm
+                        title="Are you sure to delete this message?"
+                        onConfirm={() => handleDeleteMessage(msg.id)}
+                        okText="Yes"
+                        cancelText="No"
+                      >
+                        <DeleteOutlined />
+                      </Popconfirm>],
+                    tooltips: ["Delete", "Delete"],
+                    onCopy: () => {}
+                  }: false}
+                >
+                  {msg.content}
+                </Paragraph>
+              }
+              time={moment(msg.createdAt)}
+              reactions={msg.reactions}
+            />
+          })
+      }
+    </div>
     {
       !isLoading &&
       <div className="chat-input-container">
@@ -78,6 +135,17 @@ const MessagesList = () => {
           onClick={handleSendMessage}
         />
       </div>
+    }
+  </>
+}
+
+
+const DummyMessages = () => {
+  return <>
+    {
+      ['dum1', 'dum2', 'dum3', 'dum4', 'dum5'].map((ele) => {
+        return <Skeleton avatar key={ele} paragraph={{ rows: 2 }} className="message" />
+      })
     }
   </>
 }

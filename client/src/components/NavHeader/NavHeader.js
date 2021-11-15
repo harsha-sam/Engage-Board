@@ -23,9 +23,9 @@ const NavHeader = () => {
       channels: [
         {
           icon: <EditOutlined />,
-          name: "Upload / Change Avatar",
-          id: 'Avatar',
-          onClick: (() => navigate('/avatar'))
+          name: "Update User Profile",
+          id: 'user profile',
+          onClick: (() => navigate('/user_profile'))
         },
         {
           icon: <LogoutOutlined />,

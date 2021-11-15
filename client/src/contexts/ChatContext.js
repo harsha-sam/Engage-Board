@@ -6,6 +6,8 @@ import {
   ADD_MESSAGE_TO_CHAT,
   ADD_REACTION_TO_MESSAGE,
   REMOVE_REACTION_TO_MESSAGE,
+  EDIT_MESSAGE,
+  DELETE_MESSAGE,
   SET_IS_LOADING,
 } from './actionTypes.js';
 import { chatReducer, chatInitialState } from './reducers/chatReducer';
@@ -32,10 +34,12 @@ export const ChatProvider = ({
 
 
   const selectChannel = (payload) => {
+    chatDispatch({ type: SET_IS_LOADING, payload: true })
     chatDispatch({ type: SET_CHANNEL, payload: payload })
   }
 
   const selectReceiver = (payload) => {
+    chatDispatch({ type: SET_IS_LOADING, payload: true })
     chatDispatch({ type: SET_RECEIVER, payload: payload })
   }
 
@@ -58,6 +62,12 @@ export const ChatProvider = ({
       chatDispatch({ type: SET_IS_LOADING, payload: true })
       chatDispatch({ type: REMOVE_REACTION_TO_MESSAGE, payload })
     });
+    socketRef.current.on(CHANNEL_EDIT_MESSAGE_EVENT, (payload) => {
+      chatDispatch({ type: EDIT_MESSAGE, payload })
+    })
+    socketRef.current.on(CHANNEL_DELETE_MESSAGE_EVENT, (payload) => {
+      chatDispatch({ type: DELETE_MESSAGE, payload })
+    })
   }
 
   const disconnectSocket = () => {
@@ -135,6 +145,21 @@ export const ChatProvider = ({
     })
   })
 
+  const editMessage = ((payload) => {
+    const { message_id, new_content } = payload;
+    socketRef.current.emit(CHANNEL_EDIT_MESSAGE_EVENT, {
+      message_id,
+      new_content
+    })
+  })
+
+  const deleteMessage = ((payload) => {
+    const { message_id } = payload;
+    socketRef.current.emit(CHANNEL_DELETE_MESSAGE_EVENT, {
+      message_id
+    })
+  })
+
   return <ChatContext.Provider
     value={
       {
@@ -146,7 +171,9 @@ export const ChatProvider = ({
           getDirectMessages,
           addNewMessage,
           addNewReaction,
-          deleteReaction
+          deleteReaction,
+          editMessage,
+          deleteMessage
         }
       }
     }

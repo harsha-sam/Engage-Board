@@ -33,9 +33,7 @@ const Navigation = ({ children }) => {
       <NavHeader />
       <Layout>
         <Sider collapsible width={240} style={{ height: '100vh' }}>
-          <MenuCustom items={siderOptions} mode="inline"
-            defaultSelectedKeys={['Classrooms']}
-          />
+          <MenuCustom items={siderOptions} mode="inline" />
         </Sider>
         <Content style={{ margin: '3% 5%', height: '100vh' }}>
           {children}

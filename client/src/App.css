@@ -15,12 +15,8 @@
 
 .ant-empty{
   position: absolute;
-  left: 50%;
+  left: 40%;
   top: 40%;
-}
-
-.ant-list-item-meta-title>a {
-  color: #fff;
 }
 
 .messages-list {
@@ -41,5 +37,5 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 50%;
+  width: 60%;
 }

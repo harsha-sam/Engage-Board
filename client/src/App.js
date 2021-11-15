@@ -2,11 +2,10 @@ import React from 'react'
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from './contexts/AuthContext';
 import { Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 import {
   Login,
   Register,
-  AvatarUploader,
+  EditUserProfile,
   Classrooms,
   Classroom
 } from './pages/'
@@ -22,8 +21,7 @@ const App = () => {
 
 
   if (isLoading) {
-    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
-    return <Spin indicator={antIcon} />
+    return <Spin tip="Loading..." style={{ position: 'absolute', left: '50%', top: '40%' }} />
   }
   else if (!user) {
     return <Routes>
@@ -45,9 +43,9 @@ const App = () => {
             </ClassroomsProvider>
           </Navigation>
         } />
-        <Route exact path="/avatar" element={
+        <Route exact path="/user_profile" element={
           <Navigation>
-            <AvatarUploader />
+            <EditUserProfile />
           </Navigation>
         } />
         <Route exact path="/classrooms/:id" element={

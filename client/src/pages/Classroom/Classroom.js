@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Affix, Layout, List, Avatar, Tag, Typography, Divider } from 'antd';
+import { Affix, Layout, List, Avatar, Tag, Typography, Spin } from 'antd';
 import Logo from '../../components/Logo/Logo';
 import MessagesList from '../../components/MessagesList/MessagesList';
 import MenuCustom from '../../components/MenuCustom/MenuCustom';
@@ -48,7 +48,7 @@ const Classroom = () => {
   }, [openedChannelId])
 
   if (isLoading) {
-    return <h1>Loading ...</h1>
+    return <Spin tip="Loading..." style={{position: 'absolute',left: '50%', top: '40%'}}/>
   }
 
   return <Affix>

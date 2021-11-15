@@ -1,5 +1,5 @@
-import React from 'react'
-import { Comment, Tooltip } from 'antd';
+import React, { useState } from 'react'
+import { Comment, Tooltip, Modal, Tabs, List, Avatar } from 'antd';
 import {
   LikeOutlined,
   LikeTwoTone,
@@ -15,6 +15,7 @@ import './Message.css'
 import { useChatContext } from '../../contexts/ChatContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 
+const { TabPane } = Tabs;
 
 const defaultReactions = [
   {
@@ -50,7 +51,15 @@ const defaultReactions = [
 const Message = ({ author, time, reactions, messageId, ...props }) => {
   const { authState: { user } } = useAuthContext();
   const { chatState: { isLoading }, chatActions: { addNewReaction, deleteReaction } } = useChatContext();
-  
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const handleReactionClick = (reaction) => {
     let payload = {
       message_id: messageId, reaction: reaction.key,
@@ -68,7 +77,7 @@ const Message = ({ author, time, reactions, messageId, ...props }) => {
     }
   }
 
-  const actions = defaultReactions.map((reaction) => {
+  let actions = defaultReactions.map((reaction) => {
     let currentReaction = null;
     currentReaction = reactions.find(element => element.key === reaction.key)
     if (currentReaction) reaction = { ...reaction, ...currentReaction }
@@ -80,18 +89,58 @@ const Message = ({ author, time, reactions, messageId, ...props }) => {
     </Tooltip>
   })
 
-  console.log("rendering", reactions, isLoading);
-  return <Comment
-    className="message"
-    actions={isLoading ? <></>: actions}
-    author={<a>{author}</a >}
-    datetime={
-      <Tooltip title={moment(time).format('YYYY-MM-DD HH:mm:ss')} >
-        <span>{moment(time).fromNow()}</span>
-      </Tooltip>
+  if (reactions?.length) {
+    actions.push(<span onClick={showModal}>See Who Reacted</span>)
+  }
+
+  return <>
+    <Comment
+      className="message"
+      actions={isLoading ? <></> : actions}
+      author={<a>{author}</a >}
+      datetime={
+        <Tooltip title={moment(time).format('YYYY-MM-DD HH:mm:ss')} >
+          <span>{moment(time).fromNow()}</span>
+        </Tooltip>
+      }
+      {...props}
+    />
+    {
+      <Modal title="Reactions"
+        visible={isModalVisible && !isLoading}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Tabs defaultActiveKey="0" centered>
+          {
+            reactions.map((reaction, index) => {
+              if (reaction.users) {
+                return <TabPane tab={reaction.key} key={index}>
+                  {
+                    <List
+                    dataSource={reaction.users}
+                    renderItem={item => {
+                      return <List.Item key={item.id}>
+                        <List.Item.Meta
+                          avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
+                          title={<a href="https://ant.design">{item.full_name}</a>}
+                          description={item.id}
+                        />
+                      </List.Item>
+                    }}
+                    />
+                  }
+                </TabPane>   
+              }
+              else {
+                return <>No data</>
+              }
+            })
+          }
+        </Tabs>
+      </Modal>
     }
-    {...props}
-  />
+  </>
 }
 
 export default Message

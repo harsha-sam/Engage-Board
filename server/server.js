@@ -35,7 +35,7 @@ main = async () => {
     // cors for socket
     const io = socketio(server, {
       cors: {
-        origin: "http://localhost:3001",
+        origin: "*",
         methods: ["GET", "POST", "PATCH", "DELETE"],
         credentials: true
       }

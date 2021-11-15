@@ -6,6 +6,8 @@ import {
   ADD_MESSAGE_TO_CHAT,
   ADD_REACTION_TO_MESSAGE,
   REMOVE_REACTION_TO_MESSAGE,
+  EDIT_MESSAGE,
+  DELETE_MESSAGE
 } from '../actionTypes';
 
 export const chatInitialState = {
@@ -25,10 +27,10 @@ export const chatReducer = (state = chatInitialState, action) => {
       return ({ ...state, messagesList: payload })
     }
     case SET_CHANNEL: {
-      return ({ ...state, channel: payload, receiver: null })
+      return ({ ...state, channel: payload, receiver: null, messagesList: [], isLoading: false })
     }
     case SET_RECEIVER: {
-      return ({ ...state, receiver: payload, channel: null })
+      return ({ ...state, receiver: payload, channel: null, messagesList: [], isLoading: false })
     }
     case ADD_MESSAGE_TO_CHAT: {
       let messagesList = [...state.messagesList]
@@ -66,13 +68,25 @@ export const chatReducer = (state = chatInitialState, action) => {
       let messageIndex = messagesList.findIndex((message) => message.id === payload.message_id)
       let reactions = [...messagesList[messageIndex].reactions]
       let reactionIndex = reactions.findIndex((reaction) => reaction.key === payload.reaction)
-      reactions[reactionIndex].users = reactions[reactionIndex].users.filter((user) => user.id !== payload.user.id )
-      reactions[reactionIndex].count -= 1
-      if (reactions[reactionIndex].count <= 0) {
+      reactions[reactionIndex].users = reactions[reactionIndex].users.filter((user) => user.id !== payload.user.id)
+      reactions[reactionIndex].count = reactions[reactionIndex].users.length
+      if (reactions[reactionIndex].count < 0) {
         reactions[reactionIndex].count = 0
       }
       messagesList[messageIndex].reactions = reactions;
       return ({ ...state, messagesList, isLoading: false })
+    }
+    case EDIT_MESSAGE: {
+      let messagesList = [...state.messagesList]
+      let messageIndex = messagesList.findIndex((message) => message.id === payload.message_id)
+      let newMessage = { ...messagesList[messageIndex] }
+      newMessage.content = payload.new_content
+      messagesList[messageIndex] = newMessage;
+      return ({ ...state, messagesList })
+    }
+    case DELETE_MESSAGE: {
+      let newMessagesList = state.messagesList.filter(msg => msg.id !== payload.message_id)
+      return ({ ...state, messagesList: newMessagesList })
     }
     default:
       return state

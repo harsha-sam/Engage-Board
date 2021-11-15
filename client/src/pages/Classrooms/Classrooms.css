@@ -2,3 +2,6 @@
   height: 65vh;
   overflow-Y: scroll;
 }
+.classrooms-card-container .ant-empty {
+  left: 50%;
+}
