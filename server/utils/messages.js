@@ -26,6 +26,7 @@ module.exports.editMessage = async (id, newContent) => {
 }
 
 module.exports.formatMessagesResponse = (messages) => {
+  // formatting as required by the client
   let response = messages.map((msg) => {
     let reactions = {}
     msg.reactions.forEach((r) => {

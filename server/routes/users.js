@@ -8,10 +8,12 @@ router.get('/me', verifyAccessToken, async (req, res) => res.json(req.user))
 router.patch('/me', verifyAccessToken, async (req, res) => {
   try {
     const {
-      avatar
+      avatar,
+      full_name
     } = req.body;
     let updateObj = {}
     if (avatar) updateObj.avatar = avatar;
+    if (full_name) updateObj.full_name = full_name
     if (!updateObj) {
       throw new Error('Please send fields which are to be updated')
     }

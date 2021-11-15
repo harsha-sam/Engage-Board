@@ -12,12 +12,14 @@ router.get('/', verifyAccessToken, async (req, res) => {
     let classroomsFind = Classroom.findAll({
       order: [['created_at', 'desc']]
     })
+    // classrooms which the user is a part of
     let userClassroomsFind = User.findOne({
       where: {
         id: req.user.id,
       },
       attributes: ['classrooms']
     }).then((data) => data.classrooms)
+    // classroom requests of user
     let requestsFind = Request.findAll({
       where: {
         user_id: req.user.id,
@@ -46,6 +48,7 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
     if (!name || !description)
       throw new Error('name & description are required')
     let id = req.user.id;
+    // by default, the faculty who created the classroom will be admin
     let members = [{
       id,
       role: 'admin'
@@ -62,8 +65,9 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
       members,
       created_by: id
     })
+    // adding this new classroom to user classrooms
     user.classrooms = [...user.classrooms, classroom.id];
-    await user.save().then();
+    await user.save();
     res.status(200).json(classroom)
   } catch (error) {
     res.status(400).json({
@@ -74,6 +78,7 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
 
 router.get('/:id', verifyAccessToken, async (req, res) => {
   try {
+    // returns all categories and channels of a specific classroom
     const { id } = req.params;
     if (!id) throw new Error('id is required');
     let classroom = await Classroom.findOne({
@@ -121,6 +126,7 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
 
 router.post('/users', verifyAccessToken, async (req, res) => {
   try {
+    // adding new users to a classroom
     let {
       classroom_id,
       request_id,
@@ -188,6 +194,7 @@ router.post('/users', verifyAccessToken, async (req, res) => {
 
 router.patch('/users', verifyAccessToken, async (req, res) => {
   try {
+    // removing users from a classroom
     const { classroom_id, user_id } = req.body;
     if (!classroom_id) throw new Error('classroom_id is required');
     if (!user_id) throw new Error('user_id is required');

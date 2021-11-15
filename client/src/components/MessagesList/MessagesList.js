@@ -14,7 +14,9 @@ const MessagesList = () => {
   const [newMessage, setNewMessage] = useState('');
 
   const handleSendMessage = () => {
-    addNewMessage(newMessage);
+    if (newMessage) {
+      addNewMessage(newMessage);
+    }
     setNewMessage("");
   };
 

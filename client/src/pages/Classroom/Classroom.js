@@ -77,8 +77,10 @@ const Classroom = () => {
             </Layout>
             <h1>chat box</h1>
           </Content>
-          <Sider theme="dark" width={240} style={{ height: '100vh', padding: '3% 5%' }} collapsible reverseArrow>
+          <Sider theme="dark"
+            style={{ height: '100vh', padding: '2% 3%' }}>
             <Paragraph
+              style={{color: '#fff'}}
               ellipsis={{
                 rows: 4,
                 expandable: true,
@@ -87,16 +89,15 @@ const Classroom = () => {
             >
               {description}
             </Paragraph>
-            <Divider />
             <List>
               {
                 members.map((member) => {
-                  return <List.Item key={member.id} style={{ padding: '0 10%'}}>
+                  return <List.Item key={member.id}>
                     <List.Item.Meta
                       style={{color: '#fff'}}
                       avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
                       title={<a href="https://ant.design">{member.full_name}</a>}
-                      description={<Tag color="red">{member.role}</Tag>}
+                      description={<Tag color="green">{member.role}</Tag>}
                     />
                   </List.Item>
                 })

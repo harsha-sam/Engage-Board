@@ -32,9 +32,10 @@ main = async () => {
     app.use('/requests', require('./routes/requests'))
     app.use('/chat', require('./routes/chat'))
 
+    // cors for socket
     const io = socketio(server, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: "http://localhost:3001",
         methods: ["GET", "POST", "PATCH", "DELETE"],
         credentials: true
       }
@@ -48,6 +49,7 @@ main = async () => {
       console.log(channel_id, 'c');
       socket.join(channel_id);
 
+      // when new message is received on a specific channel
       socket.on(CHANNEL_NEW_CHAT_MESSAGE_EVENT, async (data) => {
         let { sender, content } = data;
         console.log(sender, content, channel_id)
@@ -64,24 +66,28 @@ main = async () => {
         io.in(channel_id).emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, msg);
       })
 
+      // when a message is edited on a specific channel
       socket.on(CHANNEL_EDIT_MESSAGE_EVENT, async (data) => {
         let { message_id, new_content } = data;
         await editMessage(message_id, new_content);
         io.in(channel_id).emit(CHANNEL_EDIT_MESSAGE_EVENT, data);
       })
 
+      // when a message is deleted on a specific channel
       socket.on(CHANNEL_DELETE_MESSAGE_EVENT, async (data) => {
         let { message_id } = data;
         await deleteMessage(message_id)
         io.in(channel_id).emit(CHANNEL_DELETE_MESSAGE_EVENT, data);
       })
 
+      // when a message gets a new reaction on a specific channel
       socket.on(CHANNEL_MESSAGE_NEW_REACTION_EVENT, async (data) => {
         let { message_id, user, reaction } = data;
         await createReaction(message_id, user.id, reaction);
         io.in(channel_id).emit(CHANNEL_MESSAGE_NEW_REACTION_EVENT, data);
       })
       
+      // when a reaction on a message of a specific channel is deleted
       socket.on(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, async (data) => {
         let { message_id, user, reaction } = data;
         await deleteReaction(message_id, user.id, reaction);

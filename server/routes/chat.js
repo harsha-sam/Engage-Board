@@ -9,6 +9,7 @@ const { formatMessagesResponse } = require('../utils/messages');
 
 router.get('/channels/:id', verifyAccessToken, async (req, res) => {
   try {
+    // gets chat of a channel
     const { id } = req.params
     let where = {}
     if (id) where.channel_id = id
@@ -51,6 +52,7 @@ router.get('/channels/:id', verifyAccessToken, async (req, res) => {
 
 router.get('/', verifyAccessToken, async (req, res) => {
   try {
+    // gets direct messages between user and receiver
     const {
       receiver_id,
     } = req.query;
