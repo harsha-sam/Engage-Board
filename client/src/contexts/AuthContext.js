@@ -35,6 +35,9 @@ export const AuthProvider = ({
         })
         .finally(() => authDispatch({ type: SET_IS_LOADING, payload: false }))
     }
+    else {
+      authDispatch({ type: SET_IS_LOADING, payload: false })
+    }
   }, [])
 
   const setUser = (payload) => {
@@ -72,6 +75,7 @@ export const AuthProvider = ({
     localStorage.removeItem("access-token");
     localStorage.removeItem("refresh-token");
     message.success('Logged out !');
+    window.location = '/'
     window.location.reload(false);
   }
 

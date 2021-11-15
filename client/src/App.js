@@ -7,10 +7,13 @@ import {
   Login,
   Register,
   AvatarUploader,
-  Classrooms
+  Classrooms,
+  Classroom
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
 import { ClassroomsProvider } from './contexts/ClassroomsContext';
+import { ClassroomProvider } from './contexts/ClassroomContext';
+import { ChatProvider } from './contexts/ChatContext';
 import 'antd/dist/antd.css';
 import './App.css';
 
@@ -31,19 +34,30 @@ const App = () => {
   }
   else {
     return (<>
-      <Navigation>
-        <Routes>
-          <Route exact path="/login" element={<Navigate to="/classrooms" />} />
-          <Route exact path="/register" element={<Navigate to="/classrooms" />} />
-          <Route exact path="/classrooms" element={
+      <Routes>
+        <Route exact path="/login" element={<Navigate to="/classrooms" />} />
+        <Route exact path="/register" element={<Navigate to="/classrooms" />} />
+        <Route exact path="/" element={<Navigate to="/classrooms" />} />
+        <Route exact path="/classrooms" element={
+          <Navigation>
             <ClassroomsProvider>
               <Classrooms />
             </ClassroomsProvider>
-          } />
-          <Route exact path="/avatar" element={<AvatarUploader />}>
-          </Route>
-        </Routes>
-      </Navigation>
+          </Navigation>
+        } />
+        <Route exact path="/avatar" element={
+          <Navigation>
+            <AvatarUploader />
+          </Navigation>
+        } />
+        <Route exact path="/classrooms/:id" element={
+          <ClassroomProvider>
+            <ChatProvider>
+              <Classroom />
+            </ChatProvider>
+          </ClassroomProvider>
+        } />
+      </Routes>
     </>
     )
   }

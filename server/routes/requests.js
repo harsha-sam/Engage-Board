@@ -36,7 +36,7 @@ router.post('/', verifyAccessToken, async (req, res) => {
       })
       let to = classroom.admin.email;
       let requests_url = "http://localhost:3000/manage-classrooms"
-      let html = `<Please>Hey, ${classroom.admin.full_name}. ${req.user.full_name}(${req.user.id} - ${req.user.role}) has just requested to join your classroom ${classroom.name} Please navigate <a href=${requests_url}>here</a> to accept the request.</p>`
+      let html = `<Please>Hey, ${classroom.admin.full_name}. ${req.user.full_name}(${req.user.id} - ${req.user.role}) has just requested to join your classroom ${classroom.name}. Please navigate <a href=${requests_url}>here</a> to accept the request.</p>`
       const message = {
         to,
         from: {

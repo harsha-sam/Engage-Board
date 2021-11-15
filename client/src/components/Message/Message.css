@@ -1,0 +1,12 @@
+.message-reactions {
+  margin-left: 6px;
+  cursor: 'auto';
+}
+.message{
+  width: fit-content;
+  max-width: 80% ;
+  background-color: #fff !important;
+  border-radius: 25px;
+  padding: 4px 9px;
+  margin-bottom: 20px;
+}

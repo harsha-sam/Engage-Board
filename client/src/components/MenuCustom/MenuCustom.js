@@ -3,7 +3,7 @@ import { Menu } from 'antd';
 
 const { SubMenu } = Menu;
 
-const MenuCustom = ({ items, logo, ...props }) => {
+const MenuCustom = ({ items, logo, onClick, ...props }) => {
 
   const channels = [];
   const generateMenuList = (menuList) => {
@@ -32,7 +32,7 @@ const MenuCustom = ({ items, logo, ...props }) => {
   })
 
   return <Menu theme="dark"
-    onClick={handleClick}
+    onClick={onClick || handleClick}
     {...props}>
     {logo && logo}
     {generateMenuList(items)}

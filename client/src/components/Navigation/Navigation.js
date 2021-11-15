@@ -1,45 +1,17 @@
 import React from 'react'
-import { Layout, Avatar, Affix } from 'antd';
+import { Layout, Affix } from 'antd';
 import { useNavigate } from 'react-router';
-import MenuCustom from '../../components/MenuCustom/MenuCustom';
+import MenuCustom from '../MenuCustom/MenuCustom';
+import NavHeader from '../NavHeader/NavHeader';
 import {
   TeamOutlined,
   MessageOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  EditOutlined,
-  BookOutlined,
 } from '@ant-design/icons';
-import { useAuthContext } from '../../contexts/AuthContext';
 
-const { Sider, Header, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const Navigation = ({ children }) => {
   let navigate = useNavigate();
-  const { authState: { user }, authActions: { signout } } = useAuthContext()
-
-  const headerOptions = [
-    {
-      icon: <Avatar src={<UserOutlined />}
-      />,
-      name: user.full_name,
-      id: user.id,
-      channels: [
-        {
-          icon: <EditOutlined />,
-          name: "Upload / Change Avatar",
-          id: 'Avatar',
-          onClick: (() => navigate('/avatar'))
-        },
-        {
-          icon: <LogoutOutlined />,
-          name: "Logout",
-          id: "Logout",
-          onClick: signout
-        }
-      ]
-    },
-  ]
 
   const siderOptions = [
     {
@@ -54,19 +26,11 @@ const Navigation = ({ children }) => {
       id: 'Direct Messages',
       onClick: (() => navigate('/direct-messages'))
     },
-    {
-      icon: <BookOutlined />,
-      name: 'Notes',
-      id: 'Notes',
-      onClick: (() => navigate('/notes'))
-    },
   ]
 
   return <Affix>
     <Layout>
-      <Header>
-        <MenuCustom items={headerOptions} mode="horizontal" selectable={false}/>
-      </Header>
+      <NavHeader />
       <Layout>
         <Sider collapsible width={240} style={{ height: '100vh' }}>
           <MenuCustom items={siderOptions} mode="inline"

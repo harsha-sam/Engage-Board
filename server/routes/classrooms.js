@@ -169,9 +169,11 @@ router.post('/users', verifyAccessToken, async (req, res) => {
       classroom.members = newMembers
       await classroom.save().then(() => {
         user.save()
-        Request.destroy({
-          where: {id: request_id}
-        })
+        if (request_id) {
+          Request.destroy({
+            where: {id: request_id}
+          })
+        }
       }
       );
       res.status(200).json(classroom)

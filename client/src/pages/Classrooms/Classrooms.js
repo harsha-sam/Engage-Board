@@ -11,6 +11,7 @@ import './Classrooms.css';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useClassroomsContext } from '../../contexts/ClassroomsContext';
 import AddClassroom from '../../components/AddClassroom/AddClassroom';
+import { Link } from 'react-router-dom';
 
 const { TabPane } = Tabs;
 
@@ -49,9 +50,11 @@ const Classrooms = () => {
                   description={classroom.description}
                   actions={[
                     <span>
-                      <Tooltip title="Open Classroom" placement="bottom">
-                        <ArrowRightOutlined />
-                      </Tooltip>
+                      <Link to={`/classrooms/${classroom.id}`}>
+                        <Tooltip title="Open Classroom" placement="bottom">
+                          <ArrowRightOutlined />
+                        </Tooltip>
+                      </Link>
                     </span>,
                     <span onClick={() => leaveClassroom({ classroom_id: classroom.id, user_id: user.id })}>
                       <Tooltip title="Leave Classroom" placement="bottom">

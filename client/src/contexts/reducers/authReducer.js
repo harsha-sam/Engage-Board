@@ -5,7 +5,7 @@ import {
 
 export const authInitialState = {
   user: null,
-  isLoading: false,
+  isLoading: true,
 }
 
 export const authReducer = (state = authInitialState, action) => {

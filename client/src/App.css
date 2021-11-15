@@ -18,3 +18,28 @@
   left: 50%;
   top: 40%;
 }
+
+.ant-list-item-meta-title>a {
+  color: #fff;
+}
+
+.messages-list {
+  min-height: 80vh;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-top: 10px;
+  margin-left: 230px;
+}
+
+.react-input-emoji--input {
+  max-height: 50px;
+}
+
+.chat-input-container {
+  margin-top: 10px;
+  margin-left: 220px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 50%;
+}
