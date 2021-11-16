@@ -46,13 +46,11 @@ main = async () => {
       console.log('new client connected', socket.id)
 
       const { channel_id } = socket.handshake.query;
-      console.log(channel_id, 'c');
       socket.join(channel_id);
 
       // when new message is received on a specific channel
       socket.on(CHANNEL_NEW_CHAT_MESSAGE_EVENT, async (data) => {
         let { sender, content } = data;
-        console.log(sender, content, channel_id)
         let msg = await createMessage(sender.id, null, channel_id, content)
         msg = {
           id: msg.id,
@@ -99,13 +97,6 @@ main = async () => {
       })
     })
 
-    // createMessage('18AG1A0503', null, 'e93728c9-43e3-46df-b4b2-89e723c948ad', 'ssup?')
-    // createMessage('18AG1A0503', null, 'e93728c9-43e3-46df-b4b2-89e723c948ad', 'Yo bois?')
-    // createMessage('18AG1A0549', null, 'e93728c9-43e3-46df-b4b2-89e723c948ad', 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure iusto provident molestias rem maxime nesciunt quia reiciendis. Maiores labore cum exercitationem quos excepturi earum sequi iure voluptatem necessitatibus. Reiciendis, obcaecati!')
-    // createReaction('0995f1ad-61d3-45fe-9c7e-f8925874cfc0', '18AG1A0503', 'Frown')
-    // createReaction('0995f1ad-61d3-45fe-9c7e-f8925874cfc0', '18AG1A0503', 'Frown')
-    // createReaction('0995f1ad-61d3-45fe-9c7e-f8925874cfc0', '18AG1A0549', 'Like')
-    // createReaction('0d768541-3d0c-4e5e-a306-104d91be8971', '18AG1A0554', 'Smile')
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
 

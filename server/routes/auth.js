@@ -76,6 +76,7 @@ router.post('/signin', async (req, res) => {
 
 router.get('/token', verifyRefreshToken, async (req, res) => {
   try {
+    // refreshing access toekn
     const refresh_token = req.get('refresh-token');
     if (refresh_token) {
       const usr = req.user;

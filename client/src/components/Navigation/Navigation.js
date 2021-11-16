@@ -7,10 +7,11 @@ import {
   TeamOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
+import { Outlet } from 'react-router';
 
 const { Sider, Content } = Layout;
 
-const Navigation = ({ children }) => {
+const Navigation = () => {
   let navigate = useNavigate();
 
   const siderOptions = [
@@ -33,10 +34,10 @@ const Navigation = ({ children }) => {
       <NavHeader />
       <Layout>
         <Sider collapsible width={240} style={{ height: '100vh' }}>
-          <MenuCustom items={siderOptions} mode="inline" />
+          <MenuCustom items={siderOptions} mode="inline" defaultSelectedKeys={['Classrooms']}/>
         </Sider>
         <Content style={{ margin: '3% 5%', height: '100vh' }}>
-          {children}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

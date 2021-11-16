@@ -48,6 +48,7 @@ axiosInstance.interceptors.response.use(
 export const signin_URL = `/auth/signin`;
 export const signup_URL = `/auth/signup`;
 
+export const users_URL = `/users`;
 export const user_URL = `/users/me`;
 
 export const classrooms_URL = `/classrooms`;

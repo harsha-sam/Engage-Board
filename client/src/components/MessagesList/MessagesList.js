@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import moment from 'moment';
-import { Avatar, Button, Divider, Typography, Skeleton, Empty, Popconfirm } from 'antd';
+import { Avatar, Button, Divider, Typography, Skeleton, Popconfirm } from 'antd';
 import Message from '../Message/Message';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useChatContext } from '../../contexts/ChatContext';
 import InputEmoji from 'react-input-emoji'
 import { SendOutlined, DeleteOutlined } from '@ant-design/icons'
+import EmptyCustom from '../EmptyCustom/EmptyCustom';
 
 const { Paragraph } = Typography;
 const MessagesList = () => {
   let { authState: { user } } = useAuthContext();
-  const { chatState: { isLoading, messagesList }, chatActions: { addNewMessage, editMessage, deleteMessage } } = useChatContext();
+  const { chatState: { isLoading, messagesList },
+    chatActions: { addNewMessage, editMessage, deleteMessage } } = useChatContext();
   const [newMessage, setNewMessage] = useState('');
   const messagesListRef = useRef(null);
 
@@ -24,7 +26,7 @@ const MessagesList = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messagesList.length])
-  
+
   const handleSendMessage = () => {
     if (newMessage) {
       addNewMessage(newMessage);
@@ -47,17 +49,8 @@ const MessagesList = () => {
       }
       {
         !isLoading && messagesList.length === 0 ?
-          <Empty
-          image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-          imageStyle={{
-            height: 60,
-          }}
-          description={
-            <span>
-              No messages found in this channel
-            </span>
-          }
-        /> :
+          <EmptyCustom description="No messages found in this channel" />
+          :
           messagesList.map((msg) => {
             let author = msg.sender.full_name
             let avatar = <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
@@ -81,15 +74,15 @@ const MessagesList = () => {
               avatar={avatar}
               content={
                 <Paragraph
-                  editable = { msg.sender.id === user.id ? {
+                  editable={msg.sender.id === user.id ? {
                     onChange: (val) => handleEditMessage(msg.id, val),
-                  }: false}
+                  } : false}
                   ellipsis={{
                     rows: 2,
                     expandable: true,
                     symbol: "see more"
                   }}
-                  copyable = { msg.sender.id === user.id ? {
+                  copyable={msg.sender.id === user.id ? {
                     icon: [
                       <Popconfirm
                         title="Are you sure to delete this message?"
@@ -108,8 +101,8 @@ const MessagesList = () => {
                         <DeleteOutlined />
                       </Popconfirm>],
                     tooltips: ["Delete", "Delete"],
-                    onCopy: () => {}
-                  }: false}
+                    onCopy: () => { }
+                  } : false}
                 >
                   {msg.content}
                 </Paragraph>
@@ -140,10 +133,14 @@ const MessagesList = () => {
 }
 
 
-const DummyMessages = () => {
+export const DummyMessages = ({ length = 5 }) => {
+  let list = []
+  for (let i = 1; i <= length; i++) {
+    list.push(`dum${i}`)
+  }
   return <>
     {
-      ['dum1', 'dum2', 'dum3', 'dum4', 'dum5'].map((ele) => {
+      list.map((ele) => {
         return <Skeleton avatar key={ele} paragraph={{ rows: 2 }} className="message" />
       })
     }

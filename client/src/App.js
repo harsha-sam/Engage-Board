@@ -10,6 +10,7 @@ import {
   Classroom
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
+import ErrorPage from './components/ErrorPage/ErrorPage';
 import { ClassroomsProvider } from './contexts/ClassroomsContext';
 import { ClassroomProvider } from './contexts/ClassroomContext';
 import { ChatProvider } from './contexts/ChatContext';
@@ -21,7 +22,7 @@ const App = () => {
 
 
   if (isLoading) {
-    return <Spin tip="Loading..." style={{ position: 'absolute', left: '50%', top: '40%' }} />
+    return <Spin tip="Loading..." className="spinner" />
   }
   else if (!user) {
     return <Routes>
@@ -35,26 +36,38 @@ const App = () => {
       <Routes>
         <Route exact path="/login" element={<Navigate to="/classrooms" />} />
         <Route exact path="/register" element={<Navigate to="/classrooms" />} />
-        <Route exact path="/" element={<Navigate to="/classrooms" />} />
-        <Route exact path="/classrooms" element={
-          <Navigation>
+        <Route exact path="/" element={<Navigation />}>
+          <Route exact path="/" element={
             <ClassroomsProvider>
               <Classrooms />
             </ClassroomsProvider>
-          </Navigation>
-        } />
-        <Route exact path="/user_profile" element={
-          <Navigation>
-            <EditUserProfile />
-          </Navigation>
-        } />
+          } />
+          <Route exact path="/classrooms" element={
+            <ClassroomsProvider>
+              <Classrooms />
+            </ClassroomsProvider>
+          } />
+          <Route exact path="/user_profile" element={
+              <EditUserProfile />
+          } />
+        </Route>
         <Route exact path="/classrooms/:id" element={
-          <ClassroomProvider>
-            <ChatProvider>
-              <Classroom />
-            </ChatProvider>
-          </ClassroomProvider>
+          <ClassroomsProvider>
+            <ClassroomProvider>
+              <ChatProvider>
+                <Classroom />
+              </ChatProvider>
+            </ClassroomProvider>
+          </ClassroomsProvider>
         } />
+        <Route path="/error403" element={
+          <ErrorPage
+            status="403"
+            title="403"
+            subTitle="Sorry, you are not authorized to access this page."
+          />} />
+        <Route path="*" element={
+          <ErrorPage />} />
       </Routes>
     </>
     )

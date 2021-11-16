@@ -41,6 +41,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
 
 router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
   try {
+    // only faculty can create a classroom
     const {
       name,
       description
@@ -65,7 +66,7 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
       members,
       created_by: id
     })
-    // adding this new classroom to user classrooms
+    // adding this new classroom to user classrooms list
     user.classrooms = [...user.classrooms, classroom.id];
     await user.save();
     res.status(200).json(classroom)
@@ -103,19 +104,26 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
     if (!classroom) throw new Error('id is invalid')
     let userObj = {}
     classroom.members.forEach((member) => userObj[member.id] = member)
-    let users = await User.findAll({
-      where: {
-        id: {
-          [Op.in]: Object.keys(userObj)
-        }
-      },
-      attributes: ['full_name', 'id', 'avatar']
-    })
-    users.forEach((user) => {
-      userObj[user.id] = { ...user.get(), ...userObj[user.id] }
-    })
-    classroom.members = Object.values(userObj)
-    res.status(200).json(classroom)
+    if (!(req.user.id in userObj)) {
+      res.status(403).json({
+        error: `Forbidden: User is not part of the classroom ${classroom.name}`
+      });
+    }
+    else {
+      let users = await User.findAll({
+        where: {
+          id: {
+            [Op.in]: Object.keys(userObj)
+          }
+        },
+        attributes: ['full_name', 'id', 'avatar', 'email']
+      })
+      users.forEach((user) => {
+        userObj[user.id] = { ...user.get(), ...userObj[user.id] }
+      })
+      classroom.members = Object.values(userObj)
+      res.status(200).json(classroom)
+    }
   }
   catch (error) {
     res.status(400).json({
@@ -149,7 +157,7 @@ router.post('/users', verifyAccessToken, async (req, res) => {
     if (!permissionCheck) {
       res.status(403).
         json({
-          error: "Action prohibited due to lack of permission"
+          error: "Action prohibited due to lack of permission. To add users, you must be an admin or monitor"
         })
     }
     else {
@@ -160,6 +168,7 @@ router.post('/users', verifyAccessToken, async (req, res) => {
         attributes: ['classrooms', 'id']
       })
       if (!user) throw new Error('User with this id does not exist');
+      // adding this classroom to users classrooms list
       user.classrooms = [...user.classrooms, classroom.id];
       newMembers = []
       classroom.members.forEach((member) => {
@@ -176,12 +185,12 @@ router.post('/users', verifyAccessToken, async (req, res) => {
       await classroom.save().then(() => {
         user.save()
         if (request_id) {
+          // request id related should be deleted
           Request.destroy({
             where: {id: request_id}
           })
         }
-      }
-      );
+      });
       res.status(200).json(classroom)
     }
   }
@@ -202,10 +211,11 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
       where: {
         id: classroom_id
       },
-      attributes: ['members', 'id']
+      attributes: ['members', 'id', 'created_by']
     })
     let permissionCheck = false;
     if (user_id === req.user.id) {
+      // this case, if the user itself wants to leave the classroom
       permissionCheck = true;
     }
     else{
@@ -217,7 +227,7 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
     if (!permissionCheck) {
       res.status(403).
         json({
-          error: "Action prohibited due to lack of permission"
+          error: "Action prohibited due to lack of permission. To remove other users, you must be an admin or monitor"
         })
     }
     else {
@@ -227,11 +237,14 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
         },
         attributes: ['classrooms', 'id']
       })
+      // removing the user
       newMembers = classroom.members.filter((member) => member.id !== user_id)
       classroom.members = newMembers
       let user = await userFind
+      // removing this classroom from user classrooms list
       user.classrooms = user.classrooms.filter((id) => id !== classroom.id)
-      if (newMembers.length === 0) {
+      if (newMembers.length === 0 || user_id === classroom.created_by) {
+        // deleting if classroom has 0 members
         await classroom.destroy().then(() => user.save());
         res.status(200).json('Removed user and classroom is deleted')
       }

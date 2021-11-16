@@ -3,6 +3,9 @@ export const SET_IS_LOADING = "SET_IS_LOADING"
 // auth
 export const SET_USER = "SET_USER"
 
+// get list of users
+export const SET_ALL_USERS = "SET_ALL_USERS"
+
 // classrooms
 export const LOAD_CLASSROOMS = "LOAD_CLASSROOMS"
 export const ADD_CLASSROOM = "ADD_CLASSROOM"
@@ -12,6 +15,7 @@ export const WITHDRAW_REQUEST = "WITH_DRAW_REQUEST"
 
 // classroom
 export const LOAD_CLASSROOM = "LOAD_CLASSROOM"
+export const LOAD_CLASSROOM_REQUESTS = "LOAD_CLASSROOM_REQUESTS"
 
 // chat
 export const LOAD_CHAT = "LOAD_CHAT"

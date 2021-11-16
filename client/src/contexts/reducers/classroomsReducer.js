@@ -36,7 +36,6 @@ export const classroomsReducer = (state = classroomsInitialState, action) => {
       let classroom_id = payload.classroom_id;
       return {
         ...state,
-        classrooms: state.classrooms.filter((classroom) => classroom.id !== classroom_id),
         userClassrooms: state.userClassrooms.filter((id => id !== classroom_id))
       }
     } 

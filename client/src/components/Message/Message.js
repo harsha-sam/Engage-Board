@@ -106,37 +106,33 @@ const Message = ({ author, time, reactions, messageId, ...props }) => {
       {...props}
     />
     {
-      <Modal title="Reactions"
+      <Modal title=""
+        closable={false}
         visible={isModalVisible && !isLoading}
         onCancel={handleCancel}
         footer={null}
       >
         <Tabs defaultActiveKey="0" centered>
-          {
-            reactions.map((reaction, index) => {
-              if (reaction.users) {
-                return <TabPane tab={reaction.key} key={index}>
-                  {
-                    <List
-                    dataSource={reaction.users}
-                    renderItem={item => {
-                      return <List.Item key={item.id}>
-                        <List.Item.Meta
-                          avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
-                          title={<a href="https://ant.design">{item.full_name}</a>}
-                          description={item.id}
-                        />
-                      </List.Item>
-                    }}
-                    />
+          {reactions.map((reaction, index) =>
+            <TabPane tab={reaction.key} key={index}>
+              {reaction.users.length > 0 ?
+                <List
+                  dataSource={reaction.users}
+                  renderItem={item =>
+                    <List.Item key={item.id}>
+                      <List.Item.Meta
+                        avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
+                        title={<a href="https://ant.design">{item.full_name}</a>}
+                        description={item.id}
+                      />
+                    </List.Item>
                   }
-                </TabPane>   
+                />
+                :
+                <span>No reactions</span>
               }
-              else {
-                return <>No data</>
-              }
-            })
-          }
+            </TabPane>
+          )}
         </Tabs>
       </Modal>
     }

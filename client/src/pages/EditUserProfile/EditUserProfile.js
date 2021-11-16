@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import { useAuthContext } from '../../contexts/AuthContext';
-import AvatarUploader from '../AvatarUploader/AvatarUploader';
+import AvatarUploader from '../../components/AvatarUploader/AvatarUploader';
 import './EditUserProfile.css';
 
 const { Title } = Typography;

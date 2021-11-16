@@ -81,6 +81,17 @@ export const ClassroomsProvider = ({
       .then(() => {
         classroomsDispatch({ type: LEAVE_CLASSROOM, payload })
         message.success('Left the classroom')
+        window.location.reload(false);
+      })
+      .catch((err) => {
+        message.error(err?.response?.data?.error || 'something went wrong');
+      })
+  }
+
+  const addUserToClassroom = (payload) => {
+    axiosInstance.post(`${classroom_users_URL}`, payload)
+      .then(() => {
+        message.success('User has been added. Please refresh the page to see changes')
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || 'something went wrong');
@@ -94,6 +105,7 @@ export const ClassroomsProvider = ({
         classroomsActions: {
           getClassrooms,
           addClassroom,
+          addUserToClassroom,
           leaveClassroom,
           postRequest,
           withdrawRequest
