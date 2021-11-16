@@ -1,17 +1,28 @@
 import React from 'react'
 import { Avatar, List, Tag } from 'antd'
 
-const UserDisplay = ({ user }) => {
+const UserDisplay = ({ user, showTag=true, title }) => {
+  let color = "blue"
+  if (['admin', 'faculty'].includes(user.role)) {
+    color = "red";
+  }
+  else if (user.role === 'monitor') {
+    color = "green"
+  }
   return <List.Item.Meta
     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-    title={user.full_name}
+    title={title || user.full_name}
     description={<>
-      <p style={{ marginBottom: "2px" }}>
+      <small style={{ marginBottom: "2px", color: 'grey' }}>
         {user.id}
-      </p>
-      <Tag color={user.role === 'faculty' ? 'volcano' : 'cyan'}>
-        {user.role.toUpperCase()}
-      </Tag>
+      </small>
+      <br />
+      {
+        showTag &&
+        <Tag color={color}>
+          {user.role.toUpperCase()}
+        </Tag>
+      }
     </>}
   />
 }

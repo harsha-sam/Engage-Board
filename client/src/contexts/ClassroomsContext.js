@@ -17,6 +17,7 @@ import {
 } from './actionTypes';
 import { axiosInstance, classrooms_URL, requests_URL, classroom_users_URL } from '../api-config';
 import { message } from 'antd'
+import { useAuthContext } from './AuthContext';
 
 
 const ClassroomsContext = React.createContext();
@@ -25,7 +26,7 @@ export const ClassroomsProvider = ({
   children
 }) => {
   const [classroomsState, classroomsDispatch] = useReducer(classroomsReducer, classroomsInitialState);
-
+  const { authState: { user }} = useAuthContext();
   const getClassrooms = () => {
     classroomsDispatch({ type: SET_IS_LOADING, payload: true })
     axiosInstance.get(classrooms_URL)
@@ -80,7 +81,12 @@ export const ClassroomsProvider = ({
     axiosInstance.patch(`${classroom_users_URL}`, payload)
       .then(() => {
         classroomsDispatch({ type: LEAVE_CLASSROOM, payload })
-        message.success('Left the classroom')
+        if (payload.user_id === user.id) {
+          message.success('Left the classroom')
+        }
+        else {
+          message.success('Removed from classroom')
+        }
         window.location.reload(false);
       })
       .catch((err) => {

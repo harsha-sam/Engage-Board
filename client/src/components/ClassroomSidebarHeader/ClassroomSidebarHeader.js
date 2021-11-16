@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Logo from '../Logo/Logo';
-import { Menu, Button, Modal, Tabs, Select, Radio, List, Avatar, Tag, Tooltip, Popconfirm } from 'antd';
+import { Menu, Button, Modal, Tabs, Select, Radio, List, Tooltip, Popconfirm } from 'antd';
 import { useClassroomContext } from '../../contexts/ClassroomContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { DummyMessages } from '../MessagesList/MessagesList';
@@ -45,6 +45,12 @@ const ClassroomSidebarHeader = () => {
     addUserToClassroom(payload)
   }
 
+  const handleRemoveUser = (payload) => {
+    setShowUsersModal(false)
+    payload = { ...payload, classroom_id: id }
+    leaveClassroom(payload)
+  }
+
   useEffect(() => {
     let permissionCheck = members.some((member) => {
       return ((member.id === user.id)
@@ -67,7 +73,7 @@ const ClassroomSidebarHeader = () => {
               type="dashed"
               block={true}
               onClick={showUserModal}>
-              Add a user
+              Add / Remove a user
             </Button>
           </Menu.Item>
           <Menu.Item key="leave classroom">
@@ -77,7 +83,7 @@ const ClassroomSidebarHeader = () => {
                 leaveClassroom({
                   classroom_id: id,
                   user_id: user.id
-               })
+                })
               }}
               placement="top"
             >
@@ -98,14 +104,16 @@ const ClassroomSidebarHeader = () => {
       maskClosable={false}
     >
       <Tabs defaultActiveKey="0" centered onChange={() => setRole('')}>
-        <TabPane tab="Add user to classroom" key="0">
+        <TabPane tab="Add User" key="0">
           {usersLoading ? <DummyMessages length={2} />
-            : <SearchAndAddUsers
+            : <SearchAndListUsers
               role={role}
-              handleAdd={handleAddUser}
+              handleOnSave={handleAddUser}
               onRoleChange={onChange}
               users={users}
               members={members}
+              type="add"
+              buttonText={"Add"}
             />
           }
         </TabPane>
@@ -118,20 +126,46 @@ const ClassroomSidebarHeader = () => {
               onRoleChange={onChange} />
           }
         </TabPane>
+        <TabPane tab="Remove User" key="2">
+          {usersLoading ? <DummyMessages length={2} />
+            : <SearchAndListUsers
+              handleOnSave={handleRemoveUser}
+              users={users}
+              members={members}
+              type="remove"
+              currentUserId={user.id}
+              buttonText={"Remove"}
+            />
+          }
+        </TabPane>
       </Tabs>
     </Modal>
   </>)
 }
 
-const SearchAndAddUsers = ({ role, onRoleChange, users, members, handleAdd }) => {
+const SearchAndListUsers = ({ role, onRoleChange,
+  users, members, handleOnSave, type, currentUserId, buttonText }) => {
   const { Option } = Select;
   const [selectedUser, setSelectedUser] = useState();
+  const [options, setOptions] = useState([]);
 
-  const handleSave = () => handleAdd({ new_user_id: selectedUser, role })
+  const handleSave = () => {
+    if (type === 'add') handleOnSave({ new_user_id: selectedUser, role })
+    else handleOnSave({ user_id: selectedUser })
+  }
 
-  let options = users.filter((user) => {
-    return !(members.some((member) => member.id === user.id))
-  })
+  useEffect(() => {
+    if (type === 'add') {
+      setOptions(users.filter((user) => {
+        return !(members.some((member) => member.id === user.id))
+      }))
+    }
+    else {
+      setOptions(members.filter((member) =>
+        (member.id !== currentUserId && member.role !== 'admin')
+      ))
+    }
+  }, [members])
 
   return <div className="form-container">
     <div>
@@ -148,27 +182,29 @@ const SearchAndAddUsers = ({ role, onRoleChange, users, members, handleAdd }) =>
         {
           options.map((user) => {
             return <Option value={user.id} key={user.id} name={user.full_name}>
-              <UserDisplay user={user}/>
+              <UserDisplay user={user} />
             </Option>
           })
         }
       </Select>
     </div>
-    <div>
-      <label>Role: </label>
-      <Radio.Group onChange={onRoleChange} value={role}>
-        <Radio value="monitor">
-          Monitor
-        </Radio>
-        <Radio value="student">
-          Student
-        </Radio>
-      </Radio.Group>
-    </div>
+    {type === "add" &&
+      <div>
+        <label>Role: </label>
+        <Radio.Group onChange={onRoleChange} value={role}>
+          <Radio value="monitor">
+            Monitor
+          </Radio>
+          <Radio value="student">
+            Student
+          </Radio>
+        </Radio.Group>
+      </div>
+    }
     <Button type="primary"
-      disabled={!role || !selectedUser}
+      disabled={type === 'add' ? (!role || !selectedUser) : (!selectedUser)}
       onClick={handleSave}>
-      Save
+      {buttonText}
     </Button>
   </div>
 }
