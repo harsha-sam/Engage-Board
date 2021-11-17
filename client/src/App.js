@@ -16,6 +16,7 @@ import { ClassroomProvider } from './contexts/ClassroomContext';
 import { ChatProvider } from './contexts/ChatContext';
 import 'antd/dist/antd.css';
 import './App.css';
+import DirectMessages from './pages/DirectMessages/DirectMessages';
 
 const App = () => {
   const { authState: { user, isLoading } } = useAuthContext();
@@ -47,8 +48,13 @@ const App = () => {
               <Classrooms />
             </ClassroomsProvider>
           } />
-          <Route exact path="/user_profile" element={
+          <Route exact path="/profile" element={
               <EditUserProfile />
+          } />
+          <Route exact path="/direct-messages/:id/" element={
+            <ChatProvider>
+              <DirectMessages />
+            </ChatProvider>
           } />
         </Route>
         <Route exact path="/classrooms/:id" element={

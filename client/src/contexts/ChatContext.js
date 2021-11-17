@@ -24,6 +24,11 @@ const CHANNEL_EDIT_MESSAGE_EVENT = "CHANNEL_EDIT_MESSAGE_EVENT";
 const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
 const CHANNEL_MESSAGE_NEW_REACTION_EVENT = "CHANNEL_MESSAGE_NEW_REACTION_EVENT";
 const CHANNEL_MESSAGE_DELETE_REACTION_EVENT = "CHANNEL_MESSAGE_DELETE_REACTION_EVENT";
+const NEW_CHAT_MESSAGE_EVENT = "NEW_CHAT_MESSAGE_EVENT";
+const EDIT_MESSAGE_EVENT = "EDIT_MESSAGE_EVENT";
+const DELETE_MESSAGE_EVENT = "DELETE_MESSAGE_EVENT";
+const MESSAGE_NEW_REACTION_EVENT = "MESSAGE_NEW_REACTION_EVENT";
+const MESSAGE_DELETE_REACTION_EVENT = "MESSAGE_DELETE_REACTION_EVENT";
 
 export const ChatProvider = ({
   children
@@ -68,6 +73,23 @@ export const ChatProvider = ({
     socketRef.current.on(CHANNEL_DELETE_MESSAGE_EVENT, (payload) => {
       chatDispatch({ type: DELETE_MESSAGE, payload })
     })
+    socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
+      chatDispatch({ type: ADD_MESSAGE_TO_CHAT, payload: message })
+    });
+    socketRef.current.on(MESSAGE_NEW_REACTION_EVENT, (payload) => {
+      chatDispatch({ type: SET_IS_LOADING, payload: true })
+      chatDispatch({ type: ADD_REACTION_TO_MESSAGE, payload })
+    });
+    socketRef.current.on(MESSAGE_DELETE_REACTION_EVENT, (payload) => {
+      chatDispatch({ type: SET_IS_LOADING, payload: true })
+      chatDispatch({ type: REMOVE_REACTION_TO_MESSAGE, payload })
+    });
+    socketRef.current.on(EDIT_MESSAGE_EVENT, (payload) => {
+      chatDispatch({ type: EDIT_MESSAGE, payload })
+    })
+    socketRef.current.on(DELETE_MESSAGE_EVENT, (payload) => {
+      chatDispatch({ type: DELETE_MESSAGE, payload })
+    })
   }
 
   const disconnectSocket = () => {
@@ -86,7 +108,8 @@ export const ChatProvider = ({
 
   useEffect(() => {
     if (chatState.receiver && chatState.receiver.id) {
-      initiateSocketConnection();
+      initiateSocketConnection({ sender_id: user.id, receiver_id: chatState.receiver.id });
+      setupSocketListener()
       getDirectMessages(chatState.receiver)
     }
     return (() => disconnectSocket())
@@ -106,7 +129,7 @@ export const ChatProvider = ({
 
   const getDirectMessages = (payload) => {
     chatDispatch({ type: SET_IS_LOADING, payload: true })
-    axiosInstance.get(`${chat_URL}/?receiever_id=${payload.id}`)
+    axiosInstance.get(`${chat_URL}/?receiver_id=${payload.id}`)
       .then((response) => {
         chatDispatch({ type: LOAD_CHAT, payload: response.data })
       })
@@ -117,19 +140,28 @@ export const ChatProvider = ({
   }
 
   const addNewMessage = ((payload) => {
-    socketRef.current.emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, {
+    let message = {
       content: payload,
       sender: {
         id: user.id,
         full_name: user.full_name,
         avatar: user.avatar
-      }
-    })
+      },
+      receiver: chatState.receiver
+    }
+    if (chatState.channel) {
+      socketRef.current.emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, message)
+    }
+    else if (chatState.receiver) {
+      socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, message)
+    }
   })
 
   const addNewReaction = ((payload) => {
     const { message_id, reaction, user } = payload;
-    socketRef.current.emit(CHANNEL_MESSAGE_NEW_REACTION_EVENT, {
+    let event = MESSAGE_NEW_REACTION_EVENT
+    if (chatState.channel) event = CHANNEL_MESSAGE_NEW_REACTION_EVENT
+    socketRef.current.emit(event, {
       message_id: message_id,
       user,
       reaction
@@ -138,7 +170,9 @@ export const ChatProvider = ({
 
   const deleteReaction = ((payload) => {
     const { message_id, reaction, user } = payload;
-    socketRef.current.emit(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, {
+    let event = MESSAGE_DELETE_REACTION_EVENT
+    if (chatState.channel) event = CHANNEL_MESSAGE_DELETE_REACTION_EVENT
+    socketRef.current.emit(event, {
       message_id: message_id,
       user,
       reaction
@@ -147,7 +181,9 @@ export const ChatProvider = ({
 
   const editMessage = ((payload) => {
     const { message_id, new_content } = payload;
-    socketRef.current.emit(CHANNEL_EDIT_MESSAGE_EVENT, {
+    let event = EDIT_MESSAGE_EVENT
+    if (chatState.channel) event = CHANNEL_EDIT_MESSAGE_EVENT
+    socketRef.current.emit(event, {
       message_id,
       new_content
     })
@@ -155,7 +191,9 @@ export const ChatProvider = ({
 
   const deleteMessage = ((payload) => {
     const { message_id } = payload;
-    socketRef.current.emit(CHANNEL_DELETE_MESSAGE_EVENT, {
+    let event = DELETE_MESSAGE_EVENT
+    if (chatState.channel) event = CHANNEL_DELETE_MESSAGE_EVENT
+    socketRef.current.emit(event, {
       message_id
     })
   })

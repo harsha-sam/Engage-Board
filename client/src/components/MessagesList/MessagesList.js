@@ -9,7 +9,7 @@ import { SendOutlined, DeleteOutlined } from '@ant-design/icons'
 import EmptyCustom from '../EmptyCustom/EmptyCustom';
 
 const { Paragraph } = Typography;
-const MessagesList = () => {
+const MessagesList = ({wrapperClassName}) => {
   let { authState: { user } } = useAuthContext();
   const { chatState: { isLoading, messagesList },
     chatActions: { addNewMessage, editMessage, deleteMessage } } = useChatContext();
@@ -43,13 +43,13 @@ const MessagesList = () => {
   }
 
   return <>
-    <div className="messages-list" ref={messagesListRef}>
+    <div className={wrapperClassName} ref={messagesListRef}>
       {
         isLoading && <DummyMessages />
       }
       {
         !isLoading && messagesList.length === 0 ?
-          <EmptyCustom description="No messages found in this channel" />
+          <EmptyCustom description="No messages found" />
           :
           messagesList.map((msg) => {
             let author = msg.sender.full_name
@@ -71,6 +71,7 @@ const MessagesList = () => {
               key={msg.id}
               messageId={msg.id}
               author={author}
+              authorId={msg.sender.id}
               avatar={avatar}
               content={
                 <Paragraph

@@ -33,7 +33,7 @@ const Classrooms = () => {
     ))
   }, [classrooms, userClassrooms, classroomRequests])
 
-  return (<>
+  return (<div style={{ padding: '5% 10%' }}>
     {
       user.role === 'faculty'
       &&
@@ -129,7 +129,7 @@ const Classrooms = () => {
         </Row>
       </TabPane>
     </Tabs>
-  </>
+  </div>
   )
 }
 

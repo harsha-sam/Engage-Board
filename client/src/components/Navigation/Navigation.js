@@ -5,9 +5,9 @@ import MenuCustom from '../MenuCustom/MenuCustom';
 import NavHeader from '../NavHeader/NavHeader';
 import {
   TeamOutlined,
-  MessageOutlined,
 } from '@ant-design/icons';
 import { Outlet } from 'react-router';
+import  DirectMessagesSearch from './DirectMessagesSearch';
 
 const { Sider, Content } = Layout;
 
@@ -20,23 +20,18 @@ const Navigation = () => {
       name: 'Classrooms',
       id: 'Classrooms',
       onClick: (() => navigate('/classrooms'))
-    },
-    {
-      icon: <MessageOutlined />,
-      name: 'Direct Messages',
-      id: 'Direct Messages',
-      onClick: (() => navigate('/direct-messages'))
-    },
+    }
   ]
 
   return <Affix>
     <Layout>
       <NavHeader />
       <Layout>
-        <Sider collapsible width={240} style={{ height: '100vh' }}>
-          <MenuCustom items={siderOptions} mode="inline" defaultSelectedKeys={['Classrooms']}/>
+        <Sider collapsible width={260} style={{ height: '100vh' }}>
+          <MenuCustom items={siderOptions} mode="inline" selectable={false}/>
+          <DirectMessagesSearch />
         </Sider>
-        <Content style={{ margin: '3% 5%', height: '100vh' }}>
+        <Content style={{ height: '100vh' }}>
           <Outlet />
         </Content>
       </Layout>

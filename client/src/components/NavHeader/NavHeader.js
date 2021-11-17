@@ -25,7 +25,7 @@ const NavHeader = () => {
           icon: <EditOutlined />,
           name: "Update User Profile",
           id: 'user profile',
-          onClick: (() => navigate('/user_profile'))
+          onClick: (() => navigate('/profile'))
         },
         {
           icon: <LogoutOutlined />,

@@ -76,24 +76,24 @@ const ClassroomSidebarHeader = () => {
               Add / Remove a user
             </Button>
           </Menu.Item>
-          <Menu.Item key="leave classroom">
-            <Popconfirm title="Note: If you are the admin of this classroom. 
-              Leaving it will also delete the classroom. Are you sure?"
-              onConfirm={() => {
-                leaveClassroom({
-                  classroom_id: id,
-                  user_id: user.id
-                })
-              }}
-              placement="top"
-            >
-              <Button shape="round" type="danger" block={true}>
-                Leave Classroom
-              </Button>
-            </Popconfirm>
-          </Menu.Item>
         </SubMenu>
       }
+      <Menu.Item key="leave classroom">
+        <Popconfirm title="Note: If you are the admin of this classroom. 
+          Leaving it will also delete the classroom. Are you sure?"
+          onConfirm={() => {
+            leaveClassroom({
+              classroom_id: id,
+              user_id: user.id
+            })
+          }}
+          placement="top"
+        >
+          <Button shape="round" type="danger" block={true}>
+            Leave Classroom
+          </Button>
+        </Popconfirm>
+      </Menu.Item>
     </Menu>
     <Modal
       title=""
@@ -174,7 +174,8 @@ const SearchAndListUsers = ({ role, onRoleChange,
         className="select"
         showSearch
         filterOption={(val, option) => {
-          return option.value.includes(val) || option.name.includes(val)
+          return option.value.includes(val) ||
+            option.name.toLowerCase().includes(val.toLowerCase())
         }}
         value={selectedUser}
         onSelect={setSelectedUser}
@@ -220,7 +221,7 @@ const AddUsersViaReqests = ({ requests, handleAdd, role, onRoleChange }) => {
       <List.Item actions={[
         <Popconfirm title={
           <>
-            <h3>Pick the role</h3>
+            <h3>Pick the role of this user in the classroom</h3>
             <Radio.Group
               onChange={onRoleChange}
               value={role}>

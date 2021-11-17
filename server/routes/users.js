@@ -7,7 +7,8 @@ router.get('/', verifyAccessToken, async (req, res) => {
   // sending all users
   try {
     let users = await User.findAll({
-      attributes: ['id', 'full_name', 'role', 'email', 'avatar']
+      attributes: ['id', 'full_name', 'role', 'email', 'avatar'],
+      order: [['full_name', 'asc']]
     })
     res.status(200).json(users);
   }

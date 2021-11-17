@@ -61,8 +61,16 @@ router.get('/', verifyAccessToken, async (req, res) => {
     }
     let messages = await Message.findAll({
       where: {
-        sender_id: req.user.id,
-        receiver_id
+        [Op.or]: [
+          {
+            [Op.and]: [{ sender_id: req.user.id, },
+            { receiver_id }]
+          },
+          {
+            [Op.and]: [{ sender_id: receiver_id, },
+            { receiver_id: req.user.id }]
+          }
+        ]
       },
       include: [
         {
@@ -80,9 +88,14 @@ router.get('/', verifyAccessToken, async (req, res) => {
               attributes: ['full_name', 'avatar', 'id']
             }
           ],
+        },
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['full_name', 'avatar', 'id']
         }
       ],
-      order: [['created_at', 'desc']]
+      order: [['created_at', 'asc']]
     })
     res.status(200).json(formatMessagesResponse(messages))
   }

@@ -7,7 +7,6 @@ import { useChatContext } from '../../contexts/ChatContext';
 import { useParams } from 'react-router';
 import NavHeader from '../../components/NavHeader/NavHeader';
 import ClassroomSidebarHeader from '../../components/ClassroomSidebarHeader/ClassroomSidebarHeader';
-import { UsersProvider } from '../../contexts/UsersContext';
 import UserDisplay from '../../components/UserDisplay/UserDisplay';
 import SubMenu from 'antd/lib/menu/SubMenu'
 import { TeamOutlined } from '@ant-design/icons';
@@ -76,9 +75,7 @@ const Classroom = () => {
         left: 0,
         top: 0,
       }}>
-        <UsersProvider>
-          <ClassroomSidebarHeader />
-        </UsersProvider>
+        <ClassroomSidebarHeader />
         <MenuCustom items={categories}
           mode={'inline'}
           onClick={({ key }) => selectChannel({ id: key })}
@@ -91,7 +88,7 @@ const Classroom = () => {
           <Content>
             <Layout>
               <NavHeader />
-              <MessagesList />
+              <MessagesList wrapperClassName={"messages-list"} />
             </Layout>
           </Content>
           <Sider theme="dark"

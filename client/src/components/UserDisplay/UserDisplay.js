@@ -10,6 +10,7 @@ const UserDisplay = ({ user, showTag=true, title }) => {
     color = "green"
   }
   return <List.Item.Meta
+    style={{marginBottom: '10px', marginLeft: "20px"}}
     avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
     title={title || user.full_name}
     description={<>

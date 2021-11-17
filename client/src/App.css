@@ -19,20 +19,23 @@
   top: 40%;
 }
 
+.ant-input-affix-wrapper>input.ant-input{
+  color: #fff;
+}
+
+.ant-form-item-control-input-content .ant-input-affix-wrapper>input.ant-input {
+  color: #000;
+}
+
 .messages-list {
   min-height: 80vh;
   max-height: 80vh;
   overflow-y: auto;
-  margin-top: 10px;
+  margin-top: 20px;
   margin-left: 230px;
 }
-
-.react-input-emoji--input {
-  max-height: 50px;
-}
-
-.chat-input-container {
-  margin-top: 10px;
+.messages-list + .chat-input-container {
+  margin-top: 5px;
   margin-left: 220px;
   display: flex;
   align-items: center;
@@ -40,8 +43,36 @@
   width: 60%;
 }
 
+.direct-messages {
+  min-height: 77vh;
+  max-height: 77vh;
+  overflow-y: auto;
+  margin-top: 10px;
+  margin-left: 10%;
+}
+.direct-messages + .chat-input-container {
+  margin-top: 5px;
+  margin-left: 10%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 70%;
+}
+
+.direct-messages .ant-empty{
+  left: 50%;
+}
+
+.react-input-emoji--input {
+  max-height: 50px;
+}
+
 .spinner{
   position: absolute;
   left: 50%;
   top: 40%;
+}
+
+.bread-crumb{
+  margin: 10px;
 }

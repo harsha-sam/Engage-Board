@@ -14,6 +14,7 @@ import moment from 'moment';
 import './Message.css'
 import { useChatContext } from '../../contexts/ChatContext';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 const { TabPane } = Tabs;
 
@@ -48,7 +49,7 @@ const defaultReactions = [
   },
 ]
 
-const Message = ({ author, time, reactions, messageId, ...props }) => {
+const Message = ({ author, authorId, time, reactions, messageId, ...props }) => {
   const { authState: { user } } = useAuthContext();
   const { chatState: { isLoading }, chatActions: { addNewReaction, deleteReaction } } = useChatContext();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -97,7 +98,7 @@ const Message = ({ author, time, reactions, messageId, ...props }) => {
     <Comment
       className="message"
       actions={isLoading ? <></> : actions}
-      author={<a>{author}</a >}
+      author={<Link to={`/direct-messages/${authorId}`}>{author}</Link>}
       datetime={
         <Tooltip title={moment(time).format('YYYY-MM-DD HH:mm:ss')} >
           <span>{moment(time).fromNow()}</span>
@@ -122,7 +123,7 @@ const Message = ({ author, time, reactions, messageId, ...props }) => {
                     <List.Item key={item.id}>
                       <List.Item.Meta
                         avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
-                        title={<a href="https://ant.design">{item.full_name}</a>}
+                        title={<Link to={`/direct-messages/${item.id}`}>{item.full_name}</Link>}
                         description={item.id}
                       />
                     </List.Item>

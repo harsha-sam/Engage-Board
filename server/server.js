@@ -12,6 +12,11 @@ const CHANNEL_EDIT_MESSAGE_EVENT = "CHANNEL_EDIT_MESSAGE_EVENT";
 const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
 const CHANNEL_MESSAGE_NEW_REACTION_EVENT = "CHANNEL_MESSAGE_NEW_REACTION_EVENT";
 const CHANNEL_MESSAGE_DELETE_REACTION_EVENT = "CHANNEL_MESSAGE_DELETE_REACTION_EVENT";
+const NEW_CHAT_MESSAGE_EVENT = "NEW_CHAT_MESSAGE_EVENT";
+const EDIT_MESSAGE_EVENT = "EDIT_MESSAGE_EVENT";
+const DELETE_MESSAGE_EVENT = "DELETE_MESSAGE_EVENT";
+const MESSAGE_NEW_REACTION_EVENT = "MESSAGE_NEW_REACTION_EVENT";
+const MESSAGE_DELETE_REACTION_EVENT = "MESSAGE_DELETE_REACTION_EVENT";
 
 main = async () => {
   try {
@@ -45,8 +50,22 @@ main = async () => {
     io.on('connection', socket => {
       console.log('new client connected', socket.id)
 
-      const { channel_id } = socket.handshake.query;
-      socket.join(channel_id);
+      const { channel_id, receiver_id, sender_id } = socket.handshake.query;
+      let room = ''
+      if (channel_id)
+        socket.join(channel_id);
+      else if (receiver_id && sender_id) {
+        let compare = receiver_id.localeCompare(sender_id)
+        let secret = process.env.DIRECT_MESSAGE_ROOM_SECRET
+        if (compare === 1 || compare === 0) {
+          room = sender_id + secret + receiver_id
+        }
+        else if (compare === -1) {
+          room = receiver_id + secret + sender_id
+        }
+        console.log("room join", room)
+        socket.join(room)
+      }
 
       // when new message is received on a specific channel
       socket.on(CHANNEL_NEW_CHAT_MESSAGE_EVENT, async (data) => {
@@ -90,6 +109,50 @@ main = async () => {
         let { message_id, user, reaction } = data;
         await deleteReaction(message_id, user.id, reaction);
         io.in(channel_id).emit(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, data);
+      })
+
+      // when new direct message is received 
+      socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
+        let { sender, receiver, content } = data;
+        let msg = await createMessage(sender.id, receiver.id, null, content)
+        msg = {
+          id: msg.id,
+          sender,
+          content,
+          reactions: [],
+          receiver_id,
+          createdAt: msg.createdAt,
+          updatedAt: msg.updatedAt
+        }
+        io.in(room).emit(NEW_CHAT_MESSAGE_EVENT, msg);
+      })
+
+      // when a direct message is edited
+      socket.on(EDIT_MESSAGE_EVENT, async (data) => {
+        let { message_id, new_content } = data;
+        await editMessage(message_id, new_content);
+        io.in(room).emit(EDIT_MESSAGE_EVENT, data);
+      })
+
+      // when a message is deleted on a specific channel
+      socket.on(DELETE_MESSAGE_EVENT, async (data) => {
+        let { message_id } = data;
+        await deleteMessage(message_id)
+        io.in(room).emit(DELETE_MESSAGE_EVENT, data);
+      })
+
+      // when a message gets a new reaction
+      socket.on(MESSAGE_NEW_REACTION_EVENT, async (data) => {
+        let { message_id, user, reaction } = data;
+        await createReaction(message_id, user.id, reaction);
+        io.in(room).emit(MESSAGE_NEW_REACTION_EVENT, data);
+      })
+      
+      // when a reaction on a message is deleted
+      socket.on(MESSAGE_DELETE_REACTION_EVENT, async (data) => {
+        let { message_id, user, reaction } = data;
+        await deleteReaction(message_id, user.id, reaction);
+        io.in(room).emit(MESSAGE_DELETE_REACTION_EVENT, data);
       })
 
       socket.on('disconnect', () => {
