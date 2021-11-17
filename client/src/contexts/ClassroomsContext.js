@@ -3,6 +3,7 @@ import React, {
   useContext,
   useReducer
 } from 'react';
+import { useAuthContext } from './AuthContext';
 import {
   classroomsInitialState,
   classroomsReducer
@@ -17,7 +18,6 @@ import {
 } from './actionTypes';
 import { axiosInstance, classrooms_URL, requests_URL, classroom_users_URL } from '../api-config';
 import { message } from 'antd'
-import { useAuthContext } from './AuthContext';
 
 
 const ClassroomsContext = React.createContext();
@@ -34,7 +34,7 @@ export const ClassroomsProvider = ({
         classroomsDispatch({ type: LOAD_CLASSROOMS, payload: response.data })
       })
       .catch((err) => {
-        
+        message.error(err?.response?.data?.error || 'something went wrong');
       })
       .finally(() => classroomsDispatch({ type: SET_IS_LOADING, payload: false }))
   }

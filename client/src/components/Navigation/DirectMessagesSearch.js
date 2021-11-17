@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Menu, Input, Spin } from 'antd';
+import { Link } from 'react-router-dom';
 import { useUsersContext } from "../../contexts/UsersContext";
 import { useAuthContext } from "../../contexts/AuthContext";
 import UserDisplay from '../UserDisplay/UserDisplay';
+import { Menu, Input, Spin } from 'antd';
 import {
   MessageOutlined,
   SearchOutlined
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
 
 const { SubMenu } = Menu;
 const DirectMessagesSearch = () => {

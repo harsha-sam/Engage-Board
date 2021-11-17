@@ -21,7 +21,7 @@ const UserDisplay = ({ user, showTag=true, title }) => {
       {
         showTag &&
         <Tag color={color}>
-          {user.role.toUpperCase()}
+          {user.role[0].toUpperCase() + user.role.slice(1)}
         </Tag>
       }
     </>}

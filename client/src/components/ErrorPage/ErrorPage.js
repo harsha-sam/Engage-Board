@@ -1,9 +1,14 @@
 import React from 'react'
-import { Result, Button } from 'antd';
+import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
+import { Result, Button } from 'antd';
 
 
 const ErrorPage = ({ status, title, subTitle }) => {
+  const { state } = useLocation();
+  title = title || state.title
+  status = status || state.status
+  subTitle = subTitle || state.subTitle
   return <Result
     status={status || "404"}
     title={title || "404"}

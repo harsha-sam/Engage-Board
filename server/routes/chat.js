@@ -59,6 +59,15 @@ router.get('/', verifyAccessToken, async (req, res) => {
     if (!receiver_id) {
       throw new Error('receiver_id is required')
     }
+    let user = await User.findOne({
+      where: {
+      id: receiver_id
+      },
+      attributes: ['id', 'full_name', 'avatar']
+    })
+    if (!user) {
+      throw new Error('user not found')
+    }
     let messages = await Message.findAll({
       where: {
         [Op.or]: [
@@ -97,7 +106,10 @@ router.get('/', verifyAccessToken, async (req, res) => {
       ],
       order: [['created_at', 'asc']]
     })
-    res.status(200).json(formatMessagesResponse(messages))
+    res.status(200).json({
+      messages: formatMessagesResponse(messages),
+      receiver: user
+    })
   }
   catch (error) {
     res.status(400).json({

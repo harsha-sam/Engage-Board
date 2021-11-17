@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import Logo from '../Logo/Logo';
-import { Menu, Button, Modal, Tabs, Select, Radio, List, Tooltip, Popconfirm } from 'antd';
-import { useClassroomContext } from '../../contexts/ClassroomContext';
 import { useAuthContext } from '../../contexts/AuthContext';
-import { DummyMessages } from '../MessagesList/MessagesList';
-import { CheckCircleOutlined, SettingOutlined } from '@ant-design/icons'
-import SubMenu from 'antd/lib/menu/SubMenu';
-import { useClassroomsContext } from '../../contexts/ClassroomsContext';
 import { useUsersContext } from '../../contexts/UsersContext';
+import { useClassroomsContext } from '../../contexts/ClassroomsContext';
+import { useClassroomContext } from '../../contexts/ClassroomContext';
+import { DummyMessages } from '../MessagesList/MessagesList';
+import Logo from '../Logo/Logo';
 import UserDisplay from '../UserDisplay/UserDisplay'
+import { Menu, Button, Modal, Tabs, Select, Radio, List, Tooltip, Popconfirm } from 'antd';
+import { CheckCircleOutlined, SettingOutlined } from '@ant-design/icons'
 import './ClassroomSidebarHeader.css';
 
 const { TabPane } = Tabs;
+const { SubMenu } = Menu;
 
 const ClassroomSidebarHeader = () => {
   const { authState: { user } } = useAuthContext();

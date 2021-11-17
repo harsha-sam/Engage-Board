@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Affix, Layout, Menu, Typography, Spin, Tag } from 'antd';
-import MessagesList from '../../components/MessagesList/MessagesList';
-import MenuCustom from '../../components/MenuCustom/MenuCustom';
+import { useParams } from 'react-router';
 import { useClassroomContext } from '../../contexts/ClassroomContext';
 import { useChatContext } from '../../contexts/ChatContext';
-import { useParams } from 'react-router';
-import NavHeader from '../../components/NavHeader/NavHeader';
 import ClassroomSidebarHeader from '../../components/ClassroomSidebarHeader/ClassroomSidebarHeader';
+import NavHeader from '../../components/NavHeader/NavHeader';
+import MenuCustom from '../../components/MenuCustom/MenuCustom';
+import MessagesList from '../../components/MessagesList/MessagesList';
 import UserDisplay from '../../components/UserDisplay/UserDisplay';
-import SubMenu from 'antd/lib/menu/SubMenu'
+import { Affix, Layout, Menu, Typography, Spin, Tag } from 'antd';
 import { TeamOutlined } from '@ant-design/icons';
 
 const { Sider, Content } = Layout;
-
+const { SubMenu } = Menu;
 const { Paragraph, Title } = Typography;
+
 const Classroom = () => {
   const { classroomState, classroomActions: { getClassroom } } = useClassroomContext();
   const { chatState: { channel }, chatActions: { selectChannel } } = useChatContext();

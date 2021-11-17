@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { useChatContext } from '../../contexts/ChatContext';
+import moment from 'moment';
 import { Comment, Tooltip, Modal, Tabs, List, Avatar } from 'antd';
 import {
   LikeOutlined,
@@ -10,11 +14,7 @@ import {
   HeartOutlined,
   HeartTwoTone,
 } from '@ant-design/icons';
-import moment from 'moment';
 import './Message.css'
-import { useChatContext } from '../../contexts/ChatContext';
-import { useAuthContext } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
 
 const { TabPane } = Tabs;
 

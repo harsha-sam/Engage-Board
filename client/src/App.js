@@ -1,22 +1,22 @@
 import React from 'react'
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from './contexts/AuthContext';
-import { Spin } from 'antd';
+import { ClassroomsProvider } from './contexts/ClassroomsContext';
+import { ClassroomProvider } from './contexts/ClassroomContext';
+import { ChatProvider } from './contexts/ChatContext';
 import {
   Login,
   Register,
   EditUserProfile,
+  DirectMessages,
   Classrooms,
   Classroom
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
 import ErrorPage from './components/ErrorPage/ErrorPage';
-import { ClassroomsProvider } from './contexts/ClassroomsContext';
-import { ClassroomProvider } from './contexts/ClassroomContext';
-import { ChatProvider } from './contexts/ChatContext';
+import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import './App.css';
-import DirectMessages from './pages/DirectMessages/DirectMessages';
 
 const App = () => {
   const { authState: { user, isLoading } } = useAuthContext();

@@ -14,6 +14,7 @@ axiosInstance.interceptors.request.use((config) => {
   }
 );
 
+// refreshing access token with refresh token when request failed
 axiosInstance.interceptors.response.use(
   (response) => response,
   (err) => {

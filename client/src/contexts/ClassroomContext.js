@@ -2,6 +2,7 @@ import React, {
   useContext,
   useReducer
 } from 'react';
+import { useNavigate } from 'react-router';
 import {
   classroomInitialState,
   classroomReducer
@@ -11,7 +12,6 @@ import {
   LOAD_CLASSROOM_REQUESTS,
   SET_IS_LOADING
 } from './actionTypes';
-import { useNavigate } from 'react-router';
 import { axiosInstance, classrooms_URL, requests_URL } from '../api-config';
 import { message } from 'antd'
 

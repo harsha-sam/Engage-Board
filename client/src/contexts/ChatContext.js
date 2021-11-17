@@ -1,4 +1,7 @@
 import React, { useEffect, useContext, useReducer, useRef } from 'react'
+import { useNavigate } from 'react-router';
+import { useAuthContext } from './AuthContext.js';
+import { chatReducer, chatInitialState } from './reducers/chatReducer';
 import {
   LOAD_CHAT,
   SET_CHANNEL,
@@ -9,26 +12,22 @@ import {
   EDIT_MESSAGE,
   DELETE_MESSAGE,
   SET_IS_LOADING,
+  CHANNEL_NEW_CHAT_MESSAGE_EVENT,
+  CHANNEL_EDIT_MESSAGE_EVENT,
+  CHANNEL_DELETE_MESSAGE_EVENT,
+  CHANNEL_MESSAGE_NEW_REACTION_EVENT,
+  CHANNEL_MESSAGE_DELETE_REACTION_EVENT,
+  NEW_CHAT_MESSAGE_EVENT,
+  EDIT_MESSAGE_EVENT,
+  DELETE_MESSAGE_EVENT,
+  MESSAGE_NEW_REACTION_EVENT,
+  MESSAGE_DELETE_REACTION_EVENT,
 } from './actionTypes.js';
-import { chatReducer, chatInitialState } from './reducers/chatReducer';
 import { axiosInstance, chat_URL, channels_chat_URL } from '../api-config';
 import { message } from 'antd'
-import { useAuthContext } from './AuthContext.js';
 import { io } from 'socket.io-client';
 
 const ChatContext = React.createContext();
-
-
-const CHANNEL_NEW_CHAT_MESSAGE_EVENT = "CHANNEL_NEW_CHAT_MESSAGE_EVENT";
-const CHANNEL_EDIT_MESSAGE_EVENT = "CHANNEL_EDIT_MESSAGE_EVENT";
-const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
-const CHANNEL_MESSAGE_NEW_REACTION_EVENT = "CHANNEL_MESSAGE_NEW_REACTION_EVENT";
-const CHANNEL_MESSAGE_DELETE_REACTION_EVENT = "CHANNEL_MESSAGE_DELETE_REACTION_EVENT";
-const NEW_CHAT_MESSAGE_EVENT = "NEW_CHAT_MESSAGE_EVENT";
-const EDIT_MESSAGE_EVENT = "EDIT_MESSAGE_EVENT";
-const DELETE_MESSAGE_EVENT = "DELETE_MESSAGE_EVENT";
-const MESSAGE_NEW_REACTION_EVENT = "MESSAGE_NEW_REACTION_EVENT";
-const MESSAGE_DELETE_REACTION_EVENT = "MESSAGE_DELETE_REACTION_EVENT";
 
 export const ChatProvider = ({
   children
@@ -36,7 +35,7 @@ export const ChatProvider = ({
   const { authState: { user } } = useAuthContext();
   const [chatState, chatDispatch] = useReducer(chatReducer, chatInitialState);
   const socketRef = useRef();
-
+  let navigate = useNavigate();
 
   const selectChannel = (payload) => {
     chatDispatch({ type: SET_IS_LOADING, payload: true })
@@ -113,7 +112,7 @@ export const ChatProvider = ({
       getDirectMessages(chatState.receiver)
     }
     return (() => disconnectSocket())
-  }, [chatState.receiver])
+  }, [chatState.receiver?.id])
 
   const getChannelChat = (payload) => {
     chatDispatch({ type: SET_IS_LOADING, payload: true })
@@ -131,9 +130,19 @@ export const ChatProvider = ({
     chatDispatch({ type: SET_IS_LOADING, payload: true })
     axiosInstance.get(`${chat_URL}/?receiver_id=${payload.id}`)
       .then((response) => {
-        chatDispatch({ type: LOAD_CHAT, payload: response.data })
+        chatDispatch({ type: SET_RECEIVER, payload: response.data.receiver })
+        chatDispatch({ type: LOAD_CHAT, payload: response.data.messages })
       })
       .catch((err) => {
+        if (err?.response?.status === 400 && err?.response?.data?.error === 'user not found') {
+          navigate('/error', {
+            state: {
+              title: "User not found",
+              subTitle: `Sorry, the user does not exist. If the user recently registered.
+              Please go back to home and refresh`
+            }
+          })
+        }
         message.error(err?.response?.data?.error || 'something went wrong');
       })
       .finally(() => chatDispatch({ type: SET_IS_LOADING, payload: false }));
@@ -208,10 +217,10 @@ export const ChatProvider = ({
           getChannelChat,
           getDirectMessages,
           addNewMessage,
+          editMessage,
+          deleteMessage,
           addNewReaction,
           deleteReaction,
-          editMessage,
-          deleteMessage
         }
       }
     }

@@ -1,13 +1,13 @@
 import React from 'react'
+import { Outlet } from 'react-router';
 import { Layout, Affix } from 'antd';
 import { useNavigate } from 'react-router';
 import MenuCustom from '../MenuCustom/MenuCustom';
 import NavHeader from '../NavHeader/NavHeader';
+import DirectMessagesSearch from './DirectMessagesSearch';
 import {
   TeamOutlined,
 } from '@ant-design/icons';
-import { Outlet } from 'react-router';
-import  DirectMessagesSearch from './DirectMessagesSearch';
 
 const { Sider, Content } = Layout;
 

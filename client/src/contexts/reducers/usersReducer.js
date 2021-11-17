@@ -12,7 +12,6 @@ export const usersReducer = (state = usersInitialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case SET_ALL_USERS: {
-
       return { ...state, users: payload }
     }
     case SET_IS_LOADING: {

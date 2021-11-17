@@ -28,7 +28,7 @@ export const AuthProvider = ({
       axiosInstance.get(user_URL)
         .then((response) => {
           authDispatch({ type: SET_USER, payload: response.data })
-          message.success('Logged in !');
+          // message.success('Logged in !');
         })
         .catch((err) => {
           message.warning('Session expired, please login again')

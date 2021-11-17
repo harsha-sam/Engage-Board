@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import moment from 'moment';
-import { Avatar, Button, Divider, Typography, Skeleton, Popconfirm } from 'antd';
-import Message from '../Message/Message';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useChatContext } from '../../contexts/ChatContext';
+import moment from 'moment';
 import InputEmoji from 'react-input-emoji'
-import { SendOutlined, DeleteOutlined } from '@ant-design/icons'
+import Message from '../Message/Message';
 import EmptyCustom from '../EmptyCustom/EmptyCustom';
+import { Avatar, Button, Divider, Typography, Skeleton, Popconfirm } from 'antd';
+import { SendOutlined, DeleteOutlined } from '@ant-design/icons'
 
 const { Paragraph } = Typography;
 const MessagesList = ({wrapperClassName}) => {

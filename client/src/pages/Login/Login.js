@@ -1,14 +1,14 @@
 import React from 'react'
-import { Form, Input, Button, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { Form, Input, Button, Row, Col } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import Background from '../../assets/hero.png';
 import './Login.css'
-import { useAuthContext } from '../../contexts/AuthContext';
 
 const Login = () => {
   const [form] = Form.useForm();
-  const {authActions: {signin}} = useAuthContext()
+  const { authActions: { signin } } = useAuthContext()
 
   const onFinish = (values) => {
     signin(values)
@@ -61,7 +61,7 @@ const Login = () => {
         </Form>
       </Col>
       <Col md={10}>
-        <img src={Background} alt="" className="bg"/>
+        <img src={Background} alt="background" className="bg" />
       </Col>
     </Row>
   )

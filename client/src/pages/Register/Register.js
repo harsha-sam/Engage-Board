@@ -1,10 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContext';
 import { Form, Input, Button, Row, Col, Radio } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import Background from '../../assets/hero.png';
-import { Link } from 'react-router-dom';
 import '../Login/Login.css'
-import { useAuthContext } from '../../contexts/AuthContext';
 
 const Register = () => {
   const [form] = Form.useForm();
@@ -107,7 +107,7 @@ const Register = () => {
         </Form>
       </Col>
       <Col md={10}>
-        <img src={Background} alt="" className="bg"/>
+        <img src={Background} alt="background" className="bg"/>
       </Col>
     </Row>
   )
