@@ -10,6 +10,7 @@ import {
 import {
   LOAD_CLASSROOM,
   LOAD_CLASSROOM_REQUESTS,
+  SET_CONTENT_MODERATION,
   SET_IS_LOADING
 } from './actionTypes';
 import { axiosInstance, classrooms_URL, requests_URL } from '../api-config';
@@ -45,11 +46,24 @@ export const ClassroomProvider = ({
       classroomDispatch({ type: SET_IS_LOADING, payload: true })
       axiosInstance.get(`${requests_URL}/?classroom_id=${classroomState.id}`)
         .then((response) => {
-          classroomDispatch({ type: LOAD_CLASSROOM_REQUESTS, payload: response.data})
+          classroomDispatch({ type: LOAD_CLASSROOM_REQUESTS, payload: response.data })
         })
         .catch((err) => {
           message.error(err?.response?.data?.error || 'something went wrong');
           classroomDispatch({ type: SET_IS_LOADING, payload: false })
+        })
+    }
+  }
+
+  const saveContentModerationSettings = (payload) => {
+    if (classroomState.id) {
+      axiosInstance.patch(`${classrooms_URL}/update/${classroomState.id}`, payload)
+        .then((response) => {
+          classroomDispatch({ type: SET_CONTENT_MODERATION, payload: response.data })
+          message.success("Successfully saved")
+        })
+        .catch((err) => {
+          message.error(err?.response?.data?.error || 'something went wrong');
         })
     }
   }
@@ -60,7 +74,8 @@ export const ClassroomProvider = ({
         classroomState,
         classroomActions: {
           getClassroom,
-          getRequests
+          getRequests,
+          saveContentModerationSettings
         }
       }
     }

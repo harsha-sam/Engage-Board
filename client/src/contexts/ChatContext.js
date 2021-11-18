@@ -70,6 +70,9 @@ export const ChatProvider = ({
       chatDispatch({ type: EDIT_MESSAGE, payload })
     })
     socketRef.current.on(CHANNEL_DELETE_MESSAGE_EVENT, (payload) => {
+      if (payload.profanity_delete && payload.sender_id === user.id) {
+        message.error('Your message has been identified as profanity and removed')
+      }
       chatDispatch({ type: DELETE_MESSAGE, payload })
     })
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {

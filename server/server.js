@@ -46,6 +46,8 @@ main = async () => {
       }
     });
 
+    global.io = io
+
     // runs everytime a client connects
     io.on('connection', socket => {
       console.log('new client connected', socket.id)

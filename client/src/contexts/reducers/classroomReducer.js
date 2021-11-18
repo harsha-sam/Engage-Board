@@ -1,7 +1,8 @@
 import {
   LOAD_CLASSROOM,
   LOAD_CLASSROOM_REQUESTS,
-  SET_IS_LOADING
+  SET_IS_LOADING,
+  SET_CONTENT_MODERATION,
 } from '../actionTypes';
 
 export const classroomInitialState = {
@@ -11,6 +12,7 @@ export const classroomInitialState = {
   members: [],
   requests: [],
   isLoading: false,
+  is_moderation_enabled: false,
 }
 
 export const classroomReducer = (state = classroomInitialState, action) => {
@@ -24,6 +26,9 @@ export const classroomReducer = (state = classroomInitialState, action) => {
     }
     case SET_IS_LOADING: {
       return ({...state, isLoading: payload})
+    }
+    case SET_CONTENT_MODERATION: {
+      return ({...state, ...payload})
     }
     default:
       return state

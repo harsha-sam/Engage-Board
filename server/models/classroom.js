@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.JSON),
       defaultValue: [],
     },
+    is_moderation_enabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     createdAt: {
       field: 'created_at',
       type: 'TIMESTAMP',

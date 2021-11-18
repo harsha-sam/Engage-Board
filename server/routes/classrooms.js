@@ -101,7 +101,7 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
         }
       ]
     })
-    if (!classroom) throw new Error('id is invalid')
+    if (!classroom) throw new Error('Classroom not found')
     let userObj = {}
     classroom.members.forEach((member) => userObj[member.id] = member)
     if (!(req.user.id in userObj)) {
@@ -132,6 +132,36 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
   }
 })
 
+router.patch('/update/:id', verifyAccessToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) throw new Error('id is required');
+    const {
+      is_moderation_enabled
+    } = req.body;
+    if (is_moderation_enabled === null) {
+      throw new Error('is_moderation_enabled is required');
+    }
+    let classrooms = await Classroom.update({
+      is_moderation_enabled
+    }, {
+      where: {
+        id
+      },
+      returning: true
+    })
+    if (!classrooms[0]) throw new Error('classroom not found.')
+    res.status(200).json({
+      is_moderation_enabled: classrooms[1][0].is_moderation_enabled,
+    });
+  }
+  catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+})
+
 router.post('/users', verifyAccessToken, async (req, res) => {
   try {
     // adding new users to a classroom
@@ -144,12 +174,25 @@ router.post('/users', verifyAccessToken, async (req, res) => {
     if (!classroom_id) throw new Error('classroom_id is required');
     if (!new_user_id) throw new Error('new_user_id is required');
     if (!role) role = 'student'
+    let request = null;
+    if (request_id) {
+      // request id related should be deleted
+      request = await Request.findOne({
+        where: { id: request_id }
+      })
+      if (!request) {
+        throw new Error('Request not found. Either the user should have withdrawn request or the request should have been already processed.');
+      }
+    }
     let classroom = await Classroom.findOne({
       where: {
         id: classroom_id
       },
       attributes: ['members', 'id']
     })
+    if (!classroom) {
+      throw new Error('Classroom not found')
+    }
     let permissionCheck = classroom.members.some((member) => {
       return ((member.id === req.user.id)
         && (member.role === 'admin' || member.role === 'monitor'))
@@ -187,7 +230,7 @@ router.post('/users', verifyAccessToken, async (req, res) => {
         if (request_id) {
           // request id related should be deleted
           Request.destroy({
-            where: {id: request_id}
+            where: { id: request_id }
           })
         }
       });
@@ -213,12 +256,15 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
       },
       attributes: ['members', 'id', 'created_by']
     })
+    if (!classroom) {
+      throw new Error('Classroom not found')
+    }
     let permissionCheck = false;
     if (user_id === req.user.id) {
       // this case, if the user itself wants to leave the classroom
       permissionCheck = true;
     }
-    else{
+    else {
       permissionCheck = classroom.members.some((member) => {
         return ((member.id === req.user.id)
           && (member.role === 'admin' || member.role === 'monitor'))

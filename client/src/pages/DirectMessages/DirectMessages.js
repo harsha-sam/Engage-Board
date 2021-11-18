@@ -9,9 +9,11 @@ import {
   HomeOutlined,
   UserOutlined
 } from '@ant-design/icons'
+import { useAuthContext } from '../../contexts/AuthContext'
 
 const DirectMessages = () => {
   const { id } = useParams();
+  const { authState: { user } } = useAuthContext();
   const { chatState: { receiver }, chatActions: { selectReceiver } } = useChatContext();
   const { usersState: { isLoading: usersLoading } } = useUsersContext();
 
@@ -33,7 +35,9 @@ const DirectMessages = () => {
       <Breadcrumb.Item>
         <UserOutlined />
       </Breadcrumb.Item>
-      <Breadcrumb.Item>{receiver?.full_name}</Breadcrumb.Item>
+      <Breadcrumb.Item>
+        {receiver?.id === user?.id ? 'You': receiver?.full_name}
+      </Breadcrumb.Item>
     </Breadcrumb>
     <MessagesList wrapperClassName="direct-messages"/>
   </>

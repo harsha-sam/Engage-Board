@@ -6,6 +6,7 @@ import { useClassroomContext } from '../../contexts/ClassroomContext';
 import { DummyMessages } from '../MessagesList/MessagesList';
 import Logo from '../Logo/Logo';
 import UserDisplay from '../UserDisplay/UserDisplay'
+import ContentModeration from './ContentModeration';
 import { Menu, Button, Modal, Tabs, Select, Radio, List, Tooltip, Popconfirm } from 'antd';
 import { CheckCircleOutlined, SettingOutlined } from '@ant-design/icons'
 import './ClassroomSidebarHeader.css';
@@ -23,6 +24,7 @@ const ClassroomSidebarHeader = () => {
   } } = useUsersContext();
   const [showAdminSettings, setShowAdminSettings] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
+  const [showContentModeration, setShowContentModeration] = useState(false);
   const [role, setRole] = useState("");
 
   const showUserModal = () => {
@@ -75,6 +77,20 @@ const ClassroomSidebarHeader = () => {
               onClick={showUserModal}>
               Add / Remove a user
             </Button>
+          </Menu.Item>
+          <Menu.Item key="content moderation">
+            <Button shape="round"
+              type="primary"
+              block={true}
+              onClick={() => setShowContentModeration(true)}>
+              Content moderation
+            </Button>
+            {showContentModeration &&
+              <ContentModeration
+              showModal={showContentModeration}
+              onClose={() => setShowContentModeration(false)}
+              />
+            }
           </Menu.Item>
         </SubMenu>
       }

@@ -5,9 +5,7 @@ const {
 const express = require('express');
 const router = express.Router();
 const { Request, Classroom, User } = require('../models')
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
+const { sendEmail } = require('../utils/sendEmail')
 
 router.get('/', verifyAccessToken, async (req, res) => {
   try {
@@ -34,7 +32,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
     else {
       let requests = await Request.findAll({
         where: {
-          classroom_id 
+          classroom_id
         },
         include: [
           {
@@ -79,22 +77,23 @@ router.post('/', verifyAccessToken, async (req, res) => {
           }
         ]
       })
+      if (!classroom) {
+        throw new Error('Classroom does not exist. The admin of this classroom must have deleted it');
+      }
       let to = classroom.admin.email;
       let requests_url = process.env.REQUESTS_URL
-      let html = `<Please>Hey, ${classroom.admin.full_name}. ${req.user.full_name}(${req.user.id} - ${req.user.role}) has just requested to join your classroom ${classroom.name}. Please navigate <a href=${requests_url}/${classroom_id}>here</a> and open manage classroom menu to accept the request.</p>`
+      let html = `<p>Hey, ${classroom.admin.full_name}. ${req.user.full_name}(${req.user.id} - ${req.user.role}) has just requested to join your classroom ${classroom.name}. Please navigate <a href=${requests_url}/${classroom_id}>here</a> and open manage classroom menu to accept the request.</p>`
       const message = {
         to,
         from: {
-          name:'Engage Board',
+          name: 'Engage Board',
           email: process.env.SENDER_MAIL,
         },
         subject: 'Request to join',
         text: `Hey, ${classroom.admin.full_name}. ${req.user.full_name}(${req.user.id} - ${req.user.role}) has just requested to join your classroom ${classroom.name}. Please navigate to ${requests_url}/${classroom_id} and open manage classroom menu to accept the request`,
         html,
       }
-      sgMail.send(message)
-        .then((response) => console.log('Email Sent'))
-        .catch(err => console.log(error.message))
+      sendEmail(message)
       request = await Request.create({
         classroom_id,
         user_id: req.user.id

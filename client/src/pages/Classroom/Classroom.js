@@ -114,35 +114,44 @@ const Classroom = () => {
             </Paragraph>
             <Menu mode="inline" theme="dark" defaultOpenKeys={['members']} selectable={false}>
               <Menu.Divider />
-              <SubMenu title="Members" key="members" icon={<TeamOutlined />}>
-                <SubMenu title="Admin" key="Admin">
-                  {admins.map((admin) =>
-                    <UserDisplay
-                      user={admin}
-                      key={admin.id}
-                      title={<Tag color="red">
-                        {admin.full_name}
-                      </Tag>}
-                      showTag={false} />)}
-                </SubMenu>
-                <SubMenu title="Monitors" id="Monitors">
-                  {monitors.map((monitor) =>
-                    <UserDisplay user={monitor}
-                      key={monitor.id}
-                      title={<Tag color="green">
-                        {monitor.full_name}
-                      </Tag>}
-                      showTag={false} />)}
-                </SubMenu>
-                <SubMenu title="Students" id="Students">
-                  {students.map((student) =>
-                    <UserDisplay user={student}
-                      key={student.id}
-                      title={<Tag color="blue">
-                        {student.full_name}
-                      </Tag>}
-                      showTag={false} />)}
-                </SubMenu>
+              <SubMenu title={`Members (${members.length})`} key="members" icon={<TeamOutlined />}>
+                {
+                  admins.length > 0 &&
+                  <SubMenu title="Admin" key="Admin">
+                    {admins.map((admin) =>
+                      <UserDisplay
+                        user={admin}
+                        key={admin.id}
+                        title={<Tag color="red">
+                          {admin.full_name}
+                        </Tag>}
+                        showTag={false} />)}
+                  </SubMenu>
+                }
+                {
+                  monitors.length > 0 &&
+                  <SubMenu title="Monitors" key="Monitors">
+                    {monitors.map((monitor) =>
+                      <UserDisplay user={monitor}
+                        key={monitor.id}
+                        title={<Tag color="green">
+                          {monitor.full_name}
+                        </Tag>}
+                        showTag={false} />)}
+                  </SubMenu>
+                }
+                {
+                  students.length > 0 &&
+                  <SubMenu title="Students" key="Students">
+                    {students.map((student) =>
+                      <UserDisplay user={student}
+                        key={student.id}
+                        title={<Tag color="blue">
+                          {student.full_name}
+                        </Tag>}
+                        showTag={false} />)}
+                  </SubMenu>
+                }
               </SubMenu>
             </Menu>
           </Sider>

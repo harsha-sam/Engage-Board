@@ -123,7 +123,9 @@ const Message = ({ author, authorId, time, reactions, messageId, ...props }) => 
                     <List.Item key={item.id}>
                       <List.Item.Meta
                         avatar={<Avatar src={"https://joeschmoe.io/api/v1/random"} />}
-                        title={<Link to={`/direct-messages/${item.id}`}>{item.full_name}</Link>}
+                        title={<Link to={`/direct-messages/${item.id}`}>
+                          {item.id === user.id ? 'You' : item.full_name}
+                        </Link>}
                         description={item.id}
                       />
                     </List.Item>

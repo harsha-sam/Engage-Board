@@ -26,7 +26,8 @@ const DirectMessagesSearch = () => {
     if (val)
       setOptions(users.filter((user) =>
         user.id.includes(val) ||
-        user.full_name.toLowerCase().includes(val.toLowerCase())
+        user.full_name.toLowerCase().includes(val.toLowerCase()) ||
+        (user.id === current_user.id && 'you'.includes(val.toLowerCase()))
       ))
     else setOptions(users)
   }, [val, users])
@@ -49,7 +50,7 @@ const DirectMessagesSearch = () => {
                 key={option.id}
                 title={<Link to={`direct-messages/${option.id}`}
                 style={{ color: '#1890ff' }}>
-                  {option.id === current_user.id ? "Me" : option.full_name}
+                  {option.id === current_user.id ? "You" : option.full_name}
                 </Link>}
               />
             })
