@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuthContext } from '../../contexts/AuthContext';
 import AvatarUploader from '../../components/AvatarUploader/AvatarUploader';
-import { Button, Input, Spin, Typography } from 'antd';
+import { Form, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import './EditUserProfile.css';
 
@@ -30,24 +30,21 @@ const EditUserProfile = () => {
   }
 
   return (<>
-    <Title level={3}>User Profile</Title>
     <div className="user_profile_wrapper">
-      <div>
-        <label>University ID:</label>
+      <Title level={3}>User Profile</Title>
+      <br />
+      <Form.Item label="University ID">
         <Input prefix={<UserOutlined />} value={user.id} disabled />
-      </div>
-      <div>
-        <label>Email:</label>
+      </Form.Item>
+      <Form.Item label="Email">
         <Input prefix={<MailOutlined />} value={user.email} disabled />
-      </div>
-      <div>
-        <label>Full Name:</label>
+      </Form.Item>
+      <Form.Item label="Full Name">
         <Input prefix={<UserOutlined />} value={fullName} onChange={handleFullNameChange} />
-      </div>
-      <div>
-        <label>Change Avatar:</label>
+      </Form.Item>
+      <Form.Item label="Change Avatar">
         <AvatarUploader />
-      </div>
+      </Form.Item>
       <Button type="primary" disabled={!isValid}>Save</Button>
     </div>
   </>
