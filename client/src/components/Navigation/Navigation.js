@@ -7,6 +7,7 @@ import NavHeader from '../NavHeader/NavHeader';
 import DirectMessagesSearch from './DirectMessagesSearch';
 import {
   TeamOutlined,
+  BookOutlined
 } from '@ant-design/icons';
 
 const { Sider, Content } = Layout;
@@ -20,7 +21,13 @@ const Navigation = () => {
       name: 'Classrooms',
       id: 'Classrooms',
       onClick: (() => navigate('/classrooms'))
-    }
+    },
+    {
+      icon: <BookOutlined />,
+      name: 'Notes',
+      id: 'Notes',
+      onClick: (() => navigate('/notes'))
+    },
   ]
 
   return <Affix>

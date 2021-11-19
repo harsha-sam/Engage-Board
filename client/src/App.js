@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from './contexts/AuthContext';
 import { ClassroomsProvider } from './contexts/ClassroomsContext';
 import { ClassroomProvider } from './contexts/ClassroomContext';
+import { NotesProvider } from './contexts/NotesContext';
 import { ChatProvider } from './contexts/ChatContext';
 import {
   Login,
@@ -10,10 +11,12 @@ import {
   EditUserProfile,
   DirectMessages,
   Classrooms,
-  Classroom
+  Classroom,
+  Notes
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
 import ErrorPage from './components/ErrorPage/ErrorPage';
+import Note from './components/Note/Note';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import './App.css';
@@ -49,12 +52,22 @@ const App = () => {
             </ClassroomsProvider>
           } />
           <Route exact path="/profile" element={
-              <EditUserProfile />
+            <EditUserProfile />
           } />
           <Route exact path="/direct-messages/:id/" element={
             <ChatProvider>
               <DirectMessages />
             </ChatProvider>
+          } />
+          <Route exact path="/notes/" element={
+            <NotesProvider>
+              <Notes />
+            </NotesProvider>
+          } />
+          <Route exact path="/notes/:id" element={
+            <NotesProvider>
+              <Note />
+            </NotesProvider>
           } />
         </Route>
         <Route exact path="/classrooms/:id" element={

@@ -54,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       allowNull: true
     },
+    message_permission: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: ['admin', 'monitor', 'student'],
+      allowNull: true
+    },
     createdAt: {
       field: 'created_at',
       type: 'TIMESTAMP',

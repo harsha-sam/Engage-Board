@@ -28,7 +28,7 @@ main = async () => {
     };
 
     app.use(cors(corsOptions));
-    app.use(express.json());
+    app.use(express.json({ limit: '10mb' }));
     app.use(morganMiddleware);
 
     app.use('/auth', require('./routes/auth'))
@@ -36,6 +36,7 @@ main = async () => {
     app.use('/classrooms', require('./routes/classrooms'))
     app.use('/requests', require('./routes/requests'))
     app.use('/chat', require('./routes/chat'))
+    app.use('/notes', require('./routes/notes'))
 
     // cors for socket
     const io = socketio(server, {

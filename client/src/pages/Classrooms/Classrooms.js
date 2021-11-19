@@ -43,7 +43,7 @@ const Classrooms = () => {
       <TabPane tab="Your Classrooms" key="1">
         {isLoading && <DummyClassrooms />}
         <Row gutter={[16, 16]} className='classrooms-card-container'>
-          {!isLoading && yourClassrooms.length > 0
+          {(!isLoading && yourClassrooms.length) > 0
             ? yourClassrooms.map((classroom) => {
               return <Col sm={24}
                 md={12} lg={8}
@@ -136,7 +136,7 @@ const Classrooms = () => {
 export const DummyClassrooms = () => {
   return <Row gutter={[16, 16]} className='classrooms-card-container'>
     {
-      ["dum1", "dum2", "dum3"].map((ele) =>
+      ["dum1", "dum2", "dum3", "dum4", "dum5"].map((ele) =>
         <Col sm={24} md={12} lg={8} key={ele}>
           <ClassroomCard bordered={false}
             title={''}

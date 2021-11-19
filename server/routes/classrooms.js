@@ -150,7 +150,7 @@ router.patch('/update/:id', verifyAccessToken, async (req, res) => {
       },
       returning: true
     })
-    if (!classrooms[0]) throw new Error('classroom not found.')
+    if (classrooms[0] === 0) throw new Error('classroom not found.')
     res.status(200).json({
       is_moderation_enabled: classrooms[1][0].is_moderation_enabled,
     });

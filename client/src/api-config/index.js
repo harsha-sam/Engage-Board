@@ -59,3 +59,5 @@ export const requests_URL = '/requests';
 
 export const chat_URL = `/chat`;
 export const channels_chat_URL = '/chat/channels'
+
+export const notes_URL = `/notes`;
