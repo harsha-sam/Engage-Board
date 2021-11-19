@@ -5,3 +5,5 @@ export { default as Classroom } from './Classroom/Classroom';
 export { default as EditUserProfile } from './EditUserProfile/EditUserProfile';
 export { default as DirectMessages } from './DirectMessages/DirectMessages';
 export { default as Notes } from './Notes/Notes';
+export { default as Note } from './Note/Note';
+export { default as ErrorPage } from './ErrorPage/ErrorPage';

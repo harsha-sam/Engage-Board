@@ -12,11 +12,11 @@ import {
   DirectMessages,
   Classrooms,
   Classroom,
-  Notes
+  Notes,
+  Note,
+  ErrorPage
 } from './pages/'
 import Navigation from './components/Navigation/Navigation';
-import ErrorPage from './components/ErrorPage/ErrorPage';
-import Note from './components/Note/Note';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import './App.css';

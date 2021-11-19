@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router';
-import { Breadcrumb, Spin, Button, Typography } from 'antd';
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { useNotesContext } from '../../contexts/NotesContext';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useNotesContext } from '../../contexts/NotesContext';
-import { useAuthContext } from '../../contexts/AuthContext';
-import './Note.css'
-import { Link } from 'react-router-dom';
+import { Breadcrumb, Spin, Button, Typography } from 'antd';
 import {
   HomeOutlined
 } from '@ant-design/icons'
+import './Note.css'
 
 const modules = {
   toolbar: [
@@ -41,6 +41,10 @@ const Note = () => {
     setIsLoading(false);
   }, [id])
 
+  useEffect(() => {
+    return setButtonDisabled(true);
+  }, [])
+
   const handleChange = (content) => {
     if (buttonDisabled) {
       setButtonDisabled(false)
@@ -71,14 +75,15 @@ const Note = () => {
       <Breadcrumb.Item>{note.name}</Breadcrumb.Item>
     </Breadcrumb>
     <div className="editor">
-      <Button type="primary"
-        className="btn"
-        disabled={buttonDisabled}
-        onClick={handleSave}
-      >
-        Save Changes
-      </Button>
-      {note.created_by !== user.id &&
+      {note.created_by === user.id ?
+        <Button type="primary"
+          className="btn"
+          disabled={buttonDisabled}
+          onClick={handleSave}
+        >
+          Save Changes
+        </Button>
+        :
         <Text type="danger">
           This is a read only note. You can't edit this. It is owned by someone else
         </Text>}

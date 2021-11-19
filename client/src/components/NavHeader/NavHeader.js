@@ -21,7 +21,9 @@ const NavHeader = () => {
   }
   const headerOptions = [
     {
-      icon: <Avatar style={{ backgroundColor: color, verticalAlign: 'middle' }}>{ user.full_name[0] }</Avatar>,
+      icon: <Avatar style={{ backgroundColor: color, verticalAlign: 'middle' }}>
+        {user.full_name[0]}
+      </Avatar>,
       name: user.full_name,
       id: user.id,
       channels: [
