@@ -10,6 +10,7 @@ import {
 import {
   SET_IS_LOADING,
   SET_USER,
+  TOGGLE_DYSLEXIA_FONT,
 } from './actionTypes';
 import { axiosInstance, user_URL, signin_URL, signup_URL } from '../api-config/';
 import { message } from 'antd'
@@ -79,6 +80,8 @@ export const AuthProvider = ({
     window.location.reload(false);
   }
 
+  const toggleDyslexiaFont = () => authDispatch({ type: TOGGLE_DYSLEXIA_FONT })
+
   return <AuthContext.Provider
     value={
       {
@@ -87,7 +90,8 @@ export const AuthProvider = ({
           setUser,
           signup,
           signin,
-          signout
+          signout,
+          toggleDyslexiaFont
         }
       }
     }

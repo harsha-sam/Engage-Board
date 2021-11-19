@@ -1,3 +1,7 @@
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("assets/opendyslexicmono-regular-webfont.woff");
+}
 .loading {
   position: absolute;
   left: 50%;
@@ -17,6 +21,15 @@
   position: absolute;
   left: 40%;
   top: 40%;
+}
+
+.dyslexia-font {
+  font-family: 'OpenDyslexic',sans-serif !important;
+  font-size: 10;
+}
+
+.ant-menu-item:hover, .ant-menu-item-selected {
+  background-color: #2E3C43 !important;
 }
 
 .ant-input-affix-wrapper>input.ant-input{

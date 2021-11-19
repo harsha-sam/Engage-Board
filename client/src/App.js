@@ -22,7 +22,7 @@ import 'antd/dist/antd.css';
 import './App.css';
 
 const App = () => {
-  const { authState: { user, isLoading } } = useAuthContext();
+  const { authState: { user, isLoading, dyslexiaFontToggled } } = useAuthContext();
 
 
   if (isLoading) {
@@ -36,7 +36,7 @@ const App = () => {
     </Routes>
   }
   else {
-    return (<>
+    return (<main className={dyslexiaFontToggled && 'dyslexia-font'}>
       <Routes>
         <Route exact path="/login" element={<Navigate to="/classrooms" />} />
         <Route exact path="/register" element={<Navigate to="/classrooms" />} />
@@ -88,7 +88,7 @@ const App = () => {
         <Route path="*" element={
           <ErrorPage />} />
       </Routes>
-    </>
+    </main>
     )
   }
 }

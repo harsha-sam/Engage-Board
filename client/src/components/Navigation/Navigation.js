@@ -1,5 +1,5 @@
 import React from 'react'
-import { Outlet } from 'react-router';
+import { Outlet, useLocation } from 'react-router';
 import { Layout, Affix } from 'antd';
 import { useNavigate } from 'react-router';
 import MenuCustom from '../MenuCustom/MenuCustom';
@@ -13,19 +13,20 @@ import {
 const { Sider, Content } = Layout;
 
 const Navigation = () => {
+  const { pathname } = useLocation();
   let navigate = useNavigate();
 
   const siderOptions = [
     {
       icon: <TeamOutlined />,
       name: 'Classrooms',
-      id: 'Classrooms',
+      id: '/classrooms',
       onClick: (() => navigate('/classrooms'))
     },
     {
       icon: <BookOutlined />,
       name: 'Notes',
-      id: 'Notes',
+      id: '/notes',
       onClick: (() => navigate('/notes'))
     },
   ]
@@ -35,7 +36,7 @@ const Navigation = () => {
       <NavHeader />
       <Layout>
         <Sider collapsible width={260} style={{ height: '100vh' }}>
-          <MenuCustom items={siderOptions} mode="inline" selectable={false}/>
+          <MenuCustom items={siderOptions} mode="inline" selectedKeys={[pathname]}/>
           <DirectMessagesSearch />
         </Sider>
         <Content style={{ height: '100vh' }}>
