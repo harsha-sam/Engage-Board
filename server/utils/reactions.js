@@ -10,7 +10,7 @@ module.exports.createReaction = async (message_id, user_id, reaction) => {
   })
   if (reactions.length) {
     await this.deleteReaction(message_id, user_id, reaction)
-  } 
+  }
   else {
     return Reaction.create({
       message_id,

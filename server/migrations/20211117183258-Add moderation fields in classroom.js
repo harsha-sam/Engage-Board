@@ -4,8 +4,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.addColumn('classrooms', 'is_moderation_enabled', {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     })
   },
 

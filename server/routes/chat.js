@@ -61,7 +61,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
     }
     let user = await User.findOne({
       where: {
-      id: receiver_id
+        id: receiver_id
       },
       attributes: ['id', 'full_name', 'avatar']
     })

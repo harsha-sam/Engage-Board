@@ -1,40 +1,41 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
-import { useAuthContext } from '../../contexts/AuthContext';
-import { Form, Input, Button, Row, Col, Radio } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import Background from '../../assets/hero.png';
-import '../Login/Login.css'
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuthContext } from "../../contexts/AuthContext.jsx";
+import { Form, Input, Button, Row, Col, Radio } from "antd";
+import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import Background from "../../assets/hero.png";
+import "../Login/Login.css";
 
 const Register = () => {
   const [form] = Form.useForm();
-  const { authActions: { signup } } = useAuthContext();
-  
+  const {
+    authActions: { signup },
+  } = useAuthContext();
+
   const onFinish = (values) => {
-    signup(values)
+    signup(values);
     form.resetFields();
   };
 
   return (
     <Row className="flex-container">
       <Col md={10}>
-        <h1>
-          Create Account
-        </h1>
-        <Form
-          name="register"
-          onFinish={onFinish}
-          form={form}
-        >
+        <h1>Create Account</h1>
+        <Form name="register" onFinish={onFinish} form={form}>
           <Form.Item
             name="id"
-            rules={[{ required: true, message: 'Please input your University ID number!' }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input your University ID number!",
+              },
+            ]}
           >
             <Input prefix={<UserOutlined />} placeholder="University ID" />
           </Form.Item>
           <Form.Item
             name="full_name"
-            rules={[{ required: true, message: 'Please input your Name!' }]}
+            rules={[{ required: true, message: "Please input your Name!" }]}
           >
             <Input prefix={<UserOutlined />} placeholder="Full Name" />
           </Form.Item>
@@ -43,8 +44,8 @@ const Register = () => {
             rules={[
               {
                 required: true,
-                message: 'Please input your Email!',
-                type: 'email'
+                message: "Please input your Email!",
+                type: "email",
               },
             ]}
           >
@@ -55,30 +56,31 @@ const Register = () => {
             rules={[
               {
                 required: true,
-                message: 'Please input your Password!',
+                message: "Please input your Password!",
               },
             ]}
           >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-            />
+            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
           </Form.Item>
           <Form.Item
             name="confirm"
-            dependencies={['password']}
+            dependencies={["password"]}
             hasFeedback
             rules={[
               {
                 required: true,
-                message: 'Please confirm your password!',
+                message: "Please confirm your password!",
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
+                  if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                  return Promise.reject(
+                    new Error(
+                      "The two passwords that you entered do not match!"
+                    )
+                  );
                 },
               }),
             ]}
@@ -91,7 +93,7 @@ const Register = () => {
           <Form.Item
             name="role"
             label="Role"
-            rules={[{ required: true, message: 'Please pick a role!' }]}
+            rules={[{ required: true, message: "Please pick a role!" }]}
           >
             <Radio.Group>
               <Radio value="faculty">Faculty</Radio>
@@ -99,7 +101,11 @@ const Register = () => {
             </Radio.Group>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
               Register
             </Button>
             Or Already have an account ? <Link to="/login">Login here</Link>
@@ -107,10 +113,10 @@ const Register = () => {
         </Form>
       </Col>
       <Col md={10}>
-        <img src={Background} alt="background" className="bg"/>
+        <img src={Background} alt="background" className="bg" />
       </Col>
     </Row>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

@@ -106,7 +106,7 @@ main = async () => {
         await createReaction(message_id, user.id, reaction);
         io.in(channel_id).emit(CHANNEL_MESSAGE_NEW_REACTION_EVENT, data);
       })
-      
+
       // when a reaction on a message of a specific channel is deleted
       socket.on(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, async (data) => {
         let { message_id, user, reaction } = data;
@@ -150,7 +150,7 @@ main = async () => {
         await createReaction(message_id, user.id, reaction);
         io.in(room).emit(MESSAGE_NEW_REACTION_EVENT, data);
       })
-      
+
       // when a reaction on a message is deleted
       socket.on(MESSAGE_DELETE_REACTION_EVENT, async (data) => {
         let { message_id, user, reaction } = data;

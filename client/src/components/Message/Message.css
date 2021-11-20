@@ -1,10 +1,10 @@
 .message-reactions {
   margin-left: 6px;
-  cursor: 'auto';
+  cursor: "auto";
 }
-.message{
+.message {
   width: fit-content;
-  max-width: 80% ;
+  max-width: 80%;
   background-color: #fff !important;
   border-radius: 25px;
   padding: 4px 9px;

@@ -1,10 +1,10 @@
 import React from 'react'
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuthContext } from './contexts/AuthContext';
-import { ClassroomsProvider } from './contexts/ClassroomsContext';
-import { ClassroomProvider } from './contexts/ClassroomContext';
-import { NotesProvider } from './contexts/NotesContext';
-import { ChatProvider } from './contexts/ChatContext';
+import { useAuthContext } from './contexts/AuthContext.jsx';
+import { ClassroomsProvider } from './contexts/ClassroomsContext.jsx';
+import { ClassroomProvider } from './contexts/ClassroomContext.jsx';
+import { NotesProvider } from './contexts/NotesContext.jsx';
+import { ChatProvider } from './contexts/ChatContext.jsx';
 import {
   Login,
   Register,
@@ -16,7 +16,7 @@ import {
   Note,
   ErrorPage
 } from './pages/'
-import Navigation from './components/Navigation/Navigation';
+import Navigation from './components/Navigation/Navigation.jsx';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import './App.css';

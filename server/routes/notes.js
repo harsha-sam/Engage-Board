@@ -10,7 +10,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
         created_by: req.user.id
       },
       attributes: ['id', 'name', 'created_at', 'updated_at'],
-      order: [['updated_at','desc']]
+      order: [['updated_at', 'desc']]
     })
     res.status(200).json(notes);
   }

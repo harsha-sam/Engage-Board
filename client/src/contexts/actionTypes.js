@@ -5,6 +5,7 @@ export const SET_USER = "SET_USER"
 
 // get list of users
 export const SET_ALL_USERS = "SET_ALL_USERS"
+export const TOGGLE_DYSLEXIA_FONT = "TOGGLE_DYSLEXIA_FONT"
 
 // classrooms
 export const LOAD_CLASSROOMS = "LOAD_CLASSROOMS"
@@ -45,4 +46,3 @@ export const LOAD_NOTE = "LOAD_NOTE"
 export const ADD_NOTE = "ADD_NOTE"
 export const EDIT_NOTE = "EDIT_NOTE"
 export const REMOVE_NOTE = "REMOVE_NOTE"
-export const TOGGLE_DYSLEXIA_FONT = "TOGGLE_DYSLEXIA_FONT"

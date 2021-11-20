@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const axiosInstance = axios.create({ baseURL: 'http://localhost:4000' })
+export const axiosInstance = axios.create({
+  baseURL: 'http://localhost:4000'
+})
 // Add a request interceptor
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('access-token');
@@ -20,6 +22,7 @@ axiosInstance.interceptors.response.use(
   (err) => {
     const request = err.config;
     const refreshToken = localStorage.getItem('refresh-token');
+    // if request failed with 401, try fetching new access token and again make the request
     if (refreshToken &&
       err.response.status === 401 &&
       !request._retry

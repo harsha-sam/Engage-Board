@@ -28,21 +28,21 @@ export const classroomsReducer = (state = classroomsInitialState, action) => {
     case ADD_CLASSROOM: {
       return {
         ...state,
-        classrooms: [payload, ...state.classrooms, ],
+        classrooms: [payload, ...state.classrooms,],
         userClassrooms: [payload.id, ...state.userClassrooms]
       }
-    } 
+    }
     case LEAVE_CLASSROOM: {
       let classroom_id = payload.classroom_id;
       return {
         ...state,
         userClassrooms: state.userClassrooms.filter((id => id !== classroom_id))
       }
-    } 
+    }
     case ADD_REQUEST: {
       return {
         ...state,
-        classroomRequests: [payload.classroom_id, ...state.classroomRequests, ]
+        classroomRequests: [payload.classroom_id, ...state.classroomRequests,]
       }
     }
     case WITHDRAW_REQUEST: {

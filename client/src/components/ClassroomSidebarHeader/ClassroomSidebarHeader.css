@@ -1,9 +1,9 @@
-.form-container{
-  padding:5% 20%;
+.form-container {
+  padding: 5% 20%;
 }
-.form-container div{
-  margin-bottom: 10px
+.form-container div {
+  margin-bottom: 10px;
 }
-.form-container .select{
+.form-container .select {
   width: 100%;
 }

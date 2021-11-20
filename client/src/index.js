@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthProvider } from './contexts/AuthContext';
-import { UsersProvider } from './contexts/UsersContext';
+import { AuthProvider } from './contexts/AuthContext.jsx';
+import { UsersProvider } from './contexts/UsersContext.jsx';
 import App from './App';
 
 ReactDOM.render(

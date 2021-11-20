@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
                 return message.destroy()
               }
             })
-            .catch((err) => { console.log(err)})
+            .catch((err) => { console.log(err) })
         }
       }
     }

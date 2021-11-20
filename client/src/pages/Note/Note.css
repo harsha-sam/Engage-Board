@@ -1,14 +1,14 @@
-.editor{
+.editor {
   margin: 0.5in;
 }
-.editor .btn{
+.editor .btn {
   margin: 0px 10px 20px 0;
 }
-.ql-editor{
- height: 4.8in;
- padding: 15px;
- margin: 0;
- box-shadow: none;
- overflow: scroll;
- align-self: flex-start;
+.ql-editor {
+  height: 4.8in;
+  padding: 15px;
+  margin: 0;
+  box-shadow: none;
+  overflow: scroll;
+  align-self: flex-start;
 }

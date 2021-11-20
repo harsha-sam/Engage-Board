@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Button, Modal, Form, Input } from 'antd';
+import React, { useState } from "react";
+import { Button, Modal, Form, Input } from "antd";
 
 const AddClassroom = ({ handleSubmit }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -10,7 +10,7 @@ const AddClassroom = ({ handleSubmit }) => {
   };
 
   const handleOk = () => {
-    handleSubmit(form.getFieldsValue())
+    handleSubmit(form.getFieldsValue());
     form.resetFields();
     setIsModalVisible(false);
   };
@@ -25,7 +25,8 @@ const AddClassroom = ({ handleSubmit }) => {
       <Button type="primary" onClick={showModal}>
         Create a new classroom
       </Button>
-      <Modal title="Create a new classroom"
+      <Modal
+        title="Create a new classroom"
         centered
         visible={isModalVisible}
         onCancel={handleCancel}
@@ -35,13 +36,10 @@ const AddClassroom = ({ handleSubmit }) => {
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
             Submit
-          </Button>
-        ]}>
-        <Form
-          name="New Classroom"
-          form={form}
-          autoComplete="off"
-        >
+          </Button>,
+        ]}
+      >
+        <Form name="New Classroom" form={form} autoComplete="off">
           <Form.Item
             name="name"
             label="Class Name"
@@ -49,11 +47,11 @@ const AddClassroom = ({ handleSubmit }) => {
             rules={[
               {
                 required: true,
-                message: 'Please input class name!',
+                message: "Please input class name!",
               },
             ]}
           >
-            <Input maxLength={30}/>
+            <Input maxLength={30} />
           </Form.Item>
           <Form.Item
             name="description"
@@ -62,16 +60,19 @@ const AddClassroom = ({ handleSubmit }) => {
             rules={[
               {
                 required: true,
-                message: 'Please input class description!',
+                message: "Please input class description!",
               },
             ]}
           >
-            <Input.TextArea maxLength={300} autoSize={{ minRows: 3, maxRows: 6 }} />
+            <Input.TextArea
+              maxLength={300}
+              autoSize={{ minRows: 3, maxRows: 6 }}
+            />
           </Form.Item>
         </Form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default AddClassroom
+export default AddClassroom;

@@ -21,7 +21,7 @@ export const chatReducer = (state = chatInitialState, action) => {
   const { type, payload } = action;
   switch (type) {
     case SET_IS_LOADING: {
-      return ({ ...state, isLoading: payload})
+      return ({ ...state, isLoading: payload })
     }
     case LOAD_CHAT: {
       return ({ ...state, messagesList: payload })
