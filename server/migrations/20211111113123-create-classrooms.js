@@ -25,8 +25,8 @@ module.exports = {
         },
       },
       members: {
-        type: DataTypes.ARRAY(DataTypes.JSON),
-        defaultValue: []
+        type: DataTypes.JSONB,
+        defaultValue: {}
       },
       createdAt: {
         field: 'created_at',

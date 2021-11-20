@@ -10,6 +10,7 @@ const { Op } = require('sequelize');
 router.get('/', verifyAccessToken, async (req, res) => {
   try {
     let classroomsFind = Classroom.findAll({
+      attributes: ['id', 'name', 'description'],
       order: [['created_at', 'desc']]
     })
     // classrooms which the user is a part of
@@ -50,10 +51,12 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
       throw new Error('name & description are required')
     let id = req.user.id;
     // by default, the faculty who created the classroom will be admin
-    let members = [{
-      id,
-      role: 'admin'
-    }]
+    let members = {
+      [id]: {
+        id,
+        role: 'admin',
+      }
+    }
     let user = await User.findOne({
       where: {
         id
@@ -66,6 +69,8 @@ router.post('/', verifyAccessToken, verifyFaculty, async (req, res) => {
       members,
       created_by: id
     })
+    // we are not sending members list
+    delete classroom.dataValues.members
     // adding this new classroom to user classrooms list
     user.classrooms = [...user.classrooms, classroom.id];
     await user.save();
@@ -95,15 +100,15 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
             {
               model: Channel,
               as: 'channels',
-              attributes: ['id', 'name']
+              attributes: ['id', 'name', 'message_permission']
             }
           ]
         }
       ]
     })
     if (!classroom) throw new Error('Classroom not found')
-    let userObj = {}
-    classroom.members.forEach((member) => userObj[member.id] = member)
+    let userObj = { ...classroom.members }
+    let totalMembers = 0;
     if (!(req.user.id in userObj)) {
       res.status(403).json({
         error: `Forbidden: User is not part of the classroom ${classroom.name}`
@@ -120,8 +125,10 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
       })
       users.forEach((user) => {
         userObj[user.id] = { ...user.get(), ...userObj[user.id] }
+        totalMembers += 1
       })
-      classroom.members = Object.values(userObj)
+      classroom.members = userObj
+      classroom.dataValues.total_members = totalMembers
       res.status(200).json(classroom)
     }
   }
@@ -193,10 +200,10 @@ router.post('/users', verifyAccessToken, async (req, res) => {
     if (!classroom) {
       throw new Error('Classroom not found')
     }
-    let permissionCheck = classroom.members.some((member) => {
-      return ((member.id === req.user.id)
-        && (member.role === 'admin' || member.role === 'monitor'))
-    });
+    let permissionCheck = false;
+    let member = classroom.members[req.user.id]
+    if (member)
+      permissionCheck = member.role === 'admin' || member.role === 'monitor';
     if (!permissionCheck) {
       res.status(403).
         json({
@@ -213,18 +220,16 @@ router.post('/users', verifyAccessToken, async (req, res) => {
       if (!user) throw new Error('User with this id does not exist');
       // adding this classroom to users classrooms list
       user.classrooms = [...user.classrooms, classroom.id];
-      newMembers = []
-      classroom.members.forEach((member) => {
-        if (member.id === new_user_id) {
-          throw new Error('User already exists in the classroom');
-        }
-        newMembers.push(member)
-      })
-      newMembers.push({
+      newMembers = { ...classroom.members }
+      if (new_user_id in newMembers) {
+        throw new Error('User already exists in the classroom');
+      }
+      newMembers[new_user_id] = {
         id: new_user_id,
         role
-      })
+      }
       classroom.members = newMembers
+      classroom.total_members = Object.keys(newMembers).length
       await classroom.save().then(() => {
         user.save()
         if (request_id) {
@@ -265,10 +270,9 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
       permissionCheck = true;
     }
     else {
-      permissionCheck = classroom.members.some((member) => {
-        return ((member.id === req.user.id)
-          && (member.role === 'admin' || member.role === 'monitor'))
-      });
+      let member = classroom.members[req.user.id]
+      if (member)
+        permissionCheck = (member.role === 'admin' || member.role === 'monitor')
     }
     if (!permissionCheck) {
       res.status(403).
@@ -284,8 +288,10 @@ router.patch('/users', verifyAccessToken, async (req, res) => {
         attributes: ['classrooms', 'id']
       })
       // removing the user
-      newMembers = classroom.members.filter((member) => member.id !== user_id)
+      newMembers = { ...classroom.members }
+      delete newMembers[user_id]
       classroom.members = newMembers
+      classroom.total_members = Object.keys(newMembers).length
       let user = await userFind
       // removing this classroom from user classrooms list
       user.classrooms = user.classrooms.filter((id) => id !== classroom.id)

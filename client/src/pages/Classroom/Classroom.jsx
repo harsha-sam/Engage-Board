@@ -24,11 +24,12 @@ const Classroom = () => {
     chatActions: { selectChannel },
   } = useChatContext();
   const { id } = useParams();
-  const { description, members, categories } = classroomState;
+  const { description, members, total_members, categories } = classroomState;
   const [isLoading, setIsLoading] = useState(true);
   const [admins, setAdmins] = useState([]);
   const [monitors, setMonitors] = useState([]);
   const [students, setStudents] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,22 +37,34 @@ const Classroom = () => {
   }, [id]);
 
   useEffect(() => {
-    if (classroomState.categories) {
-      for (let cat of categories) {
-        if (cat.channels.length) {
-          selectChannel({ id: cat.channels[0].id });
-          break;
+    let flag = false;
+    if (categories) {
+      let newCategories = categories.map((category) => {
+        let newCategory = { ...category };
+        let newChannels = category.channels.map((channel) =>
+          ({
+            ...channel,
+            onClick: () => selectChannel(channel),
+          })
+        );
+        newCategory.channels = newChannels;
+        if (newChannels.length && !flag) {
+          selectChannel(newChannels[0]);
+          flag = true;
         }
-      }
+        return newCategory;
+      });
+      setCategoryOptions(newCategories);
       setIsLoading(false);
     }
-  }, [classroomState.categories]);
+  }, [categories]);
 
   useEffect(() => {
     let newAdmins = [];
     let newMonitors = [];
     let newStudents = [];
-    members.forEach((member) => {
+    Object.keys(members).forEach((id) => {
+      let member = members[id];
       if (member.role === "admin") newAdmins.push(member);
       else if (member.role === "monitor") newMonitors.push(member);
       else newStudents.push(member);
@@ -80,9 +93,9 @@ const Classroom = () => {
         >
           <ClassroomSidebarHeader />
           <MenuCustom
-            items={categories}
+            items={categoryOptions}
             mode={"inline"}
-            onClick={({ key }) => selectChannel({ id: key })}
+            // onClick={({ key }) => selectChannel({ id: key })}
             selectedKeys={[channel.id]}
             defaultOpenKeys={categories.map((category) => category.id)}
           />
@@ -131,7 +144,7 @@ const Classroom = () => {
               >
                 <Menu.Divider />
                 <SubMenu
-                  title={`Members (${members.length})`}
+                  title={`Members (${total_members})`}
                   key="members"
                   icon={<TeamOutlined />}
                 >

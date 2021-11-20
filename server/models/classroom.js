@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     members: {
-      type: DataTypes.ARRAY(DataTypes.JSON),
-      defaultValue: [],
+      type: DataTypes.JSONB,
+      defaultValue: {},
     },
     is_moderation_enabled: {
       type: DataTypes.BOOLEAN,
@@ -90,7 +90,8 @@ module.exports = (sequelize, DataTypes) => {
         await Channel.bulkCreate([{
           name: 'announcements',
           classroom_id,
-          category_id: categories[0].id
+          category_id: categories[0].id,
+          message_permission: ['admin', 'monitor']
         },
         {
           name: 'general',

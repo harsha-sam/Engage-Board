@@ -36,7 +36,7 @@ const App = () => {
     </Routes>
   }
   else {
-    return (<main className={dyslexiaFontToggled && 'dyslexia-font'}>
+    return (<main className={dyslexiaFontToggled ? 'dyslexia-font' : undefined}>
       <Routes>
         <Route exact path="/login" element={<Navigate to="/classrooms" />} />
         <Route exact path="/register" element={<Navigate to="/classrooms" />} />
@@ -55,9 +55,11 @@ const App = () => {
             <EditUserProfile />
           } />
           <Route exact path="/direct-messages/:id/" element={
-            <ChatProvider>
-              <DirectMessages />
-            </ChatProvider>
+            <ClassroomProvider>
+              <ChatProvider>
+                <DirectMessages />
+              </ChatProvider>
+            </ClassroomProvider>
           } />
           <Route exact path="/notes/" element={
             <NotesProvider>

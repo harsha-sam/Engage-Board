@@ -19,10 +19,10 @@ router.get('/', verifyAccessToken, async (req, res) => {
       },
       attributes: ['members', 'id']
     })
-    let permissionCheck = classroom.members.some((member) => {
-      return ((member.id === req.user.id)
-        && (member.role === 'admin' || member.role === 'monitor'))
-    });
+    let permissionCheck = false;
+    let member = classroom.members[req.user.id]
+    if (member)
+      permissionCheck = (member.role === 'admin' || member.role === 'monitor')
     if (!permissionCheck) {
       res.status(403).
         json({

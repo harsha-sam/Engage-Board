@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useChatContext } from "../../contexts/ChatContext.jsx";
+import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
 import moment from "moment";
 import InputEmoji from "react-input-emoji";
 import Message from "../Message/Message.jsx";
@@ -15,16 +16,19 @@ import {
 } from "antd";
 import { SendOutlined, DeleteOutlined } from "@ant-design/icons";
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 const MessagesList = ({ wrapperClassName }) => {
   let {
     authState: { user },
   } = useAuthContext();
   const {
-    chatState: { isLoading, messagesList },
+    chatState: { isLoading, messagesList, channel },
     chatActions: { addNewMessage, editMessage, deleteMessage },
   } = useChatContext();
   const [newMessage, setNewMessage] = useState("");
+  const {
+    classroomState: { members },
+  } = useClassroomContext();
   const messagesListRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -52,6 +56,15 @@ const MessagesList = ({ wrapperClassName }) => {
   const handleDeleteMessage = (msg_id) => {
     deleteMessage({ message_id: msg_id });
   };
+
+  const permitted = useMemo(() => {
+    if (channel) {
+      return channel.message_permission?.includes(members[user.id]?.role);
+    }
+    else {
+      return true
+    }
+  }, [members, channel, user]);
 
   return (
     <>
@@ -141,22 +154,29 @@ const MessagesList = ({ wrapperClassName }) => {
           })
         )}
       </div>
-      {!isLoading && (
-        <div className="chat-input-container">
-          <InputEmoji
-            value={newMessage}
-            onChange={setNewMessage}
-            onEnter={handleSendMessage}
-            cleanOnEnter
-            placeholder="Type a message"
-          />
-          <Button
-            type="primary"
-            icon={<SendOutlined />}
-            onClick={handleSendMessage}
-          />
-        </div>
-      )}
+      <div className="chat-input-container">
+        {!isLoading && permitted && (
+          <>
+            <InputEmoji
+              value={newMessage}
+              onChange={setNewMessage}
+              onEnter={handleSendMessage}
+              cleanOnEnter
+              placeholder="Type a message"
+            />
+            <Button
+              type="primary"
+              icon={<SendOutlined />}
+              onClick={handleSendMessage}
+            />
+          </>
+        )}
+        {!permitted && (
+          <Title level={5} type="secondary">
+            You do not have permission to send messages in this channel.
+          </Title>
+        )}
+      </div>
     </>
   );
 };

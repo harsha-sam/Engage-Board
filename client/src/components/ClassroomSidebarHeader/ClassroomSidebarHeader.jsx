@@ -71,12 +71,11 @@ const ClassroomSidebarHeader = () => {
   };
 
   useEffect(() => {
-    let permissionCheck = members.some((member) => {
-      return (
-        member.id === user.id &&
-        (member.role === "admin" || member.role === "monitor")
-      );
-    });
+    let permissionCheck = false;
+    let member = members[user.id];
+    if (member) {
+      permissionCheck = member.role === "admin" || member.role === "monitor";
+    }
     setShowAdminSettings(permissionCheck);
   }, [user, members]);
 
@@ -215,17 +214,19 @@ const SearchAndListUsers = ({
     if (type === "add") {
       setOptions(
         users.filter((user) => {
-          return !members.some((member) => member.id === user.id);
+          return !members[user.id];
         })
       );
     } else {
-      setOptions(
-        members.filter(
-          (member) => member.id !== currentUserId && member.role !== "admin"
-        )
-      );
+      let removableUsers = [];
+      Object.keys(members).forEach((id) => {
+        let member = members[id];
+        if (member.id !== currentUserId && member.role !== "admin")
+          removableUsers.push(member);
+      });
+      setOptions(removableUsers);
     }
-  }, [members]);
+  }, [members, users]);
 
   return (
     <div className="form-container">
