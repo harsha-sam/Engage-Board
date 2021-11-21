@@ -34,12 +34,13 @@ router.patch('/me', verifyAccessToken, async (req, res) => {
     if (!updateObj) {
       throw new Error('Please send fields which are to be updated')
     }
-    let user = await User.update(updateObj, {
+    let users = await User.update(updateObj, {
       where: {
         id: req.user.id
       }
     })
-    res.status(200).json(user);
+    if (users[0] === 0) throw new Error('user not found.')
+    res.status(200).json(users[1][0]);
   }
   catch (err) {
     res.status(400).json({

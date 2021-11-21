@@ -4,9 +4,9 @@ import { useUsersContext } from "../../contexts/UsersContext.jsx";
 import { useClassroomsContext } from "../../contexts/ClassroomsContext.jsx";
 import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
 import { DummyMessages } from "../MessagesList/MessagesList.jsx";
-import Logo from "../Logo/Logo";
 import UserDisplay from "../UserDisplay/UserDisplay.jsx";
 import ContentModeration from "./ContentModeration.jsx";
+import ManageChannels from "./ManageChannels.jsx";
 import {
   Menu,
   Button,
@@ -41,6 +41,7 @@ const ClassroomSidebarHeader = () => {
   } = useUsersContext();
   const [showAdminSettings, setShowAdminSettings] = useState(false);
   const [showUsersModal, setShowUsersModal] = useState(false);
+  const [showManageChannelsModal, setShowManageChannelsModal] = useState(false);
   const [showContentModeration, setShowContentModeration] = useState(false);
   const [role, setRole] = useState("");
 
@@ -81,8 +82,8 @@ const ClassroomSidebarHeader = () => {
 
   return (
     <>
-      <Menu theme="dark" selectable={false} mode="vertical">
-        <Logo src={"https://joeschmoe.io/api/v1/random"} name={name} />
+      <Menu theme="dark" selectable={false} mode="vertical" style={{marginBottom: "10%"}}>
+        <h2 className="classroom-name">{name}</h2>
         {showAdminSettings && (
           <SubMenu
             title="Manage Classroom"
@@ -92,7 +93,6 @@ const ClassroomSidebarHeader = () => {
             <Menu.Item key="add user">
               <Button
                 shape="round"
-                type="dashed"
                 block={true}
                 onClick={showUserModal}
               >
@@ -112,6 +112,22 @@ const ClassroomSidebarHeader = () => {
                 <ContentModeration
                   showModal={showContentModeration}
                   onClose={() => setShowContentModeration(false)}
+                />
+              )}
+            </Menu.Item>
+            <Menu.Item key="manage channels">
+              <Button
+                shape="round"
+                type="dashed"
+                block={true}
+                onClick={() => setShowManageChannelsModal(true)}
+              >
+                Manage Channels
+              </Button>
+              {showManageChannelsModal && (
+                <ManageChannels
+                  showModal={showManageChannelsModal}
+                  onClose={() => setShowManageChannelsModal(false)}
                 />
               )}
             </Menu.Item>

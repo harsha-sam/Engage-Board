@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
-import AvatarUploader from "../../components/AvatarUploader/AvatarUploader";
 import { Form, Button, Input, Spin, Typography } from "antd";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
 import "./EditUserProfile.css";
@@ -48,9 +47,6 @@ const EditUserProfile = () => {
             value={fullName}
             onChange={handleFullNameChange}
           />
-        </Form.Item>
-        <Form.Item label="Change Avatar">
-          <AvatarUploader />
         </Form.Item>
         <Button type="primary" disabled={!isValid}>
           Save

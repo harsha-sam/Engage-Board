@@ -25,10 +25,8 @@ router.post('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) 
     let category = null;
     if (!category_id && category_name) {
       category = await Category.create({
-        where: {
-          name: category_name,
-          classroom_id
-        }
+        name: category_name,
+        classroom_id: classroom.id,
       })
     }
     else {
@@ -40,12 +38,10 @@ router.post('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) 
       })
     }
     let channel = await Channel.create({
-      where: {
-        name: channel_name,
-        classroom_id: classroom.id,
-        category_id: category.id,
-        message_permission
-      }
+      name: channel_name,
+      classroom_id: classroom.id,
+      category_id: category.id,
+      message_permission
     })
     res.json(channel);
   }
@@ -89,13 +85,13 @@ router.patch('/:id', verifyAccessToken, verifyPermissionClassroom, async (req, r
   }
 })
 
-router.delete('/:id', verifyAccessToken, verifyPermissionClassroom, async (req, res) => {
+router.delete('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!id) throw new Error('Channel ID is required');
+    const { channel_id } = req.query;
+    if (!channel_id) throw new Error('Channel ID is required');
     let channel = await Channel.findOne({
       where: {
-        id
+        id: channel_id
       },
       attributes: ['id', 'category_id']
     })
@@ -106,7 +102,7 @@ router.delete('/:id', verifyAccessToken, verifyPermissionClassroom, async (req, 
       attributes: ['id']
     })
     if (count === 1) {
-      await category.destroy({
+      await Category.destroy({
         where: {
           id: channel.category_id
         }

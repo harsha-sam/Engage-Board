@@ -27,6 +27,7 @@ const ContentModeration = ({ showModal, onClose }) => {
       onOk={handleSave}
       onCancel={onClose}
       okText={"Save"}
+      maskClosable={false}
     >
       <h3 level={4}>
         Uses Azure Cognitive Services to detect profanity and deletes the

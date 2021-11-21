@@ -7,7 +7,6 @@ import InputEmoji from "react-input-emoji";
 import Message from "../Message/Message.jsx";
 import EmptyCustom from "../EmptyCustom/EmptyCustom.jsx";
 import {
-  Avatar,
   Button,
   Divider,
   Typography,
@@ -15,6 +14,7 @@ import {
   Popconfirm,
 } from "antd";
 import { SendOutlined, DeleteOutlined } from "@ant-design/icons";
+import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { Paragraph, Title } = Typography;
 const MessagesList = ({ wrapperClassName }) => {
@@ -75,9 +75,7 @@ const MessagesList = ({ wrapperClassName }) => {
         ) : (
           messagesList.map((msg) => {
             let author = msg.sender.full_name;
-            let avatar = (
-              <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
-            );
+            let avatar = <CustomAvatar user={msg.sender} />
             if (msg.sender.id === user.id) {
               author = "You";
               avatar = (
@@ -89,10 +87,7 @@ const MessagesList = ({ wrapperClassName }) => {
                       height: "50%",
                     }}
                   />
-                  <Avatar
-                    src="https://joeschmoe.io/api/v1/random"
-                    alt="Han Solo"
-                  />
+                  {avatar}
                 </>
               );
             }

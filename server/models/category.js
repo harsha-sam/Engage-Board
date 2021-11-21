@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: 'compositeIndex',
       set(value) {
         this.setDataValue('name', value.toUpperCase())
       }
@@ -41,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Classroom',
         key: 'id'
       },
+      unique: 'compositeIndex',
       allowNull: false,
     },
     createdAt: {

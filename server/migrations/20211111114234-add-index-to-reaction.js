@@ -2,10 +2,14 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    queryInterface.addIndex('reactions', ['message_id', 'user_id', 'reaction'])
+    queryInterface.addConstraint('reactions', {
+      type: 'unique',
+      fields: ['message_id', 'user_id', 'reaction'],
+      name: 'reactions_unique_index'
+    })
   },
 
   down: async (queryInterface, Sequelize) => {
-    queryInterface.removeIndex('reactions', ['message_id', 'user_id', 'reaction'])
+    queryInterface.removeConstraint('reactions', 'reactions_unique_index')
   }
 };

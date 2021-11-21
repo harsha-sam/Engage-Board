@@ -10,7 +10,7 @@ import {
   SET_CONTENT_MODERATION,
   SET_IS_LOADING,
 } from "./actionTypes";
-import { axiosInstance, classrooms_URL, requests_URL } from "../api-config";
+import { axiosInstance, classrooms_URL, requests_URL, channels_URL } from "../api-config";
 import { message } from "antd";
 
 const ClassroomContext = React.createContext();
@@ -74,6 +74,38 @@ export const ClassroomProvider = ({ children }) => {
     }
   };
 
+  const addChannel = (payload) => {
+    payload.classroom_id = classroomState.id
+    axiosInstance.post(channels_URL, payload)
+      .then((response) => {
+        message.success("Successfully added the channel. Please refresh");
+      })
+      .catch((err) => {
+        message.error(err?.response?.data?.error || "something went wrong");
+      });
+  }
+
+  const editChannel = (payload) => {
+    payload.classroom_id = classroomState.id
+    axiosInstance.patch(`${channels_URL}/${payload.id}`, payload)
+      .then((response) => {
+        message.success("Successfully updated the channel. Please refresh");
+      })
+      .catch((err) => {
+        message.error(err?.response?.data?.error || "something went wrong");
+      });
+  }
+
+  const removeChannel = (payload) => {
+    axiosInstance.delete(`${channels_URL}/?classroom_id=${classroomState.id}&channel_id=${payload.id}`)
+      .then((response) => {
+        message.success("Successfully removed the channel. Please refresh");
+      })
+      .catch((err) => {
+        message.error(err?.response?.data?.error || "something went wrong");
+      });
+  }
+
   return (
     <ClassroomContext.Provider
       value={{
@@ -82,6 +114,9 @@ export const ClassroomProvider = ({ children }) => {
           getClassroom,
           getRequests,
           saveContentModerationSettings,
+          addChannel,
+          editChannel,
+          removeChannel
         },
       }}
     >

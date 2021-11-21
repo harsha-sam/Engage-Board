@@ -2,10 +2,14 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    queryInterface.addIndex('requests', ['classroom_id', 'user_id'])
+    queryInterface.addConstraint('requests', {
+      type: 'unique',
+      fields: ['classroom_id', 'user_id'],
+      name: 'requests_unique_index'
+    })
   },
 
   down: async (queryInterface, Sequelize) => {
-    queryInterface.removeIndex('requests', ['classroom_id', 'user_id'])
+    queryInterface.removeConstraint('requests', 'requests_unique_index')
   }
 };

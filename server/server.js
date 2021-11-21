@@ -67,7 +67,6 @@ main = async () => {
         else if (compare === -1) {
           room = receiver_id + secret + sender_id
         }
-        console.log("room join", room)
         socket.join(room)
       }
 

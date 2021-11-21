@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Message',
         key: 'id'
       },
+      unique: 'compositeIndex',
       allowNull: false,
     },
     user_id: {
@@ -42,10 +43,12 @@ module.exports = (sequelize, DataTypes) => {
         model: 'User',
         key: 'id'
       },
+      unique: 'compositeIndex',
       allowNull: false,
     },
     reaction: {
       type: DataTypes.ENUM(['Like', 'Smile', 'Frown', 'Heart']),
+      unique: 'compositeIndex',
       allowNull: false,
     },
     createdAt: {

@@ -1,21 +1,21 @@
 import React from "react";
 import { Avatar, List, Tag } from "antd";
 
-const UserDisplay = ({ user, showTag = true, title }) => {
+const getColor = (role) => {
   let color = "blue";
-  if (["admin", "faculty"].includes(user.role)) {
+  if (["admin", "faculty"].includes(role)) {
     color = "red";
-  } else if (user.role === "monitor") {
+  } else if (role === "monitor") {
     color = "green";
   }
+  return color;
+}
+
+const UserDisplay = ({ user, showTag = true, title }) => {
   return (
     <List.Item.Meta
       style={{ marginBottom: "10px", marginLeft: "20px" }}
-      avatar={
-        <Avatar style={{ backgroundColor: color, verticalAlign: "middle" }}>
-          {user.full_name[0]}
-        </Avatar>
-      }
+      avatar={<CustomAvatar user={user}/>}
       title={title || user.full_name}
       description={
         <>
@@ -24,7 +24,7 @@ const UserDisplay = ({ user, showTag = true, title }) => {
           </small>
           <br />
           {showTag && (
-            <Tag color={color}>
+            <Tag color={getColor(user?.role)}>
               {user.role[0].toUpperCase() + user.role.slice(1)}
             </Tag>
           )}
@@ -33,5 +33,11 @@ const UserDisplay = ({ user, showTag = true, title }) => {
     />
   );
 };
+
+export const CustomAvatar = ({ user }) => {
+  return <Avatar style={{ backgroundColor: getColor(user?.role), verticalAlign: "middle", margin: "5px" }}>
+    {user.full_name[0]}
+  </Avatar>
+}
 
 export default UserDisplay;

@@ -29,14 +29,14 @@ router.get('/channels/:id', verifyAccessToken, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['full_name', 'avatar', 'id']
+              attributes: ['full_name', 'avatar', 'id', 'role']
             }
           ],
         },
         {
           model: User,
           as: 'sender',
-          attributes: ['full_name', 'avatar', 'id']
+          attributes: ['full_name', 'avatar', 'id', 'role']
         }
       ],
       order: [['created_at', 'asc']]

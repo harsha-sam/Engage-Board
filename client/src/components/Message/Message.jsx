@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useChatContext } from "../../contexts/ChatContext.jsx";
 import moment from "moment";
-import { Comment, Tooltip, Modal, Tabs, List, Avatar } from "antd";
+import { Comment, Tooltip, Modal, Tabs, List } from "antd";
 import {
   LikeOutlined,
   LikeTwoTone,
@@ -15,6 +15,7 @@ import {
   HeartTwoTone,
 } from "@ant-design/icons";
 import "./Message.css";
+import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { TabPane } = Tabs;
 
@@ -138,11 +139,7 @@ const Message = ({
                     renderItem={(item) => (
                       <List.Item key={item.id}>
                         <List.Item.Meta
-                          avatar={
-                            <Avatar
-                              src={"https://joeschmoe.io/api/v1/random"}
-                            />
-                          }
+                          avatar={<CustomAvatar user={item}/>}
                           title={
                             <Link to={`/direct-messages/${item.id}`}>
                               {item.id === user.id ? "You" : item.full_name}

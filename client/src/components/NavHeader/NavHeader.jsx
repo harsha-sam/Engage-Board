@@ -5,6 +5,7 @@ import MenuCustom from "../MenuCustom/MenuCustom.jsx";
 import { Layout, Avatar, Popover, Divider, Typography } from "antd";
 import { LogoutOutlined, EditOutlined } from "@ant-design/icons";
 import accessibility from "../../assets/accessibility.svg";
+import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { Header } = Layout;
 const { Title, Text } = Typography;
@@ -14,12 +15,6 @@ const NavHeader = () => {
     authState: { user, dyslexiaFontToggled },
     authActions: { signout, toggleDyslexiaFont },
   } = useAuthContext();
-  let color = "blue";
-  if ("faculty" === user.role) {
-    color = "red";
-  } else if (user.role === "monitor") {
-    color = "green";
-  }
   const content = (
     <>
       <Title level={4}>Accessibilty</Title>
@@ -29,11 +24,7 @@ const NavHeader = () => {
   );
   const headerOptions = [
     {
-      icon: (
-        <Avatar style={{ backgroundColor: color, verticalAlign: "middle" }}>
-          {user.full_name[0]}
-        </Avatar>
-      ),
+      icon: <CustomAvatar user={user}/>,
       name: user.full_name,
       id: user.id,
       channels: [

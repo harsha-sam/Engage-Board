@@ -95,7 +95,6 @@ const Classroom = () => {
           <MenuCustom
             items={categoryOptions}
             mode={"inline"}
-            // onClick={({ key }) => selectChannel({ id: key })}
             selectedKeys={[channel.id]}
             defaultOpenKeys={categories.map((category) => category.id)}
           />

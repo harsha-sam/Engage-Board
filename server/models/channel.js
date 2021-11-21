@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: {
       type: DataTypes.STRING,
+      unique: 'compositeIndex',
       allowNull: false
     },
     classroom_id: {
@@ -52,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Category',
         key: 'id'
       },
+      unique: 'compositeIndex',
       allowNull: true
     },
     message_permission: {

@@ -5,6 +5,8 @@ module.exports.verifyPermissionClassroom = async (req, res, next) => {
     let {
       classroom_id,
     } = req.body;
+    if (!classroom_id)
+      classroom_id = req.query.classroom_id
     if (!classroom_id) throw new Error('classroom_id is required');
     const classroom = await Classroom.findOne({
       where: {
