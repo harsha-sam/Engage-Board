@@ -58,6 +58,8 @@ export const user_URL = `/users/me`;
 export const classrooms_URL = `/classrooms`;
 export const classroom_users_URL = `/classrooms/users`;
 
+export const channels_URL = '/channels'
+
 export const requests_URL = '/requests';
 
 export const chat_URL = `/chat`;

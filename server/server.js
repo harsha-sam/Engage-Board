@@ -34,6 +34,7 @@ main = async () => {
     app.use('/auth', require('./routes/auth'))
     app.use('/users', require('./routes/users'))
     app.use('/classrooms', require('./routes/classrooms'))
+    app.use('/channels', require('./routes/channels'))
     app.use('/requests', require('./routes/requests'))
     app.use('/chat', require('./routes/chat'))
     app.use('/notes', require('./routes/notes'))

@@ -58,8 +58,9 @@ export const ClassroomProvider = ({ children }) => {
 
   const saveContentModerationSettings = (payload) => {
     if (classroomState.id) {
+      payload.classroom_id = classroomState.id;
       axiosInstance
-        .patch(`${classrooms_URL}/update/${classroomState.id}`, payload)
+        .patch(classrooms_URL, payload)
         .then((response) => {
           classroomDispatch({
             type: SET_CONTENT_MODERATION,
