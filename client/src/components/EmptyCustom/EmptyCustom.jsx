@@ -1,6 +1,7 @@
 import React from "react";
 import { Empty } from "antd";
 
+// Empty data component with image
 const EmptyCustom = ({ description }) => {
   return (
     <Empty

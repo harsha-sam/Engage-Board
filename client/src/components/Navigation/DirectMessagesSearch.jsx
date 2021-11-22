@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useUsersContext } from "../../contexts/UsersContext.jsx";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import UserDisplay from "../UserDisplay/UserDisplay.jsx";
@@ -21,21 +20,22 @@ const DirectMessagesSearch = () => {
   const handleChange = (e) => setVal(e.target.value);
 
   useEffect(() => {
+    // getting list of users on mount
     getListOfUsers();
-  }, []);
+  }, [getListOfUsers]);
 
   useEffect(() => {
-    if (val)
-      setOptions(
-        users.filter(
-          (user) =>
-            user.id.includes(val) ||
-            user.full_name.toLowerCase().includes(val.toLowerCase()) ||
-            (user.id === current_user.id && "you".includes(val.toLowerCase()))
-        )
-      );
-    else setOptions(users);
-  }, [val, users]);
+    // on search filter list of users
+    setOptions(
+      users.filter(
+        (user) =>
+          // filter based on user's name or id
+          user.id.includes(val) ||
+          user.full_name.toLowerCase().includes(val.toLowerCase()) ||
+          (user.id === current_user.id && "you".includes(val.toLowerCase()))
+      )
+    );
+  }, [val, users, current_user.id]);
 
   return (
     <Menu theme="dark" mode={"inline"} defaultOpenKeys={["Direct Messages"]}>
@@ -44,6 +44,7 @@ const DirectMessagesSearch = () => {
         icon={<MessageOutlined />}
         key="Direct Messages"
       >
+        {/* search for users */}
         <Input
           placeholder="Find or start a conversation"
           style={{ padding: "5% 10% 5% 10%", color: "#fff" }}
@@ -54,6 +55,7 @@ const DirectMessagesSearch = () => {
         />
         <div style={{ height: "60vh", overflowY: "scroll" }}>
           {isLoading ? (
+            // if list of users is loading. Show loader
             <Spin tip="Loading..." className="spinner" />
           ) : (
             options.map((option) => {
@@ -61,14 +63,6 @@ const DirectMessagesSearch = () => {
                 <UserDisplay
                   user={option}
                   key={option.id}
-                  title={
-                    <Link
-                      to={`direct-messages/${option.id}`}
-                      style={{ color: "#1890ff" }}
-                    >
-                      {option.id === current_user.id ? "You" : option.full_name}
-                    </Link>
-                  }
                 />
               );
             })

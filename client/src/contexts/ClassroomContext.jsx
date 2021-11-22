@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router";
 import {
   classroomInitialState,
@@ -10,7 +10,12 @@ import {
   SET_CONTENT_MODERATION,
   SET_IS_LOADING,
 } from "./actionTypes";
-import { axiosInstance, classrooms_URL, requests_URL, channels_URL } from "../api-config";
+import {
+  axiosInstance,
+  classrooms_URL,
+  requests_URL,
+  channels_URL,
+} from "../api-config";
 import { message } from "antd";
 
 const ClassroomContext = React.createContext();
@@ -22,23 +27,30 @@ export const ClassroomProvider = ({ children }) => {
   );
   let navigate = useNavigate();
 
-  const getClassroom = (payload) => {
-    axiosInstance
-      .get(`${classrooms_URL}/${payload.id}`)
-      .then((response) => {
-        classroomDispatch({ type: LOAD_CLASSROOM, payload: response.data });
-      })
-      .catch((err) => {
-        if (err?.response?.status === 403) {
-          navigate("/error403");
-        } else if (err?.response?.status === 400) {
-          navigate("/error");
-        }
-        message.error(err?.response?.data?.error || "something went wrong");
-      });
-  };
+  const getClassroom = useCallback(
+    (payload) => {
+      // fetches specific classroom info (name, description, members, categories, and channels)
+      axiosInstance
+        .get(`${classrooms_URL}/${payload.id}`)
+        .then((response) => {
+          classroomDispatch({ type: LOAD_CLASSROOM, payload: response.data });
+        })
+        .catch((err) => {
+          if (err?.response?.status === 403) {
+            // if the current user is not part of this classroom (forbidden)
+            navigate("/error403");
+          } else if (err?.response?.status === 400) {
+            // if this classroom does not exist.
+            navigate("/error");
+          }
+          message.error(err?.response?.data?.error || "something went wrong");
+        });
+    },
+    [navigate]
+  );
 
   const getRequests = () => {
+    // pending joining requests of the classroom
     if (classroomState.id) {
       classroomDispatch({ type: SET_IS_LOADING, payload: true });
       axiosInstance
@@ -57,6 +69,7 @@ export const ClassroomProvider = ({ children }) => {
   };
 
   const saveContentModerationSettings = (payload) => {
+    // updating content moderation settings of the classroom
     if (classroomState.id) {
       payload.classroom_id = classroomState.id;
       axiosInstance
@@ -75,36 +88,44 @@ export const ClassroomProvider = ({ children }) => {
   };
 
   const addChannel = (payload) => {
-    payload.classroom_id = classroomState.id
-    axiosInstance.post(channels_URL, payload)
+    // adding new channel to the classroom
+    payload.classroom_id = classroomState.id;
+    axiosInstance
+      .post(channels_URL, payload)
       .then((response) => {
         message.success("Successfully added the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
       });
-  }
+  };
 
   const editChannel = (payload) => {
-    payload.classroom_id = classroomState.id
-    axiosInstance.patch(`${channels_URL}/${payload.id}`, payload)
+    // updating existing channel of the classroom
+    payload.classroom_id = classroomState.id;
+    axiosInstance
+      .patch(`${channels_URL}/${payload.id}`, payload)
       .then((response) => {
         message.success("Successfully updated the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
       });
-  }
+  };
 
   const removeChannel = (payload) => {
-    axiosInstance.delete(`${channels_URL}/?classroom_id=${classroomState.id}&channel_id=${payload.id}`)
+    // deleting existing channel of the classroom
+    axiosInstance
+      .delete(
+        `${channels_URL}/?classroom_id=${classroomState.id}&channel_id=${payload.id}`
+      )
       .then((response) => {
         message.success("Successfully removed the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
       });
-  }
+  };
 
   return (
     <ClassroomContext.Provider
@@ -116,7 +137,7 @@ export const ClassroomProvider = ({ children }) => {
           saveContentModerationSettings,
           addChannel,
           editChannel,
-          removeChannel
+          removeChannel,
         },
       }}
     >

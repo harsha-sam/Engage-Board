@@ -12,8 +12,9 @@ const verifyToken = async (token, tokenSecret) => {
       } else {
         user = await User.findOne({
           where: {
-            id: payload.id
-          }
+            id: payload.id,
+          },
+          attributes: ['id', 'email', 'full_name', 'role']
         })
       }
       return user;

@@ -3,7 +3,9 @@ import { Skeleton, Card } from "antd";
 
 const { Meta } = Card;
 
-const ClassroomCard = ({ title, description, loading, actions }) => {
+// card component displayed in classrooms page
+const ClassroomCard = ({ loading, title, description, actions }) => {
+  // stripping of extra lines out of description
   let formatDescription = description.split(" ");
   if (formatDescription.length >= 10) {
     formatDescription = formatDescription.slice(0, 10);

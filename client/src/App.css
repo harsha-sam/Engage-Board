@@ -2,13 +2,13 @@
   font-family: "OpenDyslexic";
   src: url("assets/opendyslexicmono-regular-webfont.woff");
 }
-.loading {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin: -25px 0 0 -25px;
+label {
+  margin-right: 10px;
 }
 
+a {
+  color: #1890ff !important;
+}
 .ant-menu-dark.ant-menu-horizontal {
   flex-direction: row-reverse;
 }
@@ -21,11 +21,6 @@
   position: absolute;
   left: 40%;
   top: 40%;
-}
-
-.dyslexia-font {
-  font-family: "OpenDyslexic", sans-serif !important;
-  font-size: 10;
 }
 
 .ant-menu-item:hover,
@@ -43,6 +38,25 @@
   color: #000;
 }
 
+.ant-btn-primary:focus {
+  background: #1890ff;
+}
+
+.content-container {
+  padding: 5% 10%;
+}
+
+.dyslexia-font {
+  font-family: "OpenDyslexic", sans-serif;
+  font-size: 8;
+}
+
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+}
+
 .messages-list {
   min-height: 80vh;
   max-height: 80vh;
@@ -57,6 +71,10 @@
   align-items: center;
   gap: 10px;
   width: 60%;
+}
+
+.bread-crumb {
+  margin: 10px;
 }
 
 .direct-messages {
@@ -81,18 +99,4 @@
 
 .react-input-emoji--input {
   max-height: 50px;
-}
-
-.spinner {
-  position: absolute;
-  left: 50%;
-  top: 40%;
-}
-
-.bread-crumb {
-  margin: 10px;
-}
-
-label {
-  margin-right: 10px;
 }

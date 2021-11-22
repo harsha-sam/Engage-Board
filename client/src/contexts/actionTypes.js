@@ -2,6 +2,7 @@ export const SET_IS_LOADING = "SET_IS_LOADING"
 
 // auth
 export const SET_USER = "SET_USER"
+export const UPDATE_USER = "UPDATE_USER"
 
 // get list of users
 export const SET_ALL_USERS = "SET_ALL_USERS"
@@ -10,7 +11,6 @@ export const TOGGLE_DYSLEXIA_FONT = "TOGGLE_DYSLEXIA_FONT"
 // classrooms
 export const LOAD_CLASSROOMS = "LOAD_CLASSROOMS"
 export const ADD_CLASSROOM = "ADD_CLASSROOM"
-export const LEAVE_CLASSROOM = "LEAVE_CLASSROOM"
 export const ADD_REQUEST = "ADD_REQUEST"
 export const WITHDRAW_REQUEST = "WITH_DRAW_REQUEST"
 

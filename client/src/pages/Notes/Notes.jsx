@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNotesContext } from "../../contexts/NotesContext.jsx";
+import useLoader from "../../hooks/useLoader.js";
+import EmptyCustom from "../../components/EmptyCustom/EmptyCustom.jsx";
+import { DummyClassrooms } from "../Classrooms/Classrooms.jsx";
 import {
   Button,
   Popconfirm,
@@ -10,47 +13,55 @@ import {
   Col,
   Tooltip,
   Divider,
-  Spin,
 } from "antd";
 import { ArrowRightOutlined, DeleteOutlined } from "@ant-design/icons";
 import { message } from "antd";
-import EmptyCustom from "../../components/EmptyCustom/EmptyCustom.jsx";
-import { DummyClassrooms } from "../Classrooms/Classrooms.jsx";
 import moment from "moment";
 
 const { Meta } = Card;
 const Notes = () => {
   const [newNoteName, setNewNoteName] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  // flag used for initial render loading display as we are calling getNotes to fetch all notes after inital render
+  const [pageLoading, setPageLoading] = useLoader(true);
+  // loader for create new note button
+  const [buttonLoader, setButtonLoader] = useLoader(false);
   const {
     notesState: { notes, isLoading: notesLoading },
     notesActions: { getNotes, addNote, removeNote },
   } = useNotesContext();
 
   useEffect(() => {
+    // get notes will be called on mount
     getNotes();
-    setIsLoading(false);
-  }, []);
+    // setting it false as the inital render is done
+    setPageLoading(false);
+  }, [getNotes, setPageLoading]);
 
   const handleAddNote = () => {
+    // setting create new note button loader to true as we are adding a note
+    setButtonLoader(true);
     if (!newNoteName) {
       message.error("Name is required");
+      setButtonLoader(false);
     } else {
-      addNote({ name: newNoteName });
+      // adding note and resetting create new note button loader
+      addNote({ name: newNoteName }).finally(() => setButtonLoader(false));
     }
     setNewNoteName("");
   };
 
-  const handleCancel = () => {
-    setNewNoteName("");
+  const handleRemoveNote = (note) => {
+    // setting page loader to true as note is being removed
+    setPageLoading(true);
+    // resetting page loader to false after removing note
+    removeNote({ id: note.id }).finally(() => setPageLoading(false));
   };
 
-  if (isLoading) {
-    return <Spin tip="Loading..." className="spinner" />;
-  }
+  const handleCancel = () => setNewNoteName("");
 
   return (
-    <div style={{ padding: "5% 10%" }}>
+    <div className="content-container">
+      {/* Pop Confirm for taking input the new note name */}
       <Popconfirm
         icon={<></>}
         title={
@@ -65,14 +76,18 @@ const Notes = () => {
         onConfirm={handleAddNote}
         onCancel={handleCancel}
       >
-        <Button type="primary">Create a new note</Button>
+        <Button type="primary" loading={buttonLoader}>
+          Create a new note
+        </Button>
         <Divider />
       </Popconfirm>
-      {notesLoading ? (
+      {notesLoading || pageLoading ? (
+        // skeleton cards loading
         <DummyClassrooms />
       ) : (
         <Row gutter={[16, 16]} className="classrooms-card-container">
           {notes.length === 0 ? (
+            // if there are no notes, empty component will be rendered
             <EmptyCustom description="No notes found" />
           ) : (
             notes.map((note) => {
@@ -85,9 +100,10 @@ const Notes = () => {
                           <ArrowRightOutlined />
                         </Tooltip>
                       </Link>,
+                      // Popconfirm when deleting a note
                       <Popconfirm
                         title="Are you sure?"
-                        onConfirm={() => removeNote({ id: note.id })}
+                        onConfirm={() => handleRemoveNote(note)}
                       >
                         <Tooltip title="Delete Note" placement="bottom">
                           <DeleteOutlined />
@@ -101,11 +117,11 @@ const Notes = () => {
                         <>
                           <p>
                             created on:{" "}
-                            {moment(note.createdAt).format("MM/DD/YYYY")}
+                            {moment(note.createdAt).format("DD/MM/YYYY")}
                           </p>
                           <p>
                             last modified on:{" "}
-                            {moment(note.updatedAt).format("MM/DD/YYYY")}
+                            {moment(note.updatedAt).format("DD/MM/YYYY")}
                           </p>
                         </>
                       }

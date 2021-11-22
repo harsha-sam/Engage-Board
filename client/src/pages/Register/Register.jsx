@@ -1,29 +1,41 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
-import { Form, Input, Button, Row, Col, Radio } from "antd";
+import useLoader from "../../hooks/useLoader";
+import { Form, Input, Button, Row, Col, Radio, Typography } from "antd";
 import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import Background from "../../assets/hero.png";
 import "../Login/Login.css";
 
+const { Title } = Typography;
 const Register = () => {
   const [form] = Form.useForm();
   const {
     authActions: { signup },
   } = useAuthContext();
 
+  const [isSubmitted, setIsSubmitted] = useLoader(false);
+
   const onFinish = (values) => {
-    signup(values);
-    form.resetFields();
+    // submit button loader should be triggered
+    setIsSubmitted(true);
+    signup(values).finally(() => {
+      // submit button loader should be stopped
+      setIsSubmitted(false);
+      // form fields should be reset
+      form.resetFields();
+    });
   };
 
   return (
     <Row className="flex-container">
       <Col md={10}>
-        <h1>Create Account</h1>
+        <Title level={2}>Create Account</Title>
         <Form name="register" onFinish={onFinish} form={form}>
           <Form.Item
             name="id"
+            label="University ID"
+            tooltip="University ID should be unique"
             rules={[
               {
                 required: true,
@@ -31,16 +43,22 @@ const Register = () => {
               },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="University ID" />
+            <Input prefix={<UserOutlined />} placeholder="Your Unique ID" />
           </Form.Item>
           <Form.Item
             name="full_name"
+            label="Full Name"
             rules={[{ required: true, message: "Please input your Name!" }]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Full Name" />
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Type your Name here"
+            />
           </Form.Item>
           <Form.Item
             name="email"
+            label="Email"
+            tooltip="Email should be unique"
             rules={[
               {
                 required: true,
@@ -105,6 +123,7 @@ const Register = () => {
               type="primary"
               htmlType="submit"
               className="login-form-button"
+              loading={isSubmitted}
             >
               Register
             </Button>

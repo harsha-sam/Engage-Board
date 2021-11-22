@@ -1,18 +1,19 @@
 import React from "react";
-import { Outlet, useLocation } from "react-router";
-import { Layout, Affix } from "antd";
-import { useNavigate } from "react-router";
+import { Outlet, useNavigate, useLocation } from "react-router";
 import MenuCustom from "../MenuCustom/MenuCustom.jsx";
 import NavHeader from "../NavHeader/NavHeader.jsx";
 import DirectMessagesSearch from "./DirectMessagesSearch.jsx";
+import { Layout, Affix } from "antd";
 import { TeamOutlined, BookOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
 
 const Navigation = () => {
+  // pathname will be the current selected key in sidebar
   const { pathname } = useLocation();
   let navigate = useNavigate();
 
+  // siderbar options
   const siderOptions = [
     {
       icon: <TeamOutlined />,
@@ -29,19 +30,24 @@ const Navigation = () => {
   ];
 
   return (
+    // wrapping around affix to fix the component to viewport
     <Affix>
       <Layout>
+        {/* Header */}
         <NavHeader />
         <Layout>
+          {/* Sidebar */}
           <Sider collapsible width={260} style={{ height: "100vh" }}>
             <MenuCustom
               items={siderOptions}
               mode="inline"
               selectedKeys={[pathname]}
             />
+            {/* Direct Messages Users Search */}
             <DirectMessagesSearch />
           </Sider>
           <Content style={{ height: "100vh" }}>
+            {/* Displaying sub route component */}
             <Outlet />
           </Content>
         </Layout>

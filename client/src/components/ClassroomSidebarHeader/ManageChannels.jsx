@@ -27,11 +27,7 @@ const defaultForm = {
 const ManageChannels = ({ showModal, onClose }) => {
   let {
     classroomState: { categories },
-    classroomActions: {
-      addChannel,
-      editChannel,
-      removeChannel
-    }
+    classroomActions: { addChannel, editChannel, removeChannel },
   } = useClassroomContext();
 
   const [formState, setFormState] = useState(defaultForm);
@@ -63,8 +59,7 @@ const ManageChannels = ({ showModal, onClose }) => {
   };
 
   const checkFormValidity = (keys) => {
-    for (let key of keys)
-      if (!formState[key]) return false;
+    for (let key of keys) if (!formState[key]) return false;
     return true;
   };
 
@@ -81,11 +76,12 @@ const ManageChannels = ({ showModal, onClose }) => {
             ])
           )
             return message.error("Fill all the required fields");
-          addChannel({
-            category_id,
-            channel_name,
-            message_permission
-          })
+          else
+            addChannel({
+              category_id,
+              channel_name,
+              message_permission,
+            });
         } else {
           if (
             !checkFormValidity([
@@ -95,42 +91,46 @@ const ManageChannels = ({ showModal, onClose }) => {
             ])
           )
             return message.error("Fill all the required fields");
-          addChannel({
-            category_name,
-            channel_name,
-            message_permission,
-          });
+          else
+            addChannel({
+              category_name,
+              channel_name,
+              message_permission,
+            });
         }
-        return;
+        break;
       }
       case "update": {
         if (
           !checkFormValidity([
             "updating_channel_category_id",
             "channel_id",
+            "category_id",
             "channel_name",
             "message_permission",
           ])
         )
           return message.error("Fill all the required fields");
-        editChannel({
-          id: channel_id,
-          channel_name,
-          message_permission
-        })
-        return;
+        else
+          editChannel({
+            id: channel_id,
+            channel_name,
+            category_id,
+            message_permission,
+          });
+        break;
       }
       case "remove": {
-        if (
-          !checkFormValidity(["updating_channel_category_id", "channel_id"])
-        )
+        if (!checkFormValidity(["updating_channel_category_id", "channel_id"]))
           return message.error("Fill all the required fields");
-        removeChannel({ id: channel_id });
-        return;
+        else removeChannel({ id: channel_id });
+        break;
       }
       default:
         return;
     }
+    setFormState(defaultForm);
+    onClose();
   };
 
   const {

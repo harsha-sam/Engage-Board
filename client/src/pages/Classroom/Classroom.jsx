@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router";
+import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
 import { useChatContext } from "../../contexts/ChatContext.jsx";
+import useLoader from "../../hooks/useLoader";
 import ClassroomSidebarHeader from "../../components/ClassroomSidebarHeader/ClassroomSidebarHeader.jsx";
 import NavHeader from "../../components/NavHeader/NavHeader.jsx";
 import MenuCustom from "../../components/MenuCustom/MenuCustom.jsx";
 import MessagesList from "../../components/MessagesList/MessagesList.jsx";
 import UserDisplay from "../../components/UserDisplay/UserDisplay.jsx";
-import { Affix, Layout, Menu, Typography, Spin, Tag } from "antd";
+import { Affix, Layout, Menu, Typography, Spin } from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
@@ -16,6 +18,9 @@ const { Paragraph, Title } = Typography;
 
 const Classroom = () => {
   const {
+    authState: { user },
+  } = useAuthContext();
+  const {
     classroomState,
     classroomActions: { getClassroom },
   } = useClassroomContext();
@@ -23,43 +28,49 @@ const Classroom = () => {
     chatState: { channel },
     chatActions: { selectChannel },
   } = useChatContext();
+  // classroom id will be in the route params /classrooms/:id
   const { id } = useParams();
+  // current classroom info will be available in the classroom state
   const { description, members, total_members, categories } = classroomState;
-  const [isLoading, setIsLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useLoader(true);
+  // classroom members roles
   const [admins, setAdmins] = useState([]);
   const [monitors, setMonitors] = useState([]);
   const [students, setStudents] = useState([]);
+  // category options to be rendered in sidebar menu
   const [categoryOptions, setCategoryOptions] = useState([]);
 
   useEffect(() => {
-    setIsLoading(true);
     getClassroom({ id });
-  }, [id]);
+  }, [id, getClassroom]);
 
   useEffect(() => {
+    // flag used to select the first available channel by default whenever the page is loaded
     let flag = false;
     if (categories) {
       let newCategories = categories.map((category) => {
         let newCategory = { ...category };
-        let newChannels = category.channels.map((channel) =>
-          ({
-            ...channel,
-            onClick: () => selectChannel(channel),
-          })
-        );
+        // on clicking a channel, chat should be updated
+        let newChannels = category.channels.map((channel) => ({
+          ...channel,
+          onClick: () => selectChannel(channel),
+        }));
         newCategory.channels = newChannels;
         if (newChannels.length && !flag) {
+          // selecting this channel
           selectChannel(newChannels[0]);
           flag = true;
         }
         return newCategory;
       });
       setCategoryOptions(newCategories);
-      setIsLoading(false);
+      // as all the categories and channels are loaded, page loader can be reset to false and data should be shown
+      setPageLoading(false);
     }
-  }, [categories]);
+  }, [categories, selectChannel, setPageLoading]);
 
   useEffect(() => {
+    // segregating classroom members
     let newAdmins = [];
     let newMonitors = [];
     let newStudents = [];
@@ -74,11 +85,21 @@ const Classroom = () => {
     setStudents(newStudents);
   }, [members]);
 
-  if (isLoading) {
+  // permitted will check if the current user can message in the channel
+  const permitted = useMemo(() => {
+    if (channel) {
+      return channel.message_permission?.includes(members[user.id]?.role);
+    } else {
+      return true;
+    }
+  }, [members, channel, user]);
+
+  if (pageLoading) {
     return <Spin tip="Loading..." className="spinner" />;
   }
 
   return (
+    // wrapping the entire page with affix to make it fixed to viewport
     <Affix>
       <Layout>
         <Sider
@@ -91,11 +112,14 @@ const Classroom = () => {
             top: 0,
           }}
         >
+          {/* Sidebar header will contain all the settings and actions of the classroom */}
           <ClassroomSidebarHeader />
           <MenuCustom
             items={categoryOptions}
             mode={"inline"}
+            // current channel selected
             selectedKeys={[channel.id]}
+            // all categories are opened by default
             defaultOpenKeys={categories.map((category) => category.id)}
           />
         </Sider>
@@ -103,10 +127,16 @@ const Classroom = () => {
           <Layout>
             <Content>
               <Layout>
+                {/* Navigation Header for accessibility and user options */}
                 <NavHeader />
-                <MessagesList wrapperClassName={"messages-list"} />
+                {/* All messages list */}
+                <MessagesList
+                  wrapperClassName={"messages-list"}
+                  permittedToMessage={permitted}
+                />
               </Layout>
             </Content>
+            {/* Right sidebar */}
             <Sider
               theme="dark"
               style={{
@@ -118,6 +148,7 @@ const Classroom = () => {
               }}
               width={240}
             >
+              {/* Description of the classroom is displayed at top of right sidebar */}
               <Title style={{ color: "#fff" }} level={4}>
                 Description
               </Title>
@@ -135,6 +166,7 @@ const Classroom = () => {
               >
                 {description}
               </Paragraph>
+              {/* Menu showing members of this classroom along with their segregated roles*/}
               <Menu
                 mode="inline"
                 theme="dark"
@@ -142,6 +174,7 @@ const Classroom = () => {
                 selectable={false}
               >
                 <Menu.Divider />
+                {/* Sub menu will be displayed only if members are available under that role */}
                 <SubMenu
                   title={`Members (${total_members})`}
                   key="members"
@@ -153,7 +186,7 @@ const Classroom = () => {
                         <UserDisplay
                           user={admin}
                           key={admin.id}
-                          title={<Tag color="red">{admin.full_name}</Tag>}
+                          // false because we don't want to show the member role tag again as the members are already being segregated on basis of the role
                           showTag={false}
                         />
                       ))}
@@ -165,7 +198,6 @@ const Classroom = () => {
                         <UserDisplay
                           user={monitor}
                           key={monitor.id}
-                          title={<Tag color="green">{monitor.full_name}</Tag>}
                           showTag={false}
                         />
                       ))}
@@ -177,7 +209,6 @@ const Classroom = () => {
                         <UserDisplay
                           user={student}
                           key={student.id}
-                          title={<Tag color="blue">{student.full_name}</Tag>}
                           showTag={false}
                         />
                       ))}

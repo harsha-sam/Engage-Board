@@ -29,14 +29,14 @@ router.get('/channels/:id', verifyAccessToken, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['full_name', 'avatar', 'id', 'role']
+              attributes: ['full_name', 'id', 'role', 'email']
             }
           ],
         },
         {
           model: User,
           as: 'sender',
-          attributes: ['full_name', 'avatar', 'id', 'role']
+          attributes: ['full_name', 'id', 'role', 'email']
         }
       ],
       order: [['created_at', 'asc']]
@@ -63,7 +63,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
       where: {
         id: receiver_id
       },
-      attributes: ['id', 'full_name', 'avatar']
+      attributes: ['id', 'full_name', 'role', 'email']
     })
     if (!user) {
       throw new Error('user not found')
@@ -94,14 +94,14 @@ router.get('/', verifyAccessToken, async (req, res) => {
             {
               model: User,
               as: 'user',
-              attributes: ['full_name', 'avatar', 'id']
+              attributes: ['full_name', 'id', 'role', 'email']
             }
           ],
         },
         {
           model: User,
           as: 'sender',
-          attributes: ['full_name', 'avatar', 'id']
+          attributes: ['full_name', 'id', 'role', 'email']
         }
       ],
       order: [['created_at', 'asc']]

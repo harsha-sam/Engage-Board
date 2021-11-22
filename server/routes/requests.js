@@ -38,7 +38,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'full_name', 'email', 'avatar', 'role']
+            attributes: ['id', 'full_name', 'email', 'role']
           }
         ]
       })

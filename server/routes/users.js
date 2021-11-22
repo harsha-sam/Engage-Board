@@ -7,7 +7,7 @@ router.get('/', verifyAccessToken, async (req, res) => {
   // sending all users
   try {
     let users = await User.findAll({
-      attributes: ['id', 'full_name', 'role', 'email', 'avatar'],
+      attributes: ['id', 'full_name', 'role', 'email'],
       order: [['full_name', 'asc']]
     })
     res.status(200).json(users);
@@ -25,11 +25,11 @@ router.patch('/me', verifyAccessToken, async (req, res) => {
   try {
     // updating current user info
     const {
-      avatar,
+      email,
       full_name
     } = req.body;
     let updateObj = {}
-    if (avatar) updateObj.avatar = avatar;
+    if (email) updateObj.email = email;
     if (full_name) updateObj.full_name = full_name
     if (!updateObj) {
       throw new Error('Please send fields which are to be updated')
@@ -37,10 +37,18 @@ router.patch('/me', verifyAccessToken, async (req, res) => {
     let users = await User.update(updateObj, {
       where: {
         id: req.user.id
-      }
+      },
+      returning: true,
+      attributes: ['id', 'full_name', 'role', 'email']
     })
     if (users[0] === 0) throw new Error('user not found.')
-    res.status(200).json(users[1][0]);
+    let user = {
+      id: users[1][0].id,
+      email: users[1][0].email,
+      full_name: users[1][0].full_name,
+      role: users[1][0].role
+    }
+    res.status(200).json(user);
   }
   catch (err) {
     res.status(400).json({

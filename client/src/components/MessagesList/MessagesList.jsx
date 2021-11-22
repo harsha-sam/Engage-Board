@@ -1,34 +1,26 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useChatContext } from "../../contexts/ChatContext.jsx";
-import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
 import moment from "moment";
 import InputEmoji from "react-input-emoji";
 import Message from "../Message/Message.jsx";
 import EmptyCustom from "../EmptyCustom/EmptyCustom.jsx";
-import {
-  Button,
-  Divider,
-  Typography,
-  Skeleton,
-  Popconfirm,
-} from "antd";
+import { Button, Divider, Typography, Skeleton, Popconfirm } from "antd";
 import { SendOutlined, DeleteOutlined } from "@ant-design/icons";
 import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { Paragraph, Title } = Typography;
-const MessagesList = ({ wrapperClassName }) => {
-  let {
+// Chat area component - same for classrooms and direct messages
+const MessagesList = ({ wrapperClassName, permittedToMessage }) => {
+  const {
     authState: { user },
   } = useAuthContext();
   const {
-    chatState: { isLoading, messagesList, channel },
+    chatState: { isLoading, messagesList },
     chatActions: { addNewMessage, editMessage, deleteMessage },
   } = useChatContext();
   const [newMessage, setNewMessage] = useState("");
-  const {
-    classroomState: { members },
-  } = useClassroomContext();
+  // references the chat box component
   const messagesListRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -39,32 +31,27 @@ const MessagesList = ({ wrapperClassName }) => {
   };
 
   useEffect(() => {
+    // always the chat box should be scrolled to bottom whenever new message is received
     scrollToBottom();
   }, [messagesList.length]);
 
   const handleSendMessage = () => {
     if (newMessage) {
+      // if newMessage is not empty string, message is sent
       addNewMessage(newMessage);
     }
     setNewMessage("");
   };
 
   const handleEditMessage = (msg_id, content) => {
-    editMessage({ message_id: msg_id, new_content: content });
+    // if content is not empty, message is updated
+    if (content) editMessage({ message_id: msg_id, new_content: content });
   };
 
   const handleDeleteMessage = (msg_id) => {
+    // message is deleted
     deleteMessage({ message_id: msg_id });
   };
-
-  const permitted = useMemo(() => {
-    if (channel) {
-      return channel.message_permission?.includes(members[user.id]?.role);
-    }
-    else {
-      return true
-    }
-  }, [members, channel, user]);
 
   return (
     <>
@@ -75,7 +62,8 @@ const MessagesList = ({ wrapperClassName }) => {
         ) : (
           messagesList.map((msg) => {
             let author = msg.sender.full_name;
-            let avatar = <CustomAvatar user={msg.sender} />
+            let avatar = <CustomAvatar user={msg.sender} />;
+            // if the message belongs to the current user
             if (msg.sender.id === user.id) {
               author = "You";
               avatar = (
@@ -101,6 +89,7 @@ const MessagesList = ({ wrapperClassName }) => {
                 content={
                   <Paragraph
                     editable={
+                      // if the message belongs to current user, then the user can edit the message
                       msg.sender.id === user.id
                         ? {
                             onChange: (val) => handleEditMessage(msg.id, val),
@@ -112,6 +101,8 @@ const MessagesList = ({ wrapperClassName }) => {
                       expandable: true,
                       symbol: "see more",
                     }}
+                    // if the message belongs to current user, then the user can delete the message
+                    // manipulating copyable property of Paragraph component from antd for deleting feature
                     copyable={
                       msg.sender.id === user.id
                         ? {
@@ -150,7 +141,8 @@ const MessagesList = ({ wrapperClassName }) => {
         )}
       </div>
       <div className="chat-input-container">
-        {!isLoading && permitted && (
+        {/* if user is permitted to send messages in this channel*/}
+        {!isLoading && permittedToMessage && (
           <>
             <InputEmoji
               value={newMessage}
@@ -166,7 +158,7 @@ const MessagesList = ({ wrapperClassName }) => {
             />
           </>
         )}
-        {!permitted && (
+        {!permittedToMessage && (
           <Title level={5} type="secondary">
             You do not have permission to send messages in this channel.
           </Title>
@@ -177,6 +169,7 @@ const MessagesList = ({ wrapperClassName }) => {
 };
 
 export const DummyMessages = ({ length = 5 }) => {
+  // skeleton messages
   let list = [];
   for (let i = 1; i <= length; i++) {
     list.push(`dum${i}`);

@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useReducer, useCallback } from "react";
 import { usersInitialState, usersReducer } from "./reducers/usersReducer";
 import { SET_IS_LOADING, SET_ALL_USERS } from "./actionTypes";
 import { axiosInstance, users_URL } from "../api-config";
@@ -12,9 +12,10 @@ export const UsersProvider = ({ children }) => {
     usersInitialState
   );
 
-  const getListOfUsers = () => {
+  const getListOfUsers = useCallback(() => {
+    // fetches list of all users of the app
     usersDispatch({ type: SET_IS_LOADING, payload: true });
-    axiosInstance
+    return axiosInstance
       .get(users_URL)
       .then((response) => {
         usersDispatch({ type: SET_ALL_USERS, payload: response.data });
@@ -25,7 +26,7 @@ export const UsersProvider = ({ children }) => {
       .finally(() => {
         usersDispatch({ type: SET_IS_LOADING, payload: false });
       });
-  };
+  }, []);
 
   return (
     <UsersContext.Provider

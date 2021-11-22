@@ -122,7 +122,7 @@ router.get('/:id', verifyAccessToken, async (req, res) => {
             [Op.in]: Object.keys(userObj)
           }
         },
-        attributes: ['full_name', 'id', 'avatar', 'email']
+        attributes: ['full_name', 'id', 'email']
       })
       users.forEach((user) => {
         userObj[user.id] = { ...user.get(), ...userObj[user.id] }

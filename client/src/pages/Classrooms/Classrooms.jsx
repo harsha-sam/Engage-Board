@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useClassroomsContext } from "../../contexts/ClassroomsContext.jsx";
+import useLoader from "../../hooks/useLoader.js";
 import AddClassroom from "../../components/AddClassroom/AddClassroom.jsx";
 import ClassroomCard from "../../components/ClassroomCard/ClassroomCard.jsx";
 import EmptyCustom from "../../components/EmptyCustom/EmptyCustom.jsx";
@@ -22,10 +23,10 @@ const Classrooms = () => {
   } = useAuthContext();
   const {
     classroomsState: {
-      classrooms,
       isLoading,
-      userClassrooms,
-      classroomRequests,
+      classrooms, // list of all classrooms with info
+      userClassrooms, // list of classroom id's the user in
+      classroomRequests, // list of classroom requests from the user
     },
     classroomsActions: {
       addClassroom,
@@ -34,17 +35,22 @@ const Classrooms = () => {
       leaveClassroom,
     },
   } = useClassroomsContext();
-  let [yourClassrooms, setYourClassrooms] = useState([]);
-  let [browseClassrooms, setBrowseClassrooms] = useState([]);
-  let [pendingRequests, setPendingRequests] = useState([]);
+  const [yourClassrooms, setYourClassrooms] = useState([]);
+  const [browseClassrooms, setBrowseClassrooms] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [tabsDataLoading, setTabsDataLoading] = useLoader(true);
+  const [buttonLoader, setButtonLoader] = useLoader(false);
 
   useEffect(() => {
     setYourClassrooms(
+      // filter list of all classrooms whose id is in user classrooms list
       classrooms.filter((classroom) => userClassrooms.includes(classroom.id))
     );
+    // filter list of all classrooms whose id is in user classroom requests by user
     setPendingRequests(
       classrooms.filter((classroom) => classroomRequests.includes(classroom.id))
     );
+    // remaining classes are the classes that user is not part of
     setBrowseClassrooms(
       classrooms.filter(
         (classroom) =>
@@ -52,19 +58,54 @@ const Classrooms = () => {
           !classroomRequests.includes(classroom.id)
       )
     );
-  }, [classrooms, userClassrooms, classroomRequests]);
+    // as tabs data is loaded, loader should be removed
+    setTabsDataLoading(false);
+  }, [classrooms, userClassrooms, classroomRequests, setTabsDataLoading]);
+
+  const handleAddClassroom = (payload) => {
+    setButtonLoader(true);
+    addClassroom(payload).finally(() => setButtonLoader(false));
+  };
+
+  const handleSendRequest = (classroom) => {
+    const { id: classroom_id } = classroom;
+    setTabsDataLoading(true);
+    postRequest({ classroom_id });
+    // tabsDataLoading will be reset in the useEffect
+  };
+  const handleLeaveClassroom = (classroom) => {
+    const { id: classroom_id } = classroom;
+    setTabsDataLoading(true);
+    leaveClassroom({
+      user_id: user.id,
+      classroom_id,
+    });
+    // page will be reloaded whenever we leave the classroom because if the user who's leaving the classroom is admin then the entire classroom will be deleted.
+  };
+  const handleWithdrawRequest = (payload) => {
+    const { id } = payload;
+    setTabsDataLoading(true);
+    withdrawRequest({ id });
+    // tabsDataLoading will be reset in the useEffect
+  };
 
   return (
-    <div style={{ padding: "5% 10%" }}>
+    <div className="content-container">
       {user.role === "faculty" && (
+        // Faculties can create classrooms
         <>
-          <AddClassroom handleSubmit={addClassroom} />
+          <AddClassroom
+            handleSubmit={handleAddClassroom}
+            loading={buttonLoader}
+          />
           <Divider />
         </>
       )}
       <Tabs defaultActiveKey="1" centered tabBarGutter={70}>
+        {/* User Classrooms Tab  */}
         <TabPane tab="Your Classrooms" key="1">
-          {isLoading ? (
+          {isLoading || tabsDataLoading ? (
+            // skeleton loading classroom card
             <DummyClassrooms />
           ) : (
             <Row gutter={[16, 16]} className="classrooms-card-container">
@@ -77,20 +118,18 @@ const Classrooms = () => {
                         bordered={false}
                         description={classroom.description}
                         actions={[
+                          // opening classroom component
                           <Link to={`/classrooms/${classroom.id}`}>
                             <Tooltip title="Open Classroom" placement="bottom">
                               <ArrowRightOutlined />
                             </Tooltip>
                           </Link>,
+                          // leaving classroom
+                          // classroom will be deleted, if the user is admin
                           <Popconfirm
                             title="Note: If you are the admin of this classroom. 
                       Leaving it will also delete the classroom. Are you sure?"
-                            onConfirm={() =>
-                              leaveClassroom({
-                                classroom_id: classroom.id,
-                                user_id: user.id,
-                              })
-                            }
+                            onConfirm={() => handleLeaveClassroom(classroom)}
                           >
                             <Tooltip title="Leave Classroom" placement="bottom">
                               <UserDeleteOutlined />
@@ -102,14 +141,15 @@ const Classrooms = () => {
                   );
                 })
               ) : (
+                // if no classrooms are found under this tab, empty component is displayed
                 <EmptyCustom description="No classrooms found" />
               )}
             </Row>
           )}
         </TabPane>
-
+        {/* Browse Classrooms Tab  */}
         <TabPane tab="Browse Classrooms" key="2">
-          {isLoading ? (
+          {isLoading || tabsDataLoading ? (
             <DummyClassrooms />
           ) : (
             <Row gutter={[16, 16]} className="classrooms-card-container">
@@ -122,15 +162,11 @@ const Classrooms = () => {
                         bordered={false}
                         description={classroom.description}
                         actions={[
-                          <span
-                            onClick={() =>
-                              postRequest({ classroom_id: classroom.id })
-                            }
-                          >
+                          // sending request on clicking
+                          <span onClick={() => handleSendRequest(classroom)}>
                             <Tooltip title="Request to join" placement="bottom">
                               <PlusCircleOutlined />
                             </Tooltip>
-                            ,
                           </span>,
                         ]}
                       />
@@ -138,14 +174,15 @@ const Classrooms = () => {
                   );
                 })
               ) : (
+                // if no classrooms are found under this tab, we'll show empty component
                 <EmptyCustom description="No classrooms found" />
               )}
             </Row>
           )}
         </TabPane>
-
+        {/* Pending Requests Tab */}
         <TabPane tab="Pending Requests" key="3">
-          {isLoading ? (
+          {isLoading || tabsDataLoading ? (
             <DummyClassrooms />
           ) : (
             <Row gutter={[16, 16]} className="classrooms-card-container">
@@ -158,7 +195,10 @@ const Classrooms = () => {
                         bordered={false}
                         description={classroom.description}
                         actions={[
-                          <span onClick={() => withdrawRequest(classroom)}>
+                          // withdrawing request
+                          <span
+                            onClick={() => handleWithdrawRequest(classroom)}
+                          >
                             <Tooltip
                               title="Withdraw Request"
                               placement="bottom"
@@ -172,6 +212,7 @@ const Classrooms = () => {
                   );
                 })
               ) : (
+                // if no classrooms are found under this tab, we'll show empty component
                 <EmptyCustom description="No requests found" />
               )}
             </Row>
@@ -183,6 +224,7 @@ const Classrooms = () => {
 };
 
 export const DummyClassrooms = () => {
+  // skeleton loading cards
   return (
     <Row gutter={[16, 16]} className="classrooms-card-container">
       {["dum1", "dum2", "dum3", "dum4", "dum5"].map((ele) => (

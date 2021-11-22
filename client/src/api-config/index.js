@@ -3,7 +3,7 @@ import axios from "axios";
 export const axiosInstance = axios.create({
   baseURL: 'http://localhost:4000'
 })
-// Add a request interceptor
+// Add a request interceptor and store access token within the request
 axiosInstance.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem('access-token');
   const refreshToken = localStorage.getItem('refresh-token');
@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
         .then((res) => {
           if (res.status === 204) {
             localStorage.setItem("access-token", res.headers['access-token']);
-            console.log("access token is refreshed")
+            // console.log("access token is refreshed")
             return axiosInstance(request);
           }
         })

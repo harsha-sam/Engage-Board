@@ -5,6 +5,7 @@ import { Result, Button } from "antd";
 
 const ErrorPage = ({ status, title, subTitle }) => {
   const { state } = useLocation();
+  // if state is passed while navigating, then title, status and sub title to be displayed are updated accordingly.
   title = title || state?.title;
   status = status || state?.status;
   subTitle = subTitle || state?.subTitle;

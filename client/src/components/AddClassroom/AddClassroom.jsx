@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Input } from "antd";
 
-const AddClassroom = ({ handleSubmit }) => {
+// Add New Classroom Button and Modal
+const AddClassroom = ({ handleSubmit, loading }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
@@ -21,8 +22,8 @@ const AddClassroom = ({ handleSubmit }) => {
   };
 
   return (
-    <div>
-      <Button type="primary" onClick={showModal}>
+    <>
+      <Button type="primary" onClick={showModal} loading={loading}>
         Create a new classroom
       </Button>
       <Modal
@@ -71,7 +72,7 @@ const AddClassroom = ({ handleSubmit }) => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 

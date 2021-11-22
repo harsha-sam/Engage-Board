@@ -24,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.STRING
     },
-    avatar: {
-      allowNull: true,
-      type: DataTypes.STRING,
-    },
     full_name: {
       type: DataTypes.STRING,
       allowNull: false

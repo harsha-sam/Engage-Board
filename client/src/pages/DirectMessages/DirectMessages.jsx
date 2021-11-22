@@ -8,6 +8,7 @@ import MessagesList from "../../components/MessagesList/MessagesList.jsx";
 import { Breadcrumb, Spin } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 
+// private messaging component
 const DirectMessages = () => {
   const { id } = useParams();
   const {
@@ -22,10 +23,12 @@ const DirectMessages = () => {
   } = useUsersContext();
 
   useEffect(() => {
+    // fetching the user based on the current route id /direct-messages/:id
     selectReceiver({ id });
-  }, [id]);
+  }, [id, selectReceiver]);
 
   if (usersLoading) {
+    // if list of users is loading
     return <Spin tip="Loading..." className="spinner" />;
   }
 
@@ -41,10 +44,16 @@ const DirectMessages = () => {
           <UserOutlined />
         </Breadcrumb.Item>
         <Breadcrumb.Item>
+          {/* if the user is current user itself, then You will be shown*/}
           {receiver?.id === user?.id ? "You" : receiver?.full_name}
         </Breadcrumb.Item>
       </Breadcrumb>
-      <MessagesList wrapperClassName="direct-messages" />
+      {/* messages list will auto fetch the chat based on the chat context*/}
+      <MessagesList
+        wrapperClassName="direct-messages"
+        // permittedToMessage will be true incase of direct messages.
+        permittedToMessage={true}
+      />
     </>
   );
 };

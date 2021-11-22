@@ -1,4 +1,4 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { notesInitialState, notesReducer } from "./reducers/notesReducer";
 import {
@@ -21,9 +21,10 @@ export const NotesProvider = ({ children }) => {
   );
   let navigate = useNavigate();
 
-  const getNotes = () => {
+  const getNotes = useCallback(() => {
+    // fetches meta info of all notes of the user
     notesDispatch({ type: SET_IS_LOADING, payload: true });
-    axiosInstance
+    return axiosInstance
       .get(notes_URL)
       .then((response) => {
         notesDispatch({ type: LOAD_NOTES, payload: response.data });
@@ -32,11 +33,12 @@ export const NotesProvider = ({ children }) => {
         message.error(err?.response?.data?.error || "something went wrong");
       })
       .finally(() => notesDispatch({ type: SET_IS_LOADING, payload: false }));
-  };
+  }, []);
 
-  const getNote = (payload) => {
+  const getNote = useCallback((payload) => {
+    // fetches specific note of the user
     notesDispatch({ type: SET_IS_LOADING, payload: true });
-    axiosInstance
+    return axiosInstance
       .get(`${notes_URL}/${payload.id}`)
       .then((response) => {
         notesDispatch({ type: LOAD_NOTE, payload: response.data });
@@ -48,10 +50,11 @@ export const NotesProvider = ({ children }) => {
         message.error(err?.response?.data?.error || "something went wrong");
       })
       .finally(() => notesDispatch({ type: SET_IS_LOADING, payload: false }));
-  };
+  }, [navigate]);
 
   const addNote = (payload) => {
-    axiosInstance
+    // creates a new note
+    return axiosInstance
       .post(notes_URL, payload)
       .then((response) => {
         notesDispatch({ type: ADD_NOTE, payload: response.data });
@@ -63,7 +66,8 @@ export const NotesProvider = ({ children }) => {
   };
 
   const editNote = (payload) => {
-    axiosInstance
+    // updates content of existing note
+    return axiosInstance
       .patch(`${notes_URL}/${payload.id}`, payload)
       .then((response) => {
         notesDispatch({ type: EDIT_NOTE, payload: response.data });
@@ -75,12 +79,12 @@ export const NotesProvider = ({ children }) => {
   };
 
   const removeNote = (payload) => {
-    axiosInstance
+    // deletes a note
+    return axiosInstance
       .delete(`${notes_URL}/${payload.id}`)
-      .then((response) => {
-        notesDispatch({ type: REMOVE_NOTE, payload: response.data });
+      .then(() => {
+        notesDispatch({ type: REMOVE_NOTE, payload });
         message.success("Note is deleted");
-        window.location.reload(false);
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");

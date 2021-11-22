@@ -1,11 +1,12 @@
+// Navigation Header
 import React from "react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import MenuCustom from "../MenuCustom/MenuCustom.jsx";
+import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 import { Layout, Avatar, Popover, Divider, Typography } from "antd";
 import { LogoutOutlined, EditOutlined } from "@ant-design/icons";
 import accessibility from "../../assets/accessibility.svg";
-import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { Header } = Layout;
 const { Title, Text } = Typography;
@@ -15,18 +16,23 @@ const NavHeader = () => {
     authState: { user, dyslexiaFontToggled },
     authActions: { signout, toggleDyslexiaFont },
   } = useAuthContext();
+  // content to be displayed on the accessibility menu
   const content = (
     <>
       <Title level={4}>Accessibilty</Title>
       <Divider />
-      <Text>If you have difficulty reading try using a font for dyslexia.</Text>
+      <Text>
+        If you have difficulty reading try using a font for dyslexia. Click to
+        toggle.
+      </Text>
     </>
   );
   const headerOptions = [
     {
-      icon: <CustomAvatar user={user}/>,
+      icon: <CustomAvatar user={user} />,
       name: user.full_name,
       id: user.id,
+      // Dropdown options on clicking user
       channels: [
         {
           icon: <EditOutlined />,
@@ -37,18 +43,19 @@ const NavHeader = () => {
         {
           icon: <LogoutOutlined />,
           name: "Logout",
-          id: "Logout",
+          id: "logout",
           onClick: signout,
         },
       ],
     },
     {
       icon: (
+        // dyslexia font accessibility
         <Popover trigger="hover" content={content}>
           <Avatar src={accessibility} style={{ backgroundColor: "#A0AEC0" }} />
         </Popover>
       ),
-      id: "Accessibilty",
+      id: "accessibilty",
       onClick: toggleDyslexiaFont,
     },
   ];
@@ -58,7 +65,7 @@ const NavHeader = () => {
       <MenuCustom
         items={headerOptions}
         mode="horizontal"
-        selectedKeys={dyslexiaFontToggled ? ["Accessibilty"] : []}
+        selectedKeys={dyslexiaFontToggled ? ["accessibilty"] : []}
       />
     </Header>
   );

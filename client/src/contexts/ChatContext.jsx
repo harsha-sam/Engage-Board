@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useReducer, useRef } from "react";
+import React, { useEffect, useContext, useReducer, useRef, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "./AuthContext.jsx";
 import { chatReducer, chatInitialState } from "./reducers/chatReducer";
@@ -37,15 +37,15 @@ export const ChatProvider = ({ children }) => {
   const socketRef = useRef();
   let navigate = useNavigate();
 
-  const selectChannel = (payload) => {
+  const selectChannel = useCallback((payload) => {
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     chatDispatch({ type: SET_CHANNEL, payload: payload });
-  };
+  }, []);
 
-  const selectReceiver = (payload) => {
+  const selectReceiver = useCallback((payload) => {
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     chatDispatch({ type: SET_RECEIVER, payload: payload });
-  };
+  }, []);
 
   const initiateSocketConnection = (obj) => {
     socketRef.current = io("http://localhost:4000", {
@@ -162,19 +162,18 @@ export const ChatProvider = ({ children }) => {
   };
 
   const addNewMessage = (payload) => {
-    let message = {
+    let msg = {
       content: payload,
       sender: {
         id: user.id,
-        full_name: user.full_name,
-        avatar: user.avatar,
+        full_name: user.full_name
       },
       receiver: chatState.receiver,
     };
     if (chatState.channel) {
-      socketRef.current.emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, message);
+      socketRef.current.emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, msg);
     } else if (chatState.receiver) {
-      socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, message);
+      socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, msg);
     }
   };
 

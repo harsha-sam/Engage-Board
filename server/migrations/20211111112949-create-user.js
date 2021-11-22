@@ -7,10 +7,6 @@ module.exports = {
         primaryKey: true,
         type: DataTypes.STRING
       },
-      avatar: {
-        allowNull: true,
-        type: DataTypes.STRING,
-      },
       full_name: {
         type: DataTypes.STRING,
         allowNull: false

@@ -1,58 +1,69 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
+import useLoader from "../../hooks/useLoader";
 import { Form, Button, Input, Spin, Typography } from "antd";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
 import "./EditUserProfile.css";
 
 const { Title } = Typography;
 
+//  Editing User Profile Component
 const EditUserProfile = () => {
   const {
     authState: { user, isLoading },
+    authActions: { updateUser },
   } = useAuthContext();
-  const [fullName, setFullName] = useState("");
-  const [isValid, setIsValid] = useState(false);
+  const [form] = Form.useForm();
+  const [isSubmitted, setIsSubmitted] = useLoader(false);
 
-  useEffect(() => {
-    setFullName(user.full_name);
-  }, [user]);
-
-  useEffect(() => {
-    setIsValid(false);
-  }, []);
-
-  const handleFullNameChange = (e) => {
-    setFullName(e.target.value);
-    setIsValid(true);
+  const onFinish = (values) => {
+    // submit button loader should be triggered
+    const { full_name, email } = values;
+    // if only the form has new values
+    if (user.full_name !== full_name || user.email !== email) {
+      setIsSubmitted(true);
+      updateUser({ email, full_name }).finally(() => {
+        // submit button loader should be stopped
+        setIsSubmitted(false);
+        form.resetFields();
+        // form fields should be reset
+      });
+    }
   };
 
   if (isLoading) {
     return <Spin />;
   }
-
   return (
-    <>
-      <div className="user_profile_wrapper">
-        <Title level={3}>User Profile</Title>
-        <br />
-        <Form.Item label="University ID">
-          <Input prefix={<UserOutlined />} value={user.id} disabled />
+    <div className="user_profile_wrapper">
+      <Title level={3}>User Profile</Title>
+      <br />
+      <Form
+        name="update user"
+        onFinish={onFinish}
+        form={form}
+        initialValues={{
+          full_name: user.full_name,
+          email: user.email,
+          id: user.id,
+        }}
+      >
+        <Form.Item label="University ID" name="id">
+          <Input prefix={<UserOutlined />} disabled />
         </Form.Item>
-        <Form.Item label="Email">
-          <Input prefix={<MailOutlined />} value={user.email} disabled />
+        <Form.Item label="Email" name="email">
+          <Input prefix={<MailOutlined />} />
         </Form.Item>
-        <Form.Item label="Full Name">
-          <Input
-            prefix={<UserOutlined />}
-            value={fullName}
-            onChange={handleFullNameChange}
-          />
+        <Form.Item label="Full Name" name="full_name">
+          <Input prefix={<UserOutlined />} />
         </Form.Item>
-        <Button type="primary" disabled={!isValid}>
-          Save
-        </Button>
-      </div>
-    </>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isSubmitted}>
+            Save
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 

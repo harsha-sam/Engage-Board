@@ -17,6 +17,7 @@ import {
   List,
   Tooltip,
   Popconfirm,
+  Spin,
 } from "antd";
 import { CheckCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import "./ClassroomSidebarHeader.css";
@@ -82,7 +83,12 @@ const ClassroomSidebarHeader = () => {
 
   return (
     <>
-      <Menu theme="dark" selectable={false} mode="vertical" style={{marginBottom: "10%"}}>
+      <Menu
+        theme="dark"
+        selectable={false}
+        mode="vertical"
+        style={{ marginBottom: "10%" }}
+      >
         <h2 className="classroom-name">{name}</h2>
         {showAdminSettings && (
           <SubMenu
@@ -91,11 +97,7 @@ const ClassroomSidebarHeader = () => {
             key="Manage Classroom"
           >
             <Menu.Item key="add user">
-              <Button
-                shape="round"
-                block={true}
-                onClick={showUserModal}
-              >
+              <Button shape="round" block={true} onClick={showUserModal}>
                 Add / Remove a user
               </Button>
             </Menu.Item>
@@ -162,7 +164,7 @@ const ClassroomSidebarHeader = () => {
         <Tabs defaultActiveKey="0" centered onChange={() => setRole("")}>
           <TabPane tab="Add User" key="0">
             {usersLoading ? (
-              <DummyMessages length={2} />
+              <Spin tip="Loading..." />
             ) : (
               <SearchAndListUsers
                 role={role}
@@ -189,7 +191,7 @@ const ClassroomSidebarHeader = () => {
           </TabPane>
           <TabPane tab="Remove User" key="2">
             {usersLoading ? (
-              <DummyMessages length={2} />
+              <Spin tip="Loading..." />
             ) : (
               <SearchAndListUsers
                 handleOnSave={handleRemoveUser}

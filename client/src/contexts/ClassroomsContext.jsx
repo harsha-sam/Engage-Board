@@ -10,7 +10,6 @@ import {
   ADD_CLASSROOM,
   ADD_REQUEST,
   WITHDRAW_REQUEST,
-  LEAVE_CLASSROOM,
 } from "./actionTypes";
 import {
   axiosInstance,
@@ -31,6 +30,7 @@ export const ClassroomsProvider = ({ children }) => {
     authState: { user },
   } = useAuthContext();
   const getClassrooms = () => {
+    // fetches list of all classrooms, user classrooms and classroom requests of the user
     classroomsDispatch({ type: SET_IS_LOADING, payload: true });
     axiosInstance
       .get(classrooms_URL)
@@ -46,11 +46,20 @@ export const ClassroomsProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // on mount, fetch all classrooms
     getClassrooms();
+    // 1 minute interval to update classrooms
+    const interval = setInterval(() => {
+      getClassrooms();
+    }, [60000]);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const addClassroom = (payload) => {
-    axiosInstance
+    // create new classroom
+    return axiosInstance
       .post(classrooms_URL, payload)
       .then((response) => {
         classroomsDispatch({ type: ADD_CLASSROOM, payload: response.data });
@@ -58,14 +67,12 @@ export const ClassroomsProvider = ({ children }) => {
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
-      })
-      .finally(() =>
-        classroomsDispatch({ type: SET_IS_LOADING, payload: false })
-      );
+      });
   };
 
   const postRequest = (payload) => {
-    axiosInstance
+    // create a new joining request to a classroom
+    return axiosInstance
       .post(requests_URL, payload)
       .then((response) => {
         classroomsDispatch({ type: ADD_REQUEST, payload: response.data });
@@ -77,7 +84,8 @@ export const ClassroomsProvider = ({ children }) => {
   };
 
   const withdrawRequest = (payload) => {
-    axiosInstance
+    // Withdrawing a request from classroom
+    return axiosInstance
       .delete(`${requests_URL}/?classroom_id=${payload.id}`)
       .then(() => {
         classroomsDispatch({ type: WITHDRAW_REQUEST, payload });
@@ -89,13 +97,15 @@ export const ClassroomsProvider = ({ children }) => {
   };
 
   const leaveClassroom = (payload) => {
+    // leaving a classroom
     axiosInstance
       .patch(`${classroom_users_URL}`, payload)
       .then(() => {
-        classroomsDispatch({ type: LEAVE_CLASSROOM, payload });
         if (payload.user_id === user.id) {
+          // if current user left
           message.success("Left the classroom");
         } else {
+          // if another user was removed from classroom by the admin or monitor
           message.success("Removed from classroom");
         }
         window.location.reload(false);
@@ -106,6 +116,7 @@ export const ClassroomsProvider = ({ children }) => {
   };
 
   const addUserToClassroom = (payload) => {
+    // adding a user to a classroom
     axiosInstance
       .post(`${classroom_users_URL}`, payload)
       .then(() => {

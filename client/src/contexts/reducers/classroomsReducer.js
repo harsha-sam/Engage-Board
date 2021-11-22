@@ -2,15 +2,14 @@ import {
   SET_IS_LOADING,
   LOAD_CLASSROOMS,
   ADD_CLASSROOM,
-  LEAVE_CLASSROOM,
   ADD_REQUEST,
   WITHDRAW_REQUEST,
 } from "../actionTypes";
 
 export const classroomsInitialState = {
-  classrooms: [],
-  userClassrooms: [],
-  classRequests: [],
+  classrooms: [], // list of all classrooms info
+  userClassrooms: [], // list of classroom ids user is a part of
+  classroomRequests: [], // list of classroom ids requests by user
   isLoading: false,
 }
 
@@ -26,26 +25,22 @@ export const classroomsReducer = (state = classroomsInitialState, action) => {
       }
     }
     case ADD_CLASSROOM: {
+      // whenever a new classroom is created, classrooms should be updated with the new classroom info and user classrooms with the id
       return {
         ...state,
         classrooms: [payload, ...state.classrooms,],
         userClassrooms: [payload.id, ...state.userClassrooms]
       }
     }
-    case LEAVE_CLASSROOM: {
-      let classroom_id = payload.classroom_id;
-      return {
-        ...state,
-        userClassrooms: state.userClassrooms.filter((id => id !== classroom_id))
-      }
-    }
     case ADD_REQUEST: {
+      // whenever a new joining request is placed, classroom requests should store the id
       return {
         ...state,
         classroomRequests: [payload.classroom_id, ...state.classroomRequests,]
       }
     }
     case WITHDRAW_REQUEST: {
+      // whenever a request is withdrawn, classroom requests should be filtered
       let classroom_id = payload.id;
       let newClassroomRequests = state.classroomRequests.filter((id) => id !== classroom_id)
       return {

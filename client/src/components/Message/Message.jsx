@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import moment from "moment";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import { useChatContext } from "../../contexts/ChatContext.jsx";
-import moment from "moment";
+import UserDisplay from "../UserDisplay/UserDisplay.jsx";
 import { Comment, Tooltip, Modal, Tabs, List } from "antd";
 import {
   LikeOutlined,
@@ -15,10 +16,10 @@ import {
   HeartTwoTone,
 } from "@ant-design/icons";
 import "./Message.css";
-import { CustomAvatar } from "../UserDisplay/UserDisplay.jsx";
 
 const { TabPane } = Tabs;
 
+// reactions available for messages
 const defaultReactions = [
   {
     key: "Like",
@@ -81,16 +82,18 @@ const Message = ({
       user: {
         id: user.id,
         full_name: user.full_name,
-        avatar: user.avatar,
       },
     };
+    // if the user already did that specific reaction, we need to undo it
     if (reaction.users && reaction.users.some((u) => u.id === user.id)) {
       deleteReaction(payload);
     } else {
+      // new reaction
       addNewReaction(payload);
     }
   };
 
+  // counting available reactions for this message and displaying
   let actions = defaultReactions.map((reaction) => {
     let currentReaction = null;
     currentReaction = reactions.find((element) => element.key === reaction.key);
@@ -105,7 +108,8 @@ const Message = ({
     );
   });
 
-  if (reactions?.length) {
+  // if any reaction count is greater than 0, users list of who reacted will be rendered
+  if (reactions?.some((reaction) => reaction.count > 0)) {
     actions.push(<span onClick={showModal}>See Who Reacted</span>);
   }
 
@@ -130,24 +134,19 @@ const Message = ({
           onCancel={handleCancel}
           footer={null}
         >
-          <Tabs defaultActiveKey="0" centered>
-            {reactions.map((reaction, index) => (
-              <TabPane tab={reaction.key} key={index}>
+          {/* showing reactions tabs and the users list who reacted */}
+          <Tabs centered>
+            {reactions.map((reaction) => (
+              <TabPane tab={reaction.key} key={reaction.key}>
                 {reaction.users.length > 0 ? (
                   <List
                     dataSource={reaction.users}
                     renderItem={(item) => (
-                      <List.Item key={item.id}>
-                        <List.Item.Meta
-                          avatar={<CustomAvatar user={item}/>}
-                          title={
-                            <Link to={`/direct-messages/${item.id}`}>
-                              {item.id === user.id ? "You" : item.full_name}
-                            </Link>
-                          }
-                          description={item.id}
-                        />
-                      </List.Item>
+                      <UserDisplay
+                        key={item.id}
+                        user={item}
+                        showTag={false}
+                      />
                     )}
                   />
                 ) : (
