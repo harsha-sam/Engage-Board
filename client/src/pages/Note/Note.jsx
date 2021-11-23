@@ -71,7 +71,7 @@ const Note = () => {
     // save changes button loader will be true as the note is being saved
     setButtonLoader(true);
     // save changes button loader will be reset after the note is successfully saved
-    editNote({ id: note.id, data, name: note?.name }).finally(() =>
+    editNote({ id: note.id, data, name: note.name }).finally(() =>
       setButtonLoader(false)
     );
   };
@@ -96,15 +96,23 @@ const Note = () => {
       </Breadcrumb>
       <div className="editor">
         {note.created_by === user.id ? (
-          <Button
-            type="primary"
-            className="btn"
-            disabled={buttonDisabled}
-            onClick={handleSave}
-            loading={buttonLoader}
-          >
-            Save Changes
-          </Button>
+          <>
+            <Button
+              type="primary"
+              className="btn"
+              disabled={buttonDisabled}
+              onClick={handleSave}
+              loading={buttonLoader}
+            >
+              Save Changes
+            </Button>
+            <h4>
+              <strong>
+              To share this note, please share the current page link. Anyone with
+              this link can view this note but cannot edit it.
+              </strong>
+            </h4>
+          </>
         ) : (
           // if this note is not created by the current authorized user, then no changes can be made to note
           <Text type="danger">

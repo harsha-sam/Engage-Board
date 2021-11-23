@@ -194,6 +194,12 @@ router.post('/users', verifyAccessToken, verifyPermissionClassroom, async (req, 
     user.classrooms = [...user.classrooms, classroom.id];
     newMembers = { ...classroom.members }
     if (new_user_id in newMembers) {
+      await Request.destroy({
+        where: {
+          user_id: new_user_id,
+          classroom_id: classroom.id
+        }
+      })
       throw new Error('User already exists in the classroom');
     }
     newMembers[new_user_id] = {

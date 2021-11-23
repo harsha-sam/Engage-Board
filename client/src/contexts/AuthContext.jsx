@@ -80,11 +80,12 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const signout = () => {
+  const signout = async() => {
     // removing access token and refresh token from localStorage
+    await message.loading("Logging out ...!", 1);
     localStorage.removeItem("access-token");
     localStorage.removeItem("refresh-token");
-    message.success("Logged out !");
+    await message.success("Logged out", 0.5)
     window.location = "/";
     window.location.reload(false);
   };

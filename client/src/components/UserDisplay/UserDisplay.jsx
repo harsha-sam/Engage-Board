@@ -13,21 +13,22 @@ const getColor = (role) => {
   return color;
 };
 
-const UserDisplay = ({ user, title, showTag = true }) => {
+const UserDisplay = ({ user, showTag = true, showLink = true }) => {
   return (
     <List.Item.Meta
       style={{ marginBottom: "10px", marginLeft: "20px" }}
       avatar={<CustomAvatar user={user} />}
-      title={<Link to={`/direct-messages/${user.id}`}>{user.full_name}</Link>}
+      title={showLink ? <Link to={`/direct-messages/${user.id}`}>{user.full_name}</Link> :
+      user.full_name}
       description={
         <>
           <small style={{ marginBottom: "2px", color: "grey" }}>
-            {user.id}
+            {user?.id}
           </small>
           <br />
           {showTag && (
-            <Tag color={getColor(user?.role)}>
-              {user.role[0].toUpperCase() + user.role.slice(1)}
+            <Tag color={getColor(user.role)}>
+              {user.role[0]?.toUpperCase() + user.role?.slice(1)}
             </Tag>
           )}
         </>
@@ -40,7 +41,7 @@ export const CustomAvatar = ({ user }) => {
   return (
     <Avatar
       style={{
-        backgroundColor: getColor(user?.role),
+        backgroundColor: getColor(user.role),
         verticalAlign: "middle",
         margin: "5px",
       }}

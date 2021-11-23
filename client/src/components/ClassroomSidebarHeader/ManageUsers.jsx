@@ -174,7 +174,7 @@ const SearchAndListUsers = ({
           filterOption={(val, option) => {
             // search users by name or ID
             return (
-              option.value.includes(val) ||
+              option.value.toLowerCase().includes(val.toLowerCase()) ||
               option.name.toLowerCase().includes(val.toLowerCase())
             );
           }}
@@ -184,7 +184,7 @@ const SearchAndListUsers = ({
           {options.map((user) => {
             return (
               <Option value={user.id} key={user.id} name={user.full_name}>
-                <UserDisplay user={user} />
+                <UserDisplay user={user} showLink={false} />
               </Option>
             );
           })}
@@ -247,7 +247,7 @@ const AddUsersViaReqests = ({ requests, handleAdd, role, onRoleChange }) => {
             </Popconfirm>,
           ]}
         >
-          <UserDisplay user={item.user} />
+          <UserDisplay user={item.user} showLink={false}/>
         </List.Item>
       )}
     />

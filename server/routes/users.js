@@ -29,8 +29,8 @@ router.patch('/me', verifyAccessToken, async (req, res) => {
       full_name
     } = req.body;
     let updateObj = {}
-    if (email) updateObj.email = email;
-    if (full_name) updateObj.full_name = full_name
+    if (email) updateObj['email'] = email;
+    if (full_name) updateObj['full_name'] = full_name
     if (!updateObj) {
       throw new Error('Please send fields which are to be updated')
     }
@@ -39,7 +39,6 @@ router.patch('/me', verifyAccessToken, async (req, res) => {
         id: req.user.id
       },
       returning: true,
-      attributes: ['id', 'full_name', 'role', 'email']
     })
     if (users[0] === 0) throw new Error('user not found.')
     let user = {

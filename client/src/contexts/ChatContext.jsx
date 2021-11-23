@@ -190,6 +190,7 @@ export const ChatProvider = ({ children }) => {
       sender: {
         id: user.id,
         full_name: user.full_name,
+        role: user.role,
       },
       receiver: chatState.receiver,
     };

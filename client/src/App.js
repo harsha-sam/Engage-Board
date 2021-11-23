@@ -76,9 +76,11 @@ const App = () => {
               exact
               path="/direct-messages/:id/"
               element={
-                <ChatProvider>
-                  <DirectMessages />
-                </ChatProvider>
+                <ClassroomProvider>
+                  <ChatProvider>
+                    <DirectMessages />
+                  </ChatProvider>
+                </ClassroomProvider>
               }
             />
             {/* All notes of the user */}

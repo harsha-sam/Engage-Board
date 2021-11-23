@@ -30,7 +30,7 @@ const DirectMessagesSearch = () => {
       users.filter(
         (user) =>
           // filter based on user's name or id
-          user.id.includes(val) ||
+          user.id.toLowerCase().includes(val.toLowerCase()) ||
           user.full_name.toLowerCase().includes(val.toLowerCase()) ||
           (user.id === current_user.id && "you".includes(val.toLowerCase()))
       )
@@ -59,12 +59,10 @@ const DirectMessagesSearch = () => {
             <Spin tip="Loading..." className="spinner" />
           ) : (
             options.map((option) => {
-              return (
-                <UserDisplay
-                  user={option}
-                  key={option.id}
-                />
-              );
+              if (option.id === current_user.id) {
+                option.full_name = "You";
+              }
+              return <UserDisplay user={option} key={option.id} />;
             })
           )}
         </div>

@@ -76,92 +76,122 @@ main = async () => {
 
       // when new message is received on a specific channel
       socket.on(CHANNEL_NEW_CHAT_MESSAGE_EVENT, async (data) => {
-        let { sender, content } = data;
-        let msg = await createMessage(sender.id, null, channel_id, content)
-        msg = {
-          id: msg.id,
-          sender,
-          content,
-          reactions: [],
-          channel_id,
-          createdAt: msg.createdAt,
-          updatedAt: msg.updatedAt
+        try {
+          let { sender, content } = data;
+          let msg = await createMessage(sender.id, null, channel_id, content)
+          msg = {
+            id: msg.id,
+            sender,
+            content,
+            reactions: [],
+            channel_id,
+            createdAt: msg.createdAt,
+            updatedAt: msg.updatedAt
+          }
+          io.in(channel_id).emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, msg);
         }
-        io.in(channel_id).emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, msg);
+        catch (err){}
       })
 
       // when a message is edited on a specific channel
       socket.on(CHANNEL_EDIT_MESSAGE_EVENT, async (data) => {
-        let { message_id, new_content } = data;
-        let msg = await editMessage(message_id, new_content);
-        data.updatedAt = msg.updatedAt;
-        io.in(channel_id).emit(CHANNEL_EDIT_MESSAGE_EVENT, data);
+        try {
+          let { message_id, new_content } = data;
+          let msg = await editMessage(message_id, new_content);
+          data.updatedAt = msg.updatedAt;
+          io.in(channel_id).emit(CHANNEL_EDIT_MESSAGE_EVENT, data);
+        }
+        catch (err) {}
       })
 
       // when a message is deleted on a specific channel
       socket.on(CHANNEL_DELETE_MESSAGE_EVENT, async (data) => {
-        let { message_id } = data;
-        await deleteMessage(message_id)
-        io.in(channel_id).emit(CHANNEL_DELETE_MESSAGE_EVENT, data);
+        try {
+          let { message_id } = data;
+          await deleteMessage(message_id)
+          io.in(channel_id).emit(CHANNEL_DELETE_MESSAGE_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when a message gets a new reaction on a specific channel
       socket.on(CHANNEL_MESSAGE_NEW_REACTION_EVENT, async (data) => {
-        let { message_id, user, reaction } = data;
-        await createReaction(message_id, user.id, reaction);
-        io.in(channel_id).emit(CHANNEL_MESSAGE_NEW_REACTION_EVENT, data);
+        try {
+          let { message_id, user, reaction } = data;
+          await createReaction(message_id, user.id, reaction);
+          io.in(channel_id).emit(CHANNEL_MESSAGE_NEW_REACTION_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when a reaction on a message of a specific channel is deleted
       socket.on(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, async (data) => {
-        let { message_id, user, reaction } = data;
-        await deleteReaction(message_id, user.id, reaction);
-        io.in(channel_id).emit(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, data);
+        try {
+          let { message_id, user, reaction } = data;
+          await deleteReaction(message_id, user.id, reaction);
+          io.in(channel_id).emit(CHANNEL_MESSAGE_DELETE_REACTION_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when new direct message is received 
       socket.on(NEW_CHAT_MESSAGE_EVENT, async (data) => {
-        let { sender, receiver, content } = data;
-        let msg = await createMessage(sender.id, receiver.id, null, content)
-        msg = {
-          id: msg.id,
-          sender,
-          content,
-          reactions: [],
-          receiver_id,
-          createdAt: msg.createdAt,
-          updatedAt: msg.updatedAt
+        try {
+          let { sender, receiver, content } = data;
+          let msg = await createMessage(sender.id, receiver.id, null, content)
+          msg = {
+            id: msg.id,
+            sender,
+            content,
+            reactions: [],
+            receiver_id,
+            createdAt: msg.createdAt,
+            updatedAt: msg.updatedAt
+          }
+          io.in(room).emit(NEW_CHAT_MESSAGE_EVENT, msg);
         }
-        io.in(room).emit(NEW_CHAT_MESSAGE_EVENT, msg);
+        catch (err) { }
       })
 
       // when a direct message is edited
       socket.on(EDIT_MESSAGE_EVENT, async (data) => {
-        let { message_id, new_content } = data;
-        let msg = await editMessage(message_id, new_content);
-        data.updatedAt = msg.updatedAt;
-        io.in(room).emit(EDIT_MESSAGE_EVENT, data);
+        try {
+          let { message_id, new_content } = data;
+          let msg = await editMessage(message_id, new_content);
+          data.updatedAt = msg.updatedAt;
+          io.in(room).emit(EDIT_MESSAGE_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when a message is deleted on a specific channel
       socket.on(DELETE_MESSAGE_EVENT, async (data) => {
-        let { message_id } = data;
-        await deleteMessage(message_id)
-        io.in(room).emit(DELETE_MESSAGE_EVENT, data);
+        try {
+          let { message_id } = data;
+          await deleteMessage(message_id)
+          io.in(room).emit(DELETE_MESSAGE_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when a message gets a new reaction
       socket.on(MESSAGE_NEW_REACTION_EVENT, async (data) => {
-        let { message_id, user, reaction } = data;
-        await createReaction(message_id, user.id, reaction);
-        io.in(room).emit(MESSAGE_NEW_REACTION_EVENT, data);
+        try {
+          let { message_id, user, reaction } = data;
+          await createReaction(message_id, user.id, reaction);
+          io.in(room).emit(MESSAGE_NEW_REACTION_EVENT, data);
+        }
+        catch (err) { }
       })
 
       // when a reaction on a message is deleted
       socket.on(MESSAGE_DELETE_REACTION_EVENT, async (data) => {
-        let { message_id, user, reaction } = data;
-        await deleteReaction(message_id, user.id, reaction);
-        io.in(room).emit(MESSAGE_DELETE_REACTION_EVENT, data);
+        try {
+          let { message_id, user, reaction } = data;
+          await deleteReaction(message_id, user.id, reaction);
+          io.in(room).emit(MESSAGE_DELETE_REACTION_EVENT, data);
+        }
+        catch (err) { }
       })
 
       socket.on('disconnect', () => {
