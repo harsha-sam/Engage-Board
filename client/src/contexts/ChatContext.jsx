@@ -62,7 +62,7 @@ export const ChatProvider = ({ children }) => {
 
   const initiateSocketConnection = (obj) => {
     // initializing socket connection
-    socketRef.current = io("http://localhost:4000", {
+    socketRef.current = io(process.env.REACT_APP_API_BASE_URL, {
       query: obj,
     });
     console.log(`Connecting socket...`);

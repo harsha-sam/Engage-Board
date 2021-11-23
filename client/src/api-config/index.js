@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://localhost:4000'
+  baseURL: process.env.REACT_APP_API_BASE_URL
 })
 // Add a request interceptor and store access token within the request
 axiosInstance.interceptors.request.use((config) => {
@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
       !request._retry
     ) {
       request._retry = true;
-      return axios.get(`http://localhost:4000/auth/token`, {
+      return axios.get(`${process.env.REACT_APP_API_BASE_URL}/auth/token`, {
         headers: {
           'refresh-token': refreshToken
         }
