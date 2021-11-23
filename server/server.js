@@ -39,6 +39,8 @@ main = async () => {
     app.use('/chat', require('./routes/chat'))
     app.use('/notes', require('./routes/notes'))
 
+    app.get('/', (req, res) => res.send("Hello"))
+
     // cors for socket
     const io = socketio(server, {
       cors: {
@@ -168,8 +170,8 @@ main = async () => {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
 
-    server.listen(process.env.PORT || 4000, () => {
-      console.log(`App is running on port ${process.env.PORT || 4000}`)
+    server.listen(process.env.PORT || 8081, () => {
+      console.log(`App is running on port ${process.env.PORT || 8081}`)
     })
   } catch (error) {
     console.error('Unable to connect to the database:', error);
