@@ -27,9 +27,11 @@ export const chatReducer = (state = chatInitialState, action) => {
       return ({ ...state, messagesList: payload })
     }
     case SET_CHANNEL: {
+      // current channel of the classroom
       return ({ ...state, channel: payload, receiver: null, messagesList: [], isLoading: false })
     }
     case SET_RECEIVER: {
+      // direct message receiver
       return ({ ...state, receiver: payload, channel: null, messagesList: [], isLoading: false })
     }
     case ADD_MESSAGE_TO_CHAT: {
@@ -38,10 +40,14 @@ export const chatReducer = (state = chatInitialState, action) => {
     }
     case ADD_REACTION_TO_MESSAGE: {
       let messagesList = [...state.messagesList]
+      // that specific message
       let messageIndex = messagesList.findIndex((message) => message.id === payload.message_id)
+      // reactions for this message
       let newReactions = [...messagesList[messageIndex].reactions]
+      // specific reaction
       let reactionIndex = newReactions.findIndex((reaction) => reaction.key === payload.reaction)
       if (reactionIndex === -1) {
+        // creating new reaction
         newReactions.push({
           key: payload.reaction,
           title: payload.reaction,
@@ -50,6 +56,7 @@ export const chatReducer = (state = chatInitialState, action) => {
         })
       }
       else {
+        // updating existing reaction count
         let users = [...newReactions[reactionIndex].users, payload.user];
         let hash = {}
         users.forEach(element => {
@@ -65,9 +72,13 @@ export const chatReducer = (state = chatInitialState, action) => {
     }
     case REMOVE_REACTION_TO_MESSAGE: {
       let messagesList = [...state.messagesList]
+      // that specific message
       let messageIndex = messagesList.findIndex((message) => message.id === payload.message_id)
+      // reactions for that message
       let reactions = [...messagesList[messageIndex].reactions]
+      // specific reaction
       let reactionIndex = reactions.findIndex((reaction) => reaction.key === payload.reaction)
+      // updating count
       reactions[reactionIndex].users = reactions[reactionIndex].users.filter((user) => user.id !== payload.user.id)
       reactions[reactionIndex].count = reactions[reactionIndex].users.length
       if (reactions[reactionIndex].count < 0) {
@@ -81,6 +92,7 @@ export const chatReducer = (state = chatInitialState, action) => {
       let messageIndex = messagesList.findIndex((message) => message.id === payload.message_id)
       let newMessage = { ...messagesList[messageIndex] }
       newMessage.content = payload.new_content
+      newMessage.updatedAt = payload.updatedAt
       messagesList[messageIndex] = newMessage;
       return ({ ...state, messagesList })
     }

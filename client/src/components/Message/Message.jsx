@@ -55,6 +55,7 @@ const Message = ({
   author,
   authorId,
   time,
+  edited,
   reactions,
   messageId,
   ...props
@@ -121,7 +122,11 @@ const Message = ({
         author={<Link to={`/direct-messages/${authorId}`}>{author}</Link>}
         datetime={
           <Tooltip title={moment(time).format("YYYY-MM-DD HH:mm:ss")}>
-            <span>{moment(time).fromNow()}</span>
+            <span>
+              {edited
+                ? `Edited ${moment(time).fromNow()}`
+                : moment(time).fromNow()}
+            </span>
           </Tooltip>
         }
         {...props}
@@ -142,11 +147,7 @@ const Message = ({
                   <List
                     dataSource={reaction.users}
                     renderItem={(item) => (
-                      <UserDisplay
-                        key={item.id}
-                        user={item}
-                        showTag={false}
-                      />
+                      <UserDisplay key={item.id} user={item} showTag={false} />
                     )}
                   />
                 ) : (

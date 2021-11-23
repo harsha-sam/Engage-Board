@@ -30,7 +30,7 @@ const ContentModeration = ({ showModal, onClose }) => {
       maskClosable={false}
     >
       <h3 level={4}>
-        Uses Azure Cognitive Services to detect profanity and deletes the
+        Uses Azure Cognitive Services to detect profanity and auto deletes the
         messages identified.
       </h3>
       <br />

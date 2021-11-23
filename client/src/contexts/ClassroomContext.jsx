@@ -49,7 +49,7 @@ export const ClassroomProvider = ({ children }) => {
     [navigate]
   );
 
-  const getRequests = () => {
+  const getRequests = useCallback(() => {
     // pending joining requests of the classroom
     if (classroomState.id) {
       classroomDispatch({ type: SET_IS_LOADING, payload: true });
@@ -66,7 +66,7 @@ export const ClassroomProvider = ({ children }) => {
           classroomDispatch({ type: SET_IS_LOADING, payload: false });
         });
     }
-  };
+  }, [classroomState.id]);
 
   const saveContentModerationSettings = (payload) => {
     // updating content moderation settings of the classroom

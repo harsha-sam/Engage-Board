@@ -89,7 +89,8 @@ main = async () => {
       // when a message is edited on a specific channel
       socket.on(CHANNEL_EDIT_MESSAGE_EVENT, async (data) => {
         let { message_id, new_content } = data;
-        await editMessage(message_id, new_content);
+        let msg = await editMessage(message_id, new_content);
+        data.updatedAt = msg.updatedAt;
         io.in(channel_id).emit(CHANNEL_EDIT_MESSAGE_EVENT, data);
       })
 
@@ -133,7 +134,8 @@ main = async () => {
       // when a direct message is edited
       socket.on(EDIT_MESSAGE_EVENT, async (data) => {
         let { message_id, new_content } = data;
-        await editMessage(message_id, new_content);
+        let msg = await editMessage(message_id, new_content);
+        data.updatedAt = msg.updatedAt;
         io.in(room).emit(EDIT_MESSAGE_EVENT, data);
       })
 

@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
-import { useUsersContext } from "../../contexts/UsersContext.jsx";
 import { useClassroomsContext } from "../../contexts/ClassroomsContext.jsx";
 import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
-import { DummyMessages } from "../MessagesList/MessagesList.jsx";
-import UserDisplay from "../UserDisplay/UserDisplay.jsx";
+import ManageUsers from "./ManageUsers.jsx";
 import ContentModeration from "./ContentModeration.jsx";
 import ManageChannels from "./ManageChannels.jsx";
-import {
-  Menu,
-  Button,
-  Modal,
-  Tabs,
-  Select,
-  Radio,
-  List,
-  Tooltip,
-  Popconfirm,
-  Spin,
-} from "antd";
-import { CheckCircleOutlined, SettingOutlined } from "@ant-design/icons";
+import { Menu, Button, Popconfirm } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import "./ClassroomSidebarHeader.css";
 
-const { TabPane } = Tabs;
 const { SubMenu } = Menu;
 
 const ClassroomSidebarHeader = () => {
@@ -30,49 +16,22 @@ const ClassroomSidebarHeader = () => {
     authState: { user },
   } = useAuthContext();
   const {
-    classroomsActions: { addUserToClassroom, leaveClassroom },
-  } = useClassroomsContext();
-  const {
-    classroomState: { id, name, members, isLoading, requests },
-    classroomActions: { getRequests },
+    classroomState: { id, name, members },
   } = useClassroomContext();
   const {
-    usersState: { users, isLoading: usersLoading },
-    usersActions: { getListOfUsers },
-  } = useUsersContext();
+    // for leaving the classroom
+    classroomsActions: { leaveClassroom },
+  } = useClassroomsContext();
   const [showAdminSettings, setShowAdminSettings] = useState(false);
-  const [showUsersModal, setShowUsersModal] = useState(false);
+  // add/remove users modal
+  const [showManageUsersModal, setShowManageUsersModal] = useState(false);
+  // manage channels modal
   const [showManageChannelsModal, setShowManageChannelsModal] = useState(false);
+  // content moderation modal
   const [showContentModeration, setShowContentModeration] = useState(false);
-  const [role, setRole] = useState("");
-
-  const showUserModal = () => {
-    getRequests();
-    getListOfUsers();
-    setRole("");
-    setShowUsersModal(true);
-  };
-
-  const handleCancel = () => {
-    setRole("");
-    setShowUsersModal(false);
-  };
-
-  const onChange = (e) => setRole(e.target.value);
-
-  const handleAddUser = (payload) => {
-    setShowUsersModal(false);
-    payload = { ...payload, classroom_id: id };
-    addUserToClassroom(payload);
-  };
-
-  const handleRemoveUser = (payload) => {
-    setShowUsersModal(false);
-    payload = { ...payload, classroom_id: id };
-    leaveClassroom(payload);
-  };
 
   useEffect(() => {
+    // checking permission to show admin settings
     let permissionCheck = false;
     let member = members[user.id];
     if (member) {
@@ -80,6 +39,13 @@ const ClassroomSidebarHeader = () => {
     }
     setShowAdminSettings(permissionCheck);
   }, [user, members]);
+
+  const handleLeaveClassroom = () => {
+    leaveClassroom({
+      user_id: user.id,
+      classroom_id: id,
+    });
+  };
 
   return (
     <>
@@ -89,18 +55,32 @@ const ClassroomSidebarHeader = () => {
         mode="vertical"
         style={{ marginBottom: "10%" }}
       >
+        {/* classroom name */}
         <h2 className="classroom-name">{name}</h2>
+        {/* only display manage classroom menu for admins and monitors */}
         {showAdminSettings && (
           <SubMenu
             title="Manage Classroom"
             icon={<SettingOutlined />}
             key="Manage Classroom"
           >
+            {/* Adding or removing users */}
             <Menu.Item key="add user">
-              <Button shape="round" block={true} onClick={showUserModal}>
+              <Button
+                shape="round"
+                block={true}
+                onClick={() => setShowManageUsersModal(true)}
+              >
                 Add / Remove a user
               </Button>
+              {showManageUsersModal && (
+                <ManageUsers
+                  showModal={showManageUsersModal}
+                  onClose={() => setShowManageUsersModal(false)}
+                />
+              )}
             </Menu.Item>
+            {/* Content Moderation Modal*/}
             <Menu.Item key="content moderation">
               <Button
                 shape="round"
@@ -117,6 +97,7 @@ const ClassroomSidebarHeader = () => {
                 />
               )}
             </Menu.Item>
+            {/* Manage Channels Modal */}
             <Menu.Item key="manage channels">
               <Button
                 shape="round"
@@ -135,16 +116,12 @@ const ClassroomSidebarHeader = () => {
             </Menu.Item>
           </SubMenu>
         )}
+        {/* Leaving classroom */}
         <Menu.Item key="leave classroom">
           <Popconfirm
             title="Note: If you are the admin of this classroom. 
           Leaving it will also delete the classroom. Are you sure?"
-            onConfirm={() => {
-              leaveClassroom({
-                classroom_id: id,
-                user_id: user.id,
-              });
-            }}
+            onConfirm={handleLeaveClassroom}
             placement="top"
           >
             <Button shape="round" type="danger" block={true}>
@@ -153,184 +130,7 @@ const ClassroomSidebarHeader = () => {
           </Popconfirm>
         </Menu.Item>
       </Menu>
-      <Modal
-        title=""
-        visible={showAdminSettings && showUsersModal}
-        onCancel={handleCancel}
-        footer={null}
-        closable={true}
-        maskClosable={false}
-      >
-        <Tabs defaultActiveKey="0" centered onChange={() => setRole("")}>
-          <TabPane tab="Add User" key="0">
-            {usersLoading ? (
-              <Spin tip="Loading..." />
-            ) : (
-              <SearchAndListUsers
-                role={role}
-                handleOnSave={handleAddUser}
-                onRoleChange={onChange}
-                users={users}
-                members={members}
-                type="add"
-                buttonText={"Add"}
-              />
-            )}
-          </TabPane>
-          <TabPane tab="Pending Requests" key="1">
-            {isLoading ? (
-              <DummyMessages length={2} />
-            ) : (
-              <AddUsersViaReqests
-                requests={requests}
-                handleAdd={handleAddUser}
-                role={role}
-                onRoleChange={onChange}
-              />
-            )}
-          </TabPane>
-          <TabPane tab="Remove User" key="2">
-            {usersLoading ? (
-              <Spin tip="Loading..." />
-            ) : (
-              <SearchAndListUsers
-                handleOnSave={handleRemoveUser}
-                users={users}
-                members={members}
-                type="remove"
-                currentUserId={user.id}
-                buttonText={"Remove"}
-              />
-            )}
-          </TabPane>
-        </Tabs>
-      </Modal>
     </>
-  );
-};
-
-const SearchAndListUsers = ({
-  role,
-  onRoleChange,
-  users,
-  members,
-  handleOnSave,
-  type,
-  currentUserId,
-  buttonText,
-}) => {
-  const { Option } = Select;
-  const [selectedUser, setSelectedUser] = useState();
-  const [options, setOptions] = useState([]);
-
-  const handleSave = () => {
-    if (type === "add") handleOnSave({ new_user_id: selectedUser, role });
-    else handleOnSave({ user_id: selectedUser });
-  };
-
-  useEffect(() => {
-    if (type === "add") {
-      setOptions(
-        users.filter((user) => {
-          return !members[user.id];
-        })
-      );
-    } else {
-      let removableUsers = [];
-      Object.keys(members).forEach((id) => {
-        let member = members[id];
-        if (member.id !== currentUserId && member.role !== "admin")
-          removableUsers.push(member);
-      });
-      setOptions(removableUsers);
-    }
-  }, [members, users]);
-
-  return (
-    <div className="form-container">
-      <div>
-        <Select
-          placeholder="Search a user by name or ID"
-          className="select"
-          showSearch
-          filterOption={(val, option) => {
-            return (
-              option.value.includes(val) ||
-              option.name.toLowerCase().includes(val.toLowerCase())
-            );
-          }}
-          value={selectedUser}
-          onSelect={setSelectedUser}
-        >
-          {options.map((user) => {
-            return (
-              <Option value={user.id} key={user.id} name={user.full_name}>
-                <UserDisplay user={user} />
-              </Option>
-            );
-          })}
-        </Select>
-      </div>
-      {type === "add" && (
-        <div>
-          <label>Role: </label>
-          <Radio.Group onChange={onRoleChange} value={role}>
-            <Radio value="monitor">Monitor</Radio>
-            <Radio value="student">Student</Radio>
-          </Radio.Group>
-        </div>
-      )}
-      <Button
-        type="primary"
-        disabled={type === "add" ? !role || !selectedUser : !selectedUser}
-        onClick={handleSave}
-      >
-        {buttonText}
-      </Button>
-    </div>
-  );
-};
-
-const AddUsersViaReqests = ({ requests, handleAdd, role, onRoleChange }) => {
-  if (!requests.length) {
-    return <span>No requests found</span>;
-  }
-  return (
-    <List
-      itemLayout="horizontal"
-      dataSource={requests}
-      renderItem={(item) => (
-        <List.Item
-          actions={[
-            <Popconfirm
-              title={
-                <>
-                  <h3>Pick the role of this user in the classroom</h3>
-                  <Radio.Group onChange={onRoleChange} value={role}>
-                    <Radio value="monitor">Monitor</Radio>
-                    <Radio value="student">Student</Radio>
-                  </Radio.Group>
-                </>
-              }
-              okText="Add user"
-              onConfirm={() => {
-                handleAdd({
-                  new_user_id: item.user.id,
-                  request_id: item.id,
-                  role,
-                });
-              }}
-            >
-              <Tooltip title="Accept">
-                <CheckCircleOutlined />
-              </Tooltip>
-            </Popconfirm>,
-          ]}
-        >
-          <UserDisplay user={item.user} />
-        </List.Item>
-      )}
-    />
   );
 };
 

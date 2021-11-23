@@ -22,7 +22,8 @@ module.exports.editMessage = async (id, newContent) => {
     where: {
       id
     },
-    individualHooks: true
+    individualHooks: true,
+    returning: true
   })
 }
 

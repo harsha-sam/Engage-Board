@@ -1,4 +1,11 @@
-import React, { useEffect, useContext, useReducer, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useContext,
+  useReducer,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { useNavigate } from "react-router";
 import { useAuthContext } from "./AuthContext.jsx";
 import { chatReducer, chatInitialState } from "./reducers/chatReducer";
@@ -34,27 +41,35 @@ export const ChatProvider = ({ children }) => {
     authState: { user },
   } = useAuthContext();
   const [chatState, chatDispatch] = useReducer(chatReducer, chatInitialState);
+  const receieverId = useMemo(
+    () => chatState.receiver?.id,
+    [chatState.receiver?.id]
+  );
   const socketRef = useRef();
   let navigate = useNavigate();
 
   const selectChannel = useCallback((payload) => {
+    // selecting channel for chatbox
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     chatDispatch({ type: SET_CHANNEL, payload: payload });
   }, []);
 
   const selectReceiver = useCallback((payload) => {
+    // selecting receiever of direct messages
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     chatDispatch({ type: SET_RECEIVER, payload: payload });
   }, []);
 
   const initiateSocketConnection = (obj) => {
+    // initializing socket connection
     socketRef.current = io("http://localhost:4000", {
       query: obj,
     });
     console.log(`Connecting socket...`);
   };
 
-  const setupSocketListener = () => {
+  const setupSocketListener = useCallback(() => {
+    // channel events
     socketRef.current.on(CHANNEL_NEW_CHAT_MESSAGE_EVENT, (message) => {
       chatDispatch({ type: ADD_MESSAGE_TO_CHAT, payload: message });
     });
@@ -77,6 +92,7 @@ export const ChatProvider = ({ children }) => {
       }
       chatDispatch({ type: DELETE_MESSAGE, payload });
     });
+    // Direct message events
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
       chatDispatch({ type: ADD_MESSAGE_TO_CHAT, payload: message });
     });
@@ -94,35 +110,16 @@ export const ChatProvider = ({ children }) => {
     socketRef.current.on(DELETE_MESSAGE_EVENT, (payload) => {
       chatDispatch({ type: DELETE_MESSAGE, payload });
     });
-  };
+  }, [user.id]);
 
   const disconnectSocket = () => {
+    // disconnecting socket
     console.log("Disconnecting socket...");
     if (socketRef.current) socketRef.current.disconnect();
   };
 
-  useEffect(() => {
-    if (chatState.channel && chatState.channel.id) {
-      initiateSocketConnection({ channel_id: chatState.channel.id });
-      setupSocketListener();
-      getChannelChat(chatState.channel);
-    }
-    return () => disconnectSocket();
-  }, [chatState.channel]);
-
-  useEffect(() => {
-    if (chatState.receiver && chatState.receiver.id) {
-      initiateSocketConnection({
-        sender_id: user.id,
-        receiver_id: chatState.receiver.id,
-      });
-      setupSocketListener();
-      getDirectMessages(chatState.receiver);
-    }
-    return () => disconnectSocket();
-  }, [chatState.receiver?.id]);
-
-  const getChannelChat = (payload) => {
+  const getChannelChat = useCallback((payload) => {
+    // fetches messages of a channel in a classroom
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     axiosInstance
       .get(`${channels_chat_URL}/${payload.id}`)
@@ -133,14 +130,27 @@ export const ChatProvider = ({ children }) => {
         message.error(err?.response?.data?.error || "something went wrong");
       })
       .finally(() => chatDispatch({ type: SET_IS_LOADING, payload: false }));
-  };
+  }, []);
 
-  const getDirectMessages = (payload) => {
+  useEffect(() => {
+    if (chatState.channel && chatState.channel.id) {
+      initiateSocketConnection({ channel_id: chatState.channel.id });
+      setupSocketListener();
+      getChannelChat(chatState.channel);
+    }
+    return () => disconnectSocket();
+  }, [chatState.channel, setupSocketListener, getChannelChat]);
+
+  const getDirectMessages = useCallback((payload) => {
+    // fetches messages b/w user and receiver
     chatDispatch({ type: SET_IS_LOADING, payload: true });
     axiosInstance
       .get(`${chat_URL}/?receiver_id=${payload.id}`)
       .then((response) => {
-        chatDispatch({ type: SET_RECEIVER, payload: response.data.receiver });
+        chatDispatch({
+          type: SET_RECEIVER,
+          payload: response.data.receiver,
+        });
         chatDispatch({ type: LOAD_CHAT, payload: response.data.messages });
       })
       .catch((err) => {
@@ -159,14 +169,27 @@ export const ChatProvider = ({ children }) => {
         message.error(err?.response?.data?.error || "something went wrong");
       })
       .finally(() => chatDispatch({ type: SET_IS_LOADING, payload: false }));
-  };
+  }, []);
+
+  useEffect(() => {
+    if (receieverId) {
+      initiateSocketConnection({
+        sender_id: user.id,
+        receiver_id: receieverId,
+      });
+      setupSocketListener();
+      getDirectMessages({ id: receieverId });
+    }
+    return () => disconnectSocket();
+  }, [receieverId, setupSocketListener, user.id, getDirectMessages]);
 
   const addNewMessage = (payload) => {
+    // creates new message
     let msg = {
       content: payload,
       sender: {
         id: user.id,
-        full_name: user.full_name
+        full_name: user.full_name,
       },
       receiver: chatState.receiver,
     };
@@ -177,9 +200,11 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  // create a new reaction
   const addNewReaction = (payload) => {
     const { message_id, reaction, user } = payload;
     let event = MESSAGE_NEW_REACTION_EVENT;
+    // if channel exists, then the message belongs to a channel else it is a direct message event
     if (chatState.channel) event = CHANNEL_MESSAGE_NEW_REACTION_EVENT;
     socketRef.current.emit(event, {
       message_id: message_id,
@@ -188,6 +213,7 @@ export const ChatProvider = ({ children }) => {
     });
   };
 
+  // deletes a reaction
   const deleteReaction = (payload) => {
     const { message_id, reaction, user } = payload;
     let event = MESSAGE_DELETE_REACTION_EVENT;
@@ -199,6 +225,7 @@ export const ChatProvider = ({ children }) => {
     });
   };
 
+  // edits a message
   const editMessage = (payload) => {
     const { message_id, new_content } = payload;
     let event = EDIT_MESSAGE_EVENT;
@@ -209,6 +236,7 @@ export const ChatProvider = ({ children }) => {
     });
   };
 
+  // deletes a message
   const deleteMessage = (payload) => {
     const { message_id } = payload;
     let event = DELETE_MESSAGE_EVENT;

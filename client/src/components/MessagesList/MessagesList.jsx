@@ -79,6 +79,12 @@ const MessagesList = ({ wrapperClassName, permittedToMessage }) => {
                 </>
               );
             }
+            //if created time not equal to updated time then the message is edited
+            let time = moment(msg.createdAt);
+            let edited = msg.createdAt !== msg.updatedAt;
+            if (edited) {
+              time = moment(msg.updatedAt);
+            }
             return (
               <Message
                 key={msg.id}
@@ -133,7 +139,8 @@ const MessagesList = ({ wrapperClassName, permittedToMessage }) => {
                     {msg.content}
                   </Paragraph>
                 }
-                time={moment(msg.createdAt)}
+                time={time}
+                edited={edited}
                 reactions={msg.reactions}
               />
             );

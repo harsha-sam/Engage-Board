@@ -31,5 +31,10 @@ module.exports = {
     "port": process.env.DB_PORT,
     "dialect": 'postgres',
     "timezone": process.env.TZ,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+      }
+    }
   }
 };
