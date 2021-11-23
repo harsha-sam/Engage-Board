@@ -7,6 +7,7 @@ const { createMessage, editMessage, deleteMessage } = require('./utils/messages'
 const socketio = require('socket.io');
 const morganMiddleware = require('./middleware/morgan')
 const http = require('http')
+// socket events
 const CHANNEL_NEW_CHAT_MESSAGE_EVENT = "CHANNEL_NEW_CHAT_MESSAGE_EVENT";
 const CHANNEL_EDIT_MESSAGE_EVENT = "CHANNEL_EDIT_MESSAGE_EVENT";
 const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
@@ -18,6 +19,7 @@ const DELETE_MESSAGE_EVENT = "DELETE_MESSAGE_EVENT";
 const MESSAGE_NEW_REACTION_EVENT = "MESSAGE_NEW_REACTION_EVENT";
 const MESSAGE_DELETE_REACTION_EVENT = "MESSAGE_DELETE_REACTION_EVENT";
 
+// main function
 main = async () => {
   try {
     const app = express();
