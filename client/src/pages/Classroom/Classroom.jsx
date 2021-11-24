@@ -7,6 +7,7 @@ import useLoader from "../../hooks/useLoader";
 import ClassroomSidebarHeader from "../../components/ClassroomSidebarHeader/ClassroomSidebarHeader.jsx";
 import NavHeader from "../../components/NavHeader/NavHeader.jsx";
 import MenuCustom from "../../components/MenuCustom/MenuCustom.jsx";
+import EmptyCustom from "../../components/EmptyCustom/EmptyCustom.jsx";
 import MessagesList from "../../components/MessagesList/MessagesList.jsx";
 import UserDisplay from "../../components/UserDisplay/UserDisplay.jsx";
 import { Affix, Layout, Menu, Typography, Spin } from "antd";
@@ -104,13 +105,12 @@ const Classroom = () => {
       <Layout>
         <Sider
           theme="dark"
-          style={{
-            overflow: "auto",
-            height: "100vh",
-            position: "fixed",
-            left: 0,
-            top: 0,
-          }}
+          className="left-sidebar"
+          style={{ height: "100vh", zIndex: 2 }}
+          breakpoint="md"
+          width={240}
+          collapsible
+          collapsedWidth={0}
         >
           {/* Sidebar header will contain all the settings and actions of the classroom */}
           <ClassroomSidebarHeader />
@@ -118,9 +118,10 @@ const Classroom = () => {
             items={categoryOptions}
             mode={"inline"}
             // current channel selected
-            selectedKeys={[channel.id]}
+            selectedKeys={[channel?.id]}
             // all categories are opened by default
             defaultOpenKeys={categories.map((category) => category.id)}
+            style={{ height: "60%", overflow: "auto" }}
           />
         </Sider>
         <Content>
@@ -130,23 +131,31 @@ const Classroom = () => {
                 {/* Navigation Header for accessibility and user options */}
                 <NavHeader />
                 {/* All messages list */}
-                <MessagesList
-                  wrapperClassName={"messages-list"}
-                  permittedToMessage={permitted}
-                />
+                {channel ? (
+                  <MessagesList
+                    wrapperClassName={"messages-list"}
+                    permittedToMessage={permitted}
+                  />
+                ) : (
+                  <EmptyCustom description="No channels found" />
+                )}
               </Layout>
             </Content>
             {/* Right sidebar */}
             <Sider
               theme="dark"
+              className="right-sidebar"
+              breakpoint="lg"
+              reverseArrow={true}
+              collapsible
+              width={240}
+              collapsedWidth={0}
               style={{
                 padding: "5% 1%",
-                overflow: "auto",
+                zIndex: "1",
                 position: "sticky",
                 height: "100vh",
-                right: 0,
               }}
-              width={240}
             >
               {/* Description of the classroom is displayed at top of right sidebar */}
               <Title style={{ color: "#fff" }} level={4}>
@@ -157,6 +166,8 @@ const Classroom = () => {
                   color: "#fff",
                   textAlign: "justify",
                   marginBottom: "15px",
+                  overflow: "auto",
+                  maxHeight: "40%",
                 }}
                 ellipsis={{
                   rows: 5,
@@ -170,10 +181,10 @@ const Classroom = () => {
               <Menu
                 mode="inline"
                 theme="dark"
-                defaultOpenKeys={["members"]}
+                defaultOpenKeys={["members", "Admin", "Monitors", "Students"]}
                 selectable={false}
+                style={{ overflow: "auto", height: "60vh" }}
               >
-                <Menu.Divider />
                 {/* Sub menu will be displayed only if members are available under that role */}
                 <SubMenu
                   title={`Members (${total_members})`}

@@ -247,7 +247,7 @@ const AddUsersViaReqests = ({ requests, handleAdd, role, onRoleChange }) => {
             </Popconfirm>,
           ]}
         >
-          <UserDisplay user={item.user} showLink={false}/>
+          <UserDisplay user={item.user} showLink={false} />
         </List.Item>
       )}
     />

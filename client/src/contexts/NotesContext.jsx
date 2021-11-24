@@ -35,22 +35,25 @@ export const NotesProvider = ({ children }) => {
       .finally(() => notesDispatch({ type: SET_IS_LOADING, payload: false }));
   }, []);
 
-  const getNote = useCallback((payload) => {
-    // fetches specific note of the user
-    notesDispatch({ type: SET_IS_LOADING, payload: true });
-    return axiosInstance
-      .get(`${notes_URL}/${payload.id}`)
-      .then((response) => {
-        notesDispatch({ type: LOAD_NOTE, payload: response.data });
-      })
-      .catch((err) => {
-        if (err?.response?.status === 400) {
-          navigate("/error");
-        }
-        message.error(err?.response?.data?.error || "something went wrong");
-      })
-      .finally(() => notesDispatch({ type: SET_IS_LOADING, payload: false }));
-  }, [navigate]);
+  const getNote = useCallback(
+    (payload) => {
+      // fetches specific note of the user
+      notesDispatch({ type: SET_IS_LOADING, payload: true });
+      return axiosInstance
+        .get(`${notes_URL}/${payload.id}`)
+        .then((response) => {
+          notesDispatch({ type: LOAD_NOTE, payload: response.data });
+        })
+        .catch((err) => {
+          if (err?.response?.status === 400) {
+            navigate("/error");
+          }
+          message.error(err?.response?.data?.error || "something went wrong");
+        })
+        .finally(() => notesDispatch({ type: SET_IS_LOADING, payload: false }));
+    },
+    [navigate]
+  );
 
   const addNote = (payload) => {
     // creates a new note

@@ -90,7 +90,7 @@ main = async () => {
           }
           io.in(channel_id).emit(CHANNEL_NEW_CHAT_MESSAGE_EVENT, msg);
         }
-        catch (err){}
+        catch (err) { }
       })
 
       // when a message is edited on a specific channel
@@ -101,7 +101,7 @@ main = async () => {
           data.updatedAt = msg.updatedAt;
           io.in(channel_id).emit(CHANNEL_EDIT_MESSAGE_EVENT, data);
         }
-        catch (err) {}
+        catch (err) { }
       })
 
       // when a message is deleted on a specific channel

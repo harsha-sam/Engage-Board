@@ -5,6 +5,7 @@ import useLoader from "../../hooks/useLoader";
 import { Form, Input, Button, Row, Col, Radio, Typography } from "antd";
 import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import Background from "../../assets/hero.png";
+import logo from "../../assets/Logo/cover.png";
 import "../Login/Login.css";
 
 const { Title } = Typography;
@@ -29,8 +30,12 @@ const Register = () => {
 
   return (
     <Row className="flex-container">
-      <Col md={10}>
-        <Title level={2}>Create Account</Title>
+      <Col md={20} lg={10}>
+        <img src={logo} alt="logo" className="app-logo" />
+        <Title level={3} type="secondary">
+          Create Account
+        </Title>
+        <br />
         <Form name="register" onFinish={onFinish} form={form}>
           <Form.Item
             name="id"
@@ -131,7 +136,7 @@ const Register = () => {
           </Form.Item>
         </Form>
       </Col>
-      <Col md={10}>
+      <Col md={20} lg={10}>
         <img src={Background} alt="background" className="bg" />
       </Col>
     </Row>

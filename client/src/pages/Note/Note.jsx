@@ -82,7 +82,7 @@ const Note = () => {
   }
 
   return (
-    <>
+    <section className="notes-page">
       <Breadcrumb className="bread-crumb">
         <Breadcrumb.Item>
           <Link to={"/"}>
@@ -108,8 +108,8 @@ const Note = () => {
             </Button>
             <h4>
               <strong>
-              To share this note, please share the current page link. Anyone with
-              this link can view this note but cannot edit it.
+                To share this note, please share the current page link. Anyone
+                with this link can view this note but cannot edit it.
               </strong>
             </h4>
           </>
@@ -128,7 +128,7 @@ const Note = () => {
           modules={modules}
         />
       </div>
-    </>
+    </section>
   );
 };
 

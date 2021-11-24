@@ -95,6 +95,7 @@ router.delete('/', verifyAccessToken, verifyPermissionClassroom, async (req, res
       },
       attributes: ['id', 'category_id']
     })
+    if (!channel) throw new Error('Channel not found')
     let { count } = await Channel.findAndCountAll({
       where: {
         category_id: channel.category_id

@@ -3,7 +3,7 @@ const {
 } = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
-const { User, Message, Reaction } = require('../models');
+const { User, Message, Channel, Reaction, Classroom } = require('../models');
 const { Op } = require('sequelize');
 const { formatMessagesResponse } = require('../utils/messages');
 
@@ -14,34 +14,52 @@ router.get('/channels/:id', verifyAccessToken, async (req, res) => {
     let where = {}
     if (id) where.channel_id = id
     else throw new Error('channel_id is required')
-    let messages = await Message.findAll({
-      where,
+    let channel = await Channel.findOne({
+      where: { id },
       include: [
         {
-          model: Reaction,
-          as: 'reactions',
-          attributes: ['id',
-            'reaction',
-            'created_at',
-            'updated_at'
-          ],
-          include: [
-            {
-              model: User,
-              as: 'user',
-              attributes: ['full_name', 'id', 'role', 'email']
-            }
-          ],
-        },
-        {
-          model: User,
-          as: 'sender',
-          attributes: ['full_name', 'id', 'role', 'email']
+          model: Classroom,
+          as: 'classroom',
+          attributes: ['members', 'id']
         }
-      ],
-      order: [['created_at', 'asc']]
+      ]
     })
-    res.status(200).json(formatMessagesResponse(messages))
+    if (!channel) throw new Error('channel not found')
+    if (!(req.user.id in channel.classroom.members)) {
+      res.status(403).json({
+        error: 'Forbidden: User is not part of the classroom'
+      })
+    }
+    else {
+      let messages = await Message.findAll({
+        where,
+        include: [
+          {
+            model: Reaction,
+            as: 'reactions',
+            attributes: ['id',
+              'reaction',
+              'created_at',
+              'updated_at'
+            ],
+            include: [
+              {
+                model: User,
+                as: 'user',
+                attributes: ['full_name', 'id', 'role', 'email']
+              }
+            ],
+          },
+          {
+            model: User,
+            as: 'sender',
+            attributes: ['full_name', 'id', 'role', 'email']
+          }
+        ],
+        order: [['created_at', 'asc']]
+      })
+      res.status(200).json(formatMessagesResponse(messages))
+    }
   }
   catch (error) {
     res.status(400).json({

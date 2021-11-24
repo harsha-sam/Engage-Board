@@ -2,6 +2,11 @@
   font-family: "OpenDyslexic";
   src: url("assets/opendyslexicmono-regular-webfont.woff");
 }
+main {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 label {
   margin-right: 10px;
 }
@@ -18,9 +23,8 @@ a {
 }
 
 .ant-empty {
-  position: absolute;
-  left: 40%;
-  top: 40%;
+  margin-top: 20%;
+  text-align: center;
 }
 
 .ant-menu-item:hover,
@@ -45,6 +49,11 @@ a {
 .content-container {
   padding: 5% 10%;
 }
+@media screen and (max-width: 400px) {
+  .left-sidebar {
+    position: fixed;
+  }
+}
 
 .dyslexia-font {
   font-family: "OpenDyslexic", sans-serif;
@@ -58,19 +67,21 @@ a {
 }
 
 .messages-list {
-  min-height: 80vh;
-  max-height: 80vh;
+  z-index: 0;
+  height: 78vh;
   overflow-y: auto;
   margin-top: 20px;
-  margin-left: 230px;
+  margin-left: 50px;
 }
 .messages-list + .chat-input-container {
-  margin-top: 5px;
-  margin-left: 220px;
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  margin: 20px 0 10px 40px;
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 60%;
+  width: 45%;
 }
 
 .bread-crumb {
@@ -78,10 +89,9 @@ a {
 }
 
 .direct-messages {
-  min-height: 77vh;
-  max-height: 77vh;
+  height: 75vh;
   overflow-y: auto;
-  margin-top: 10px;
+  margin-top: 20px;
   margin-left: 10%;
 }
 .direct-messages + .chat-input-container {

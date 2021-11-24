@@ -7,6 +7,7 @@ import { Form, Input, Button, Row, Col, Typography } from "antd";
 // icons
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import Background from "../../assets/hero.png";
+import logo from "../../assets/Logo/cover.png";
 import "./Login.css";
 
 const { Title } = Typography;
@@ -33,9 +34,13 @@ const Login = () => {
 
   return (
     <Row className="flex-container">
-      <Col md={10}>
-        <Title level={2}>Login to your account</Title>
-        <Form name="login" onFinish={onFinish} form={form}>
+      <Col md={20} lg={10}>
+        <img src={logo} alt="logo" className="app-logo" />
+        <Title level={4} type="secondary">
+          Log In to Your Account
+        </Title>
+        <br />
+        <Form name="login" onFinish={onFinish} form={form} className="form">
           <Form.Item
             name="email"
             rules={[
@@ -72,7 +77,7 @@ const Login = () => {
           </Form.Item>
         </Form>
       </Col>
-      <Col md={10}>
+      <Col md={20} lg={10}>
         <img src={Background} alt="background" className="bg" />
       </Col>
     </Row>

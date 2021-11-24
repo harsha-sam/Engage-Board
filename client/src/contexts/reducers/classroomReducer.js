@@ -26,10 +26,10 @@ export const classroomReducer = (state = classroomInitialState, action) => {
       return ({ ...state, requests: payload, isLoading: false })
     }
     case SET_IS_LOADING: {
-      return ({...state, isLoading: payload})
+      return ({ ...state, isLoading: payload })
     }
     case SET_CONTENT_MODERATION: {
-      return ({...state, ...payload})
+      return ({ ...state, ...payload })
     }
     default:
       return state

@@ -10,7 +10,7 @@ module.exports = {
     "timezone": process.env.TZ,
     "dialectOptions": {
       "ssl": {
-        "require":true,
+        "require": true,
       }
     }
   },

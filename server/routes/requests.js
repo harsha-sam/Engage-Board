@@ -4,46 +4,26 @@ const {
 } = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
+const { verifyPermissionClassroom } = require('../middleware/classroom');
 const { Request, Classroom, User } = require('../models')
 const { sendEmail } = require('../utils/sendEmail')
 
-router.get('/', verifyAccessToken, async (req, res) => {
+router.get('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) => {
   try {
-    const { classroom_id } = req.query;
-    if (!classroom_id) {
-      throw new Error('classroom_id param is required');
-    }
-    let classroom = await Classroom.findOne({
+    let classroom = req.classroom
+    let requests = await Request.findAll({
       where: {
-        id: classroom_id
+        classroom_id: classroom.id
       },
-      attributes: ['members', 'id']
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'full_name', 'email', 'role']
+        }
+      ]
     })
-    let permissionCheck = false;
-    let member = classroom.members[req.user.id]
-    if (member)
-      permissionCheck = (member.role === 'admin' || member.role === 'monitor')
-    if (!permissionCheck) {
-      res.status(403).
-        json({
-          error: "Action prohibited due to lack of permission"
-        })
-    }
-    else {
-      let requests = await Request.findAll({
-        where: {
-          classroom_id
-        },
-        include: [
-          {
-            model: User,
-            as: 'user',
-            attributes: ['id', 'full_name', 'email', 'role']
-          }
-        ]
-      })
-      res.status(200).json(requests)
-    }
+    res.status(200).json(requests)
   }
   catch (error) {
     res.status(400).json({
@@ -119,7 +99,7 @@ router.delete('/', verifyAccessToken, async (req, res) => {
       }
     })
     if (!request) {
-      throw new Error('Admin has already processed your request, please refresh');
+      throw new Error('Request has already been processed, please refresh');
     }
     await request.destroy();
     res.sendStatus(204);

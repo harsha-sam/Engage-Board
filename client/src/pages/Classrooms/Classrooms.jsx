@@ -70,8 +70,7 @@ const Classrooms = () => {
   const handleSendRequest = (classroom) => {
     const { id: classroom_id } = classroom;
     setTabsDataLoading(true);
-    postRequest({ classroom_id });
-    // tabsDataLoading will be reset in the useEffect
+    postRequest({ classroom_id }).finally(() => setTabsDataLoading(false));
   };
   const handleLeaveClassroom = (classroom) => {
     const { id: classroom_id } = classroom;
@@ -85,7 +84,7 @@ const Classrooms = () => {
   const handleWithdrawRequest = (payload) => {
     const { id } = payload;
     setTabsDataLoading(true);
-    withdrawRequest({ id });
+    withdrawRequest({ id }).finally(() => setTabsDataLoading(false));
     // tabsDataLoading will be reset in the useEffect
   };
 

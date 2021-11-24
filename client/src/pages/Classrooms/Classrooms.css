@@ -1,6 +1,6 @@
 .classrooms-card-container {
   height: 55vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .classrooms-card-container .ant-empty {
   left: 50%;

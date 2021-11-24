@@ -53,7 +53,7 @@ const DirectMessagesSearch = () => {
           onChange={handleChange}
           suffix={<SearchOutlined />}
         />
-        <div style={{ height: "60vh", overflowY: "scroll" }}>
+        <div style={{ height: "50vh", overflowY: "scroll" }}>
           {isLoading ? (
             // if list of users is loading. Show loader
             <Spin tip="Loading..." className="spinner" />

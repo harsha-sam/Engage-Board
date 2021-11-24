@@ -18,12 +18,17 @@ const UserDisplay = ({ user, showTag = true, showLink = true }) => {
     <List.Item.Meta
       style={{ marginBottom: "10px", marginLeft: "20px" }}
       avatar={<CustomAvatar user={user} />}
-      title={showLink ? <Link to={`/direct-messages/${user.id}`}>{user.full_name}</Link> :
-      user.full_name}
+      title={
+        showLink ? (
+          <Link to={`/direct-messages/${user.id}`}>{user.full_name}</Link>
+        ) : (
+          user.full_name
+        )
+      }
       description={
         <>
           <small style={{ marginBottom: "2px", color: "grey" }}>
-            {user?.id}
+            {user.id}
           </small>
           <br />
           {showTag && (

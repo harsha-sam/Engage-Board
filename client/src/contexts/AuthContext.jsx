@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
       });
-  }
+  };
 
   const signup = (payload) => {
     return axiosInstance
@@ -80,12 +80,12 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const signout = async() => {
+  const signout = async () => {
     // removing access token and refresh token from localStorage
     await message.loading("Logging out ...!", 1);
     localStorage.removeItem("access-token");
     localStorage.removeItem("refresh-token");
-    await message.success("Logged out", 0.5)
+    await message.success("Logged out", 0.5);
     window.location = "/";
     window.location.reload(false);
   };

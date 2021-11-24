@@ -247,7 +247,7 @@ router.patch('/users', verifyAccessToken, verifyLeaveClassroom, async (req, res)
     // removing this classroom from user classrooms list
     user.classrooms = user.classrooms.filter((id) => id !== classroom.id)
     if (newMembers.length === 0 || user_id === classroom.created_by) {
-      // deleting if classroom has 0 members
+      // deleting if classroom has 0 members or if admin is leaving
       await classroom.destroy().then(() => user.save());
       res.status(200).json('Removed user and classroom is deleted')
     }

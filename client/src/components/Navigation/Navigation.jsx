@@ -37,7 +37,12 @@ const Navigation = () => {
         <NavHeader />
         <Layout>
           {/* Sidebar */}
-          <Sider collapsible width={260} style={{ height: "100vh" }}>
+          <Sider
+            collapsible
+            breakpoint="md"
+            width={280}
+            style={{ height: "100vh", zIndex: 1 }}
+          >
             <MenuCustom
               items={siderOptions}
               mode="inline"

@@ -3,7 +3,13 @@
   justify-content: space-around;
   align-items: center;
   gap: 20px;
-  padding: 8% 6%;
+  padding: 6% 6%;
+}
+
+.app-logo {
+  width: 80%;
+  height: 100%;
+  margin: 2% 2% 2% -15%;
 }
 
 .login-form-button {
@@ -11,6 +17,6 @@
 }
 
 .bg {
-  height: 80%;
+  height: 100%;
   width: 100%;
 }
