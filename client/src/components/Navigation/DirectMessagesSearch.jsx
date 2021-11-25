@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUsersContext } from "../../contexts/UsersContext.jsx";
 import { useAuthContext } from "../../contexts/AuthContext.jsx";
 import UserDisplay from "../UserDisplay/UserDisplay.jsx";
-import { Menu, Input, Spin } from "antd";
+import { Menu, Input, Spin, Divider } from "antd";
 import { MessageOutlined, SearchOutlined } from "@ant-design/icons";
 
 const { SubMenu } = Menu;
@@ -66,6 +66,7 @@ const DirectMessagesSearch = () => {
             })
           )}
         </div>
+        <Divider className="divider" />
       </SubMenu>
     </Menu>
   );

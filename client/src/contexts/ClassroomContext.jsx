@@ -1,4 +1,10 @@
-import React, { useContext, useReducer, useCallback } from "react";
+import React, {
+  useContext,
+  useReducer,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { useNavigate } from "react-router";
 import {
   classroomInitialState,
@@ -9,7 +15,21 @@ import {
   LOAD_CLASSROOM_REQUESTS,
   SET_CONTENT_MODERATION,
   SET_IS_LOADING,
+  ADD_CHANNEL_TO_CLASSROOM,
+  REMOVE_CHANNEL_FROM_CLASSROOM,
+  UPDATE_CHANNEL_OF_CLASSROOM,
+  ADD_MEMBER_TO_CLASSROOM,
+  REMOVE_MEMBER_FROM_CLASSROOM,
 } from "./actionTypes";
+import {
+  CONTENT_MODERATION_UPDATE,
+  NEW_MEMBER,
+  REMOVE_MEMBER,
+  DELETE_CLASSROOM,
+  NEW_CHANNEL,
+  UPDATE_CHANNEL,
+  REMOVE_CHANNEL
+} from "./socketevents"
 import {
   axiosInstance,
   classrooms_URL,
@@ -17,15 +37,94 @@ import {
   channels_URL,
 } from "../api-config";
 import { message } from "antd";
+import { io } from "socket.io-client";
+import { useAuthContext } from "./AuthContext";
 
 const ClassroomContext = React.createContext();
 
 export const ClassroomProvider = ({ children }) => {
+  const {
+    authState: { user },
+  } = useAuthContext();
   const [classroomState, classroomDispatch] = useReducer(
     classroomReducer,
     classroomInitialState
   );
+  const socketRef = useRef();
   let navigate = useNavigate();
+
+  const setupSocketListener = useCallback(() => {
+    socketRef.current.on(CONTENT_MODERATION_UPDATE, async (data) => {
+      classroomDispatch({
+        type: SET_CONTENT_MODERATION,
+        payload: data,
+      });
+    });
+    socketRef.current.on(NEW_CHANNEL, (payload) => {
+      classroomDispatch({
+        type: ADD_CHANNEL_TO_CLASSROOM,
+        payload,
+      });
+      message.success(`New channel ${payload.name} has been added`);
+    });
+    socketRef.current.on(UPDATE_CHANNEL, (payload) => {
+      classroomDispatch({
+        type: UPDATE_CHANNEL_OF_CLASSROOM,
+        payload
+      })
+    })
+    socketRef.current.on(REMOVE_CHANNEL, (payload) => {
+      classroomDispatch({
+        type: REMOVE_CHANNEL_FROM_CLASSROOM,
+        payload,
+      });
+      message.success(`Channel ${payload.name} has been removed`);
+    });
+    socketRef.current.on(NEW_MEMBER, (payload) => {
+      classroomDispatch({
+        type: ADD_MEMBER_TO_CLASSROOM,
+        payload,
+      });
+      message.success(`${payload.full_name} has been added to this classroom`);
+    });
+    socketRef.current.on(REMOVE_MEMBER, (payload) => {
+      classroomDispatch({
+        type: REMOVE_MEMBER_FROM_CLASSROOM,
+        payload,
+      });
+      if (payload.id === user.id) {
+        navigate("/error", {
+          state: {
+            title: "Forbidden",
+            status: "403",
+            subTitle: "You have been removed from this classroom.",
+          },
+        });
+      }
+    });
+    socketRef.current.on(DELETE_CLASSROOM, (payload) => {
+      navigate("/error", {
+        state: {
+          subTitle: "Classroom not found. Mush have been deleted",
+        },
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (classroomState.id) {
+      // initializing socket connection with classroom id
+      socketRef.current = io(process.env.REACT_APP_API_BASE_URL, {
+        query: {
+          classroom_id: classroomState.id,
+        },
+      });
+      setupSocketListener();
+    }
+    return () => {
+      if (socketRef.current) socketRef.current.disconnect();
+    };
+  }, [classroomState.id, setupSocketListener]);
 
   const getClassroom = useCallback(
     (payload) => {
@@ -93,7 +192,7 @@ export const ClassroomProvider = ({ children }) => {
     axiosInstance
       .post(channels_URL, payload)
       .then((response) => {
-        message.success("Successfully added the channel. Please refresh");
+        // message.success("Successfully added the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
@@ -106,7 +205,7 @@ export const ClassroomProvider = ({ children }) => {
     axiosInstance
       .patch(`${channels_URL}/${payload.id}`, payload)
       .then((response) => {
-        message.success("Successfully updated the channel. Please refresh");
+        // message.success("Successfully updated the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
@@ -120,7 +219,7 @@ export const ClassroomProvider = ({ children }) => {
         `${channels_URL}/?classroom_id=${classroomState.id}&channel_id=${payload.id}`
       )
       .then((response) => {
-        message.success("Successfully removed the channel. Please refresh");
+        // message.success("Successfully removed the channel. Please refresh");
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");

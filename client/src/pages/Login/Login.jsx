@@ -40,7 +40,7 @@ const Login = () => {
           Log In to Your Account
         </Title>
         <br />
-        <Form name="login" onFinish={onFinish} form={form} className="form">
+        <Form name="login" onFinish={onFinish} form={form} className="form" autoComplete="off">
           <Form.Item
             name="email"
             rules={[

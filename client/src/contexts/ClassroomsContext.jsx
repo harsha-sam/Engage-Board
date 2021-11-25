@@ -108,7 +108,7 @@ export const ClassroomsProvider = ({ children }) => {
           // if another user was removed from classroom by the admin or monitor
           message.success("Removed from classroom");
         }
-        window.location.reload(false);
+        // window.location.reload(false);
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");
@@ -120,9 +120,9 @@ export const ClassroomsProvider = ({ children }) => {
     axiosInstance
       .post(`${classroom_users_URL}`, payload)
       .then(() => {
-        message.success(
-          "User has been added. Please refresh the page to see changes"
-        );
+        // message.success(
+        //   "User has been added. Please refresh the page to see changes"
+        // );
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");

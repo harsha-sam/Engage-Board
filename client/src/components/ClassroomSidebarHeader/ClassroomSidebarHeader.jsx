@@ -5,7 +5,7 @@ import { useClassroomContext } from "../../contexts/ClassroomContext.jsx";
 import ManageUsers from "./ManageUsers.jsx";
 import ContentModeration from "./ContentModeration.jsx";
 import ManageChannels from "./ManageChannels.jsx";
-import { Menu, Button, Popconfirm } from "antd";
+import { Menu, Button, Popconfirm, Typography } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import "./ClassroomSidebarHeader.css";
 
@@ -56,7 +56,13 @@ const ClassroomSidebarHeader = () => {
         style={{ marginBottom: "10%" }}
       >
         {/* classroom name */}
-        <h2 className="classroom-name">{name}</h2>
+        <Typography.Title level={4} ellipsis={{
+          expandable: true,
+          rows: 2,
+          symbol: "expand"
+        }} className="classroom-name">
+          {name}
+        </Typography.Title>
         {/* only display manage classroom menu for admins and monitors */}
         {showAdminSettings && (
           <SubMenu

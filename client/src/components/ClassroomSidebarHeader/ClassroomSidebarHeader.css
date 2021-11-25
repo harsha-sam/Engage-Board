@@ -9,5 +9,6 @@
 }
 .classroom-name {
   margin: 20% 0 20% 10%;
-  color: #fff;
+  color: #fff !important;
+  text-overflow: ellipsis;
 }

@@ -49,10 +49,15 @@ a {
 .content-container {
   padding: 5% 10%;
 }
-@media screen and (max-width: 400px) {
+
+@media screen and (max-width: 480px) {
   .left-sidebar {
     position: fixed;
   }
+}
+
+.divider {
+  background-color: #2e3c43;
 }
 
 .dyslexia-font {
@@ -109,4 +114,15 @@ a {
 
 .react-input-emoji--input {
   max-height: 50px;
+}
+/* making scrollbar visible */
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #2e3c43;
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }

@@ -36,7 +36,12 @@ const Register = () => {
           Create Account
         </Title>
         <br />
-        <Form name="register" onFinish={onFinish} form={form}>
+        <Form
+          name="register"
+          onFinish={onFinish}
+          form={form}
+          autoComplete="off"
+        >
           <Form.Item
             name="id"
             label="University ID"

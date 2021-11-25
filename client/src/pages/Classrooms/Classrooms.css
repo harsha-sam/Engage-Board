@@ -1,7 +1,15 @@
 .classrooms-card-container {
   height: 55vh;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .classrooms-card-container .ant-empty {
+  position: absolute;
   left: 50%;
+  top: 10%;;
+}
+@media screen and (max-width: 400px) {
+  .classrooms-card-container .ant-empty {
+    position: absolute;
+    top: 30%;
+  }
 }

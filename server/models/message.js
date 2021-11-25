@@ -4,7 +4,9 @@ const {
 } = require('sequelize');
 const axios = require('axios');
 const { sendEmail } = require('../utils/sendEmail');
-const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
+const {
+  CHANNEL_DELETE_MESSAGE_EVENT
+} = require("../socketevents");
 
 module.exports = (sequelize, DataTypes) => {
   class Message extends Model {

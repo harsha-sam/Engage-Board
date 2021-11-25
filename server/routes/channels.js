@@ -5,6 +5,11 @@ const { verifyPermissionClassroom } = require('../middleware/classroom');
 const express = require('express');
 const router = express.Router();
 const { Category, Channel } = require('../models');
+const {
+  NEW_CHANNEL,
+  UPDATE_CHANNEL,
+  REMOVE_CHANNEL
+} = require('../socketevents');
 
 router.post('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) => {
   try {
@@ -43,6 +48,9 @@ router.post('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) 
       category_id: category.id,
       message_permission
     })
+    channel = { ...channel.get() }
+    channel.category = category
+    io.in(classroom.id).emit(NEW_CHANNEL, channel)
     res.json(channel);
   }
   catch (error) {
@@ -62,21 +70,24 @@ router.patch('/:id', verifyAccessToken, verifyPermissionClassroom, async (req, r
       category_id,
       message_permission
     } = req.body;
-    let update_obj = {}
-    if (channel_name)
-      update_obj.name = channel_name
-    if (category_id)
-      update_obj.category_id = category_id
-    if (message_permission)
-      update_obj.message_permission = message_permission
-    let channels = await Channel.update(update_obj, {
+    let classroom = req.classroom
+    let channel = await Channel.findOne({
       where: {
         id
-      },
-      returning: true
+      }
     })
-    if (channels[0] === 0) throw new Error('channel not found.')
-    res.status(200).json(channels[1][0]);
+    if (!channel) throw new Error('channel not found.')
+    let prev_category_id = channel.category_id;
+    if (channel_name)
+      channel.name = channel_name
+    if (category_id)
+      channel.category_id = category_id
+    if (message_permission)
+      channel.message_permission = message_permission
+    await channel.save();
+    channel = { ...channel.get(), prev_category_id }
+    io.in(classroom.id).emit(UPDATE_CHANNEL, channel)
+    res.status(200).json(channel);
   }
   catch (error) {
     res.status(400).json({
@@ -88,12 +99,13 @@ router.patch('/:id', verifyAccessToken, verifyPermissionClassroom, async (req, r
 router.delete('/', verifyAccessToken, verifyPermissionClassroom, async (req, res) => {
   try {
     const { channel_id } = req.query;
+    let classroom = req.classroom
     if (!channel_id) throw new Error('Channel ID is required');
     let channel = await Channel.findOne({
       where: {
         id: channel_id
       },
-      attributes: ['id', 'category_id']
+      attributes: ['id', 'name', 'category_id']
     })
     if (!channel) throw new Error('Channel not found')
     let { count } = await Channel.findAndCountAll({
@@ -112,6 +124,7 @@ router.delete('/', verifyAccessToken, verifyPermissionClassroom, async (req, res
     else {
       await channel.destroy();
     }
+    io.in(classroom.id).emit(REMOVE_CHANNEL, channel)
     res.sendStatus(204);
   }
   catch (err) {

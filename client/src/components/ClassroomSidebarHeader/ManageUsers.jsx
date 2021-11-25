@@ -170,6 +170,7 @@ const SearchAndListUsers = ({
         <Select
           placeholder="Search a user by name or ID"
           className="select"
+          autoComplete="off"
           showSearch
           filterOption={(val, option) => {
             // search users by name or ID

@@ -10,7 +10,7 @@ import MenuCustom from "../../components/MenuCustom/MenuCustom.jsx";
 import EmptyCustom from "../../components/EmptyCustom/EmptyCustom.jsx";
 import MessagesList from "../../components/MessagesList/MessagesList.jsx";
 import UserDisplay from "../../components/UserDisplay/UserDisplay.jsx";
-import { Affix, Layout, Menu, Typography, Spin } from "antd";
+import { Affix, Layout, Menu, Typography, Spin , Divider} from "antd";
 import { TeamOutlined } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
@@ -47,20 +47,25 @@ const Classroom = () => {
 
   useEffect(() => {
     // flag used to select the first available channel by default whenever the page is loaded
-    let flag = false;
+    let flag = channel === null;
     if (categories) {
       let newCategories = categories.map((category) => {
         let newCategory = { ...category };
         // on clicking a channel, chat should be updated
-        let newChannels = category.channels.map((channel) => ({
-          ...channel,
-          onClick: () => selectChannel(channel),
-        }));
+        let newChannels = category.channels.map((currentChannel) => {
+          if (currentChannel.id === channel?.id) {
+            if (channel?.message_permission !== currentChannel.message_permission)
+              selectChannel(currentChannel)
+            flag = false;
+          }
+          return {...currentChannel,
+          onClick: () => selectChannel(currentChannel)}
+        });
         newCategory.channels = newChannels;
-        if (newChannels.length && !flag) {
+        if (newChannels.length && flag) {
           // selecting this channel
           selectChannel(newChannels[0]);
-          flag = true;
+          flag = false;
         }
         return newCategory;
       });
@@ -123,6 +128,7 @@ const Classroom = () => {
             defaultOpenKeys={categories.map((category) => category.id)}
             style={{ height: "60%", overflow: "auto" }}
           />
+          <Divider className="divider" />
         </Sider>
         <Content>
           <Layout>
@@ -177,6 +183,7 @@ const Classroom = () => {
               >
                 {description}
               </Paragraph>
+              <Divider className="divider" />
               {/* Menu showing members of this classroom along with their segregated roles*/}
               <Menu
                 mode="inline"

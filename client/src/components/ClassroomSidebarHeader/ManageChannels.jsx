@@ -180,6 +180,7 @@ const ManageChannels = ({ showModal, onClose }) => {
                   placeholder="Type New Category Name here"
                   onChange={handleChange}
                   value={category_name}
+                  autoComplete="off"
                 />
               </Form.Item>
             )}
@@ -254,6 +255,7 @@ const ChannelForm = ({ handleChange, channelName, messagePermission }) => {
           name={"channel_name"}
           value={channelName}
           onChange={handleChange}
+          autoComplete="off"
         />
       </Form.Item>
       <Form.Item label="Messaging Permissions" required>
@@ -289,6 +291,7 @@ const CustomSelect = ({
         optionFilterProp={"label"}
         placeholder="Select.."
         showSearch
+        autoComplete="off"
         onChange={(val) =>
           handleChange({ target: { name: selectName, value: val } })
         }

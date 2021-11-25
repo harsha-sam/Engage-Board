@@ -8,16 +8,18 @@ const socketio = require('socket.io');
 const morganMiddleware = require('./middleware/morgan')
 const http = require('http')
 // socket events
-const CHANNEL_NEW_CHAT_MESSAGE_EVENT = "CHANNEL_NEW_CHAT_MESSAGE_EVENT";
-const CHANNEL_EDIT_MESSAGE_EVENT = "CHANNEL_EDIT_MESSAGE_EVENT";
-const CHANNEL_DELETE_MESSAGE_EVENT = "CHANNEL_DELETE_MESSAGE_EVENT";
-const CHANNEL_MESSAGE_NEW_REACTION_EVENT = "CHANNEL_MESSAGE_NEW_REACTION_EVENT";
-const CHANNEL_MESSAGE_DELETE_REACTION_EVENT = "CHANNEL_MESSAGE_DELETE_REACTION_EVENT";
-const NEW_CHAT_MESSAGE_EVENT = "NEW_CHAT_MESSAGE_EVENT";
-const EDIT_MESSAGE_EVENT = "EDIT_MESSAGE_EVENT";
-const DELETE_MESSAGE_EVENT = "DELETE_MESSAGE_EVENT";
-const MESSAGE_NEW_REACTION_EVENT = "MESSAGE_NEW_REACTION_EVENT";
-const MESSAGE_DELETE_REACTION_EVENT = "MESSAGE_DELETE_REACTION_EVENT";
+const {
+  CHANNEL_NEW_CHAT_MESSAGE_EVENT,
+  CHANNEL_EDIT_MESSAGE_EVENT,
+  CHANNEL_DELETE_MESSAGE_EVENT,
+  CHANNEL_MESSAGE_NEW_REACTION_EVENT,
+  CHANNEL_MESSAGE_DELETE_REACTION_EVENT,
+  NEW_CHAT_MESSAGE_EVENT,
+  EDIT_MESSAGE_EVENT,
+  DELETE_MESSAGE_EVENT,
+  MESSAGE_NEW_REACTION_EVENT,
+  MESSAGE_DELETE_REACTION_EVENT
+} = require('./socketevents');
 
 // main function
 main = async () => {
@@ -58,10 +60,17 @@ main = async () => {
     io.on('connection', socket => {
       console.log('new client connected', socket.id)
 
-      const { channel_id, receiver_id, sender_id } = socket.handshake.query;
+      const { classroom_id, channel_id, receiver_id, sender_id } = socket.handshake.query;
+
       let room = ''
-      if (channel_id)
+      if (classroom_id) {
+        // joining classroom
+        socket.join(classroom_id)
+      }
+      else if (channel_id) {
+        // joining channel
         socket.join(channel_id);
+      }
       else if (receiver_id && sender_id) {
         let compare = receiver_id.localeCompare(sender_id)
         let secret = process.env.DIRECT_MESSAGE_ROOM_SECRET

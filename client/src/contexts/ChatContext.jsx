@@ -18,7 +18,9 @@ import {
   REMOVE_REACTION_TO_MESSAGE,
   EDIT_MESSAGE,
   DELETE_MESSAGE,
-  SET_IS_LOADING,
+  SET_IS_LOADING
+} from "./actionTypes.js";
+import {
   CHANNEL_NEW_CHAT_MESSAGE_EVENT,
   CHANNEL_EDIT_MESSAGE_EVENT,
   CHANNEL_DELETE_MESSAGE_EVENT,
@@ -29,7 +31,7 @@ import {
   DELETE_MESSAGE_EVENT,
   MESSAGE_NEW_REACTION_EVENT,
   MESSAGE_DELETE_REACTION_EVENT,
-} from "./actionTypes.js";
+} from "./socketevents";
 import { axiosInstance, chat_URL, channels_chat_URL } from "../api-config";
 import { message } from "antd";
 import { io } from "socket.io-client";

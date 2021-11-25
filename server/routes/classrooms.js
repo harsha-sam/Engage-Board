@@ -7,6 +7,12 @@ const express = require('express');
 const router = express.Router();
 const { User, Classroom, Category, Channel, Request } = require('../models')
 const { Op } = require('sequelize');
+const {
+  DELETE_CLASSROOM,
+  CONTENT_MODERATION_UPDATE,
+  NEW_MEMBER,
+  REMOVE_MEMBER,
+} = require('../socketevents');
 
 router.get('/', verifyAccessToken, async (req, res) => {
   try {
@@ -151,6 +157,9 @@ router.patch('/', verifyAccessToken, verifyPermissionClassroom, async (req, res)
     let classroom = req.classroom;
     classroom.is_moderation_enabled = is_moderation_enabled
     await classroom.save();
+    io.in(classroom.id).emit(CONTENT_MODERATION_UPDATE, {
+      is_moderation_enabled
+    })
     res.status(200).json({
       is_moderation_enabled: classroom.is_moderation_enabled
     });
@@ -187,7 +196,7 @@ router.post('/users', verifyAccessToken, verifyPermissionClassroom, async (req, 
       where: {
         id: new_user_id
       },
-      attributes: ['classrooms', 'id']
+      attributes: ['classrooms', 'id', 'full_name', 'role']
     })
     if (!user) throw new Error('User with this id does not exist');
     // adding this classroom to users classrooms list
@@ -216,6 +225,9 @@ router.post('/users', verifyAccessToken, verifyPermissionClassroom, async (req, 
           where: { id: request_id }
         })
       }
+      user = { ...user.get(), role }
+      delete user.classrooms
+      io.in(classroom.id).emit(NEW_MEMBER, user)
     });
     res.status(200).json(classroom)
   }
@@ -249,10 +261,16 @@ router.patch('/users', verifyAccessToken, verifyLeaveClassroom, async (req, res)
     if (newMembers.length === 0 || user_id === classroom.created_by) {
       // deleting if classroom has 0 members or if admin is leaving
       await classroom.destroy().then(() => user.save());
+      user = { ...user.get() }
+      delete user.classrooms
+      io.in(classroom.id).emit(DELETE_CLASSROOM)
       res.status(200).json('Removed user and classroom is deleted')
     }
     else {
       await classroom.save().then(() => user.save());
+      user = { ...user.get() }
+      delete user.classrooms
+      io.in(classroom.id).emit(REMOVE_MEMBER, user)
       res.status(200).json(classroom)
     }
   }
