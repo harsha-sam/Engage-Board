@@ -13,12 +13,14 @@ const InputMessage = ({ permittedToMessage }) => {
   } = useChatContext();
 
   const handleSendMessage = (newMessage) => {
+    console.log("here", newMessage);
     if (newMessage) {
       // if newMessage is not empty string, message is sent
       addNewMessage(newMessage);
     }
     setNewMessage("");
   };
+  console.log("message", newMessage);
   return (
     <div className="chat-input-container">
       {/* if user is permitted to send messages in this channel*/}
@@ -34,7 +36,9 @@ const InputMessage = ({ permittedToMessage }) => {
           <Button
             type="primary"
             icon={<SendOutlined />}
-            onClick={handleSendMessage}
+            onClick={() => {
+              handleSendMessage(newMessage)
+            }}
           />
         </>
       )}
