@@ -54,12 +54,16 @@ const Classroom = () => {
         // on clicking a channel, chat should be updated
         let newChannels = category.channels.map((currentChannel) => {
           if (currentChannel.id === channel?.id) {
-            if (channel?.message_permission !== currentChannel.message_permission)
-              selectChannel(currentChannel)
+            if (
+              channel?.message_permission !== currentChannel.message_permission
+            )
+              selectChannel(currentChannel);
             flag = false;
           }
-          return {...currentChannel,
-          onClick: () => selectChannel(currentChannel)}
+          return {
+            ...currentChannel,
+            onClick: () => selectChannel(currentChannel),
+          };
         });
         newCategory.channels = newChannels;
         if (newChannels.length && flag) {
@@ -73,6 +77,7 @@ const Classroom = () => {
       // as all the categories and channels are loaded, page loader can be reset to false and data should be shown
       setPageLoading(false);
     }
+    // eslint-disable-next-line
   }, [categories, selectChannel, setPageLoading]);
 
   useEffect(() => {

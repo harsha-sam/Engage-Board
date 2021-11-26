@@ -171,6 +171,7 @@ export const ChatProvider = ({ children }) => {
         message.error(err?.response?.data?.error || "something went wrong");
       })
       .finally(() => chatDispatch({ type: SET_IS_LOADING, payload: false }));
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {

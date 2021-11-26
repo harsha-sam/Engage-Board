@@ -109,7 +109,7 @@ export const ClassroomProvider = ({ children }) => {
         },
       });
     });
-  }, []);
+  }, [navigate, user.id]);
 
   useEffect(() => {
     if (classroomState.id) {
