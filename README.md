@@ -125,7 +125,6 @@ Database Design : [https://dbdiagram.io/d/61890d4702cf5d186b4b12d2](https://dbdi
 A user can see three tabs on the classrooms page:
 
 - **Your Classrooms Tab**: Displays list of classrooms in which the user is a member
-<br />
 - **Browse Classrooms Tab**: Displays list of classrooms in which the user is not a member
 > A user can request to join the classroom
 - **Pending Requests Tab**: Displays list of classrooms which the user requested to join and the admin still didn't accept the request are shown here
@@ -150,23 +149,23 @@ A user can see three tabs on the classrooms page:
     2. Monitor (Students / Other Faculty who can act as TA's or CR's) 
     3. Students
     
-    > **Monitors are Teaching Assistants / Class Representatives picked by the admin.**
-    > 
+> **Monitors are Teaching Assistants / Class Representatives picked by the admin.**
+> 
 
 - A classroom will have :
     - Channel - The place where members of the classroom interact with each other through text messages.
     - Category - Used to organize Channels into sections that users can collapse and expand.
     
-    > **Channels have messaging permissions associated with their role in the classroom.**
-    > 
+> **Channels have messaging permissions associated with their role in the classroom.**
+> 
     
 - Admin / Monitor can :
     1. Update content moderation settings of a classroom.
     2. Add / Remove Users from the classroom.
     3. Add / Remove / Update channels of a classroom.
-<br/>
+
 - Some Default Channels are created on creation of a classroom.
-<br/>
+
 - Chat - Implemented using socket.io
     - Users can text, send emojis and interact with other members of the classroom in real-time.
     - A user can edit/delete their messages.
