@@ -1,5 +1,3 @@
-# Engage Board Documentation
-
 # Engage Board
 
 **Engage Board is an easy-to-use, all-in-one web application to create and manage virtual classroom communities for your university with an array of extra features and add-ons that enrich the discussions and makes the collaboration smooth.** 
@@ -16,7 +14,7 @@
 
 ---
 
-# Tech Stack :
+# Tech Stack
 
 **Frontend**: React JS & Ant-D Framework
 
@@ -67,7 +65,7 @@ Database Design : [https://dbdiagram.io/d/61890d4702cf5d186b4b12d2](https://dbdi
 
 ---
 
-# Features :
+# Features
 
 ## **Authentication**
 
@@ -75,32 +73,44 @@ Database Design : [https://dbdiagram.io/d/61890d4702cf5d186b4b12d2](https://dbdi
     - User must provide `unique university enrollment ID (identification number in the university)`.
     - User must provide a `Unique Email ID.`
     - User must register either as a 
-    1) Faculty or
-    2) Student
+    - Faculty or
+    - Student
     
-    Note: Please provide a valid email address at registration as the app even has an email notification feature for some use cases.
-    
-    1) What happens if there is already a user with the same university enrollment ID or with the same email address?
+    **Note: Please provide a valid email address at registration as the app even has an email notification feature for some use cases.**
+    <br />
+    <aside>
+    💡 What happens if there is already a user with the same university enrollment ID or with the same email address?
     
     → A validation error occurs.
     
-    2) How are passwords stored?
+    </aside>
+    
+    <aside>
+    💡 How are passwords stored?
     
     → Passwords are securely hashed and stored
+    
+    </aside>
     
 
 ---
 
 - **Log In**
     - User should log in with an email and password.
-    
-    1) Can I access any route of the app without logging in?
-    
+    <br />
+    <aside>
+    💡 Can I access any route of the app without logging in?
+
     → No, a user can only access routes after logging in.
     
-    2) Should I re-login every time after refreshing the page?
+    </aside>
     
+    <aside>
+    💡 Should I re-login every time after refreshing the page?
+
     → No, JWT is used to authenticate the user. The user's state will persist as long as the token is valid. After the token expires, the user will be prompted to log in again.
+    
+    </aside>
     
 
 ---
@@ -114,52 +124,49 @@ Database Design : [https://dbdiagram.io/d/61890d4702cf5d186b4b12d2](https://dbdi
 
 A user can see three tabs on the classrooms page:
 
-- Your Classrooms Tab: Displays list of classrooms in which the user is a member
-    
-    ---
-    
-- Browse Classrooms Tab: Displays list of classrooms in which the user is not a member
-    - A user can request to join the classroom
-    
-    ---
-    
-- Pending Requests Tab: Displays list of classrooms which the user requested to join and the admin still didn't accept the request are shown here
-    - A user can withdraw requests to join a classroom.
+- **Your Classrooms Tab**: Displays list of classrooms in which the user is a member
+<br />
+- **Browse Classrooms Tab**: Displays list of classrooms in which the user is not a member
+> A user can request to join the classroom
+- **Pending Requests Tab**: Displays list of classrooms which the user requested to join and the admin still didn't accept the request are shown here
+> A user can withdraw requests to join a classroom.
 
-What happens when I request to join a classroom?
+<br />
+<aside>
+💡 What happens when I request to join a classroom?
 
 → An email is sent to the admin of the classroom notifying about the request as shown below
+
+</aside>
 
 ![image (1).png](Engage%20Board%20Documentation%206ecc547e330e46288957e5664217774b/image_(1).png)
 
 ---
 
-## Classroom page
+## Classroom
 
 - Each classroom will have three roles:
+    1. Admin  (Faculty who created the classroom) 
+    2. Monitor (Students / Other Faculty who can act as TA's or CR's) 
+    3. Students
     
-     1) Admin  (Faculty who created the classroom) 
-    
-    2) Monitor (Students / Other Faculty who can act as TA's or CR's) 
-    
-    3) Students
-    
-    > Monitors are Teaching Assistants / Class Representatives picked by the admin.
+    > **Monitors are Teaching Assistants / Class Representatives picked by the admin.**
     > 
+
 - A classroom will have :
     - Channel - The place where members of the classroom interact with each other through text messages.
     - Category - Used to organize Channels into sections that users can collapse and expand.
     
-    > Channels have messaging permissions associated with their role in the classroom.
+    > **Channels have messaging permissions associated with their role in the classroom.**
     > 
+    
 - Admin / Monitor can :
-1) Update content moderation settings of a classroom.
-    
-    2) Add / Remove Users from the classroom.
-    
-    3) Add / Remove / Update channels of a classroom.
-    
+    1. Update content moderation settings of a classroom.
+    2. Add / Remove Users from the classroom.
+    3. Add / Remove / Update channels of a classroom.
+<br/>
 - Some Default Channels are created on creation of a classroom.
+<br/>
 - Chat - Implemented using socket.io
     - Users can text, send emojis and interact with other members of the classroom in real-time.
     - A user can edit/delete their messages.
@@ -170,17 +177,26 @@ What happens when I request to join a classroom?
 - By default, content moderation is enabled in classroom on the creation.
 - A member of the classroom can also leave the classroom.
 
-What happens when the admin leaves a classroom ?
+<aside>
+💡 What happens when the admin leaves a classroom ?
 
 → The classroom is deleted when the admin leaves it. Admin is supposed to be the in-charge of the classroom. Hence, a classroom cannot be without an admin.
 
-How can I delete a Category of a classroom ? 
+</aside>
+
+<aside>
+💡 How can I delete a Category of a classroom ? 
 
 → To delete a category, delete all the channels under it. A category is auto-deleted if there are no channels under it.
 
-Are Channels soft deleted?
+</aside>
+
+<aside>
+💡 Are Channels soft deleted?
 
 → No, the Channels and Messages associated are permanently deleted.
+
+</aside>
 
 ---
 
@@ -189,13 +205,19 @@ Are Channels soft deleted?
 - Direct Messages allow you to have one-on-one / private conversations with other users.
 - A user can search for other users based on their **ID or Full Name** and send the message.
 
-Can I direct message myself?
+<aside>
+💡 Can I direct message myself?
 
 → Yes, you can. Search the list of users by your ID and send the message.
 
-Can anyone access my one-on-one conversations?
+</aside>
+
+<aside>
+💡 Can anyone access my one-on-one conversations?
 
 → No, these are secure. Only the person to whom the message is sent can view it.
+
+</aside>
 
 ---
 
@@ -205,9 +227,12 @@ Can anyone access my one-on-one conversations?
 - A user can create, maintain and delete private notes. Images can also be attached in a note.
 - A user can share a note with others by sharing the route of the note. Anyone with that link can view the note. But other users are not permitted to edit the note.
 
-How notes feature is helpful?
+<aside>
+💡 How notes feature is helpful?
 
 → A use case where a faculty in a classroom wants to hand over some homework/assignments/any questionnaire. With the help of the notes feature, a faculty can prepare the note with require info and share the URL in the classroom. All students can now view the note and understand.
+
+</aside>
 
 ---
 
@@ -215,9 +240,12 @@ How notes feature is helpful?
 
 - A user can update their **Email ID or Full name.**
 
-Can I update my **University Enrollment ID?**
+<aside>
+💡 Can I update my University Enrollment ID
 
 → No, the app still does not support updating **University Enrollment ID** as it is a primary constraint in identifying users uniquely.
+
+</aside>
 
 ---
 
@@ -242,17 +270,6 @@ Can I update my **University Enrollment ID?**
 - Invalid routes will show a **404 Page.**
 
 ---
-
-- Engage Board is also friendly to those students/users with **Dyslexia** who face difficulty in reading.
-- By toggling the accessibility icon (on the extreme right) of the navbar will transform the entire app font to **OpenDyslexic font** as shown below
-
-## Update User Profile
-
-- A user can update their **Email ID or Full name**
-
-Can I update my **University Enrollment ID?**
-
-→ No, the app still does not support updating **University Enrollment ID** as it is a primary constraint in identifying users uniquely.
 
 ## Common App Screens
 
