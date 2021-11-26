@@ -270,7 +270,7 @@ A user can see three tabs on the classrooms page:
 
 ---
 
-## Common App Screens
+## App Screens
 
 Login:
 
