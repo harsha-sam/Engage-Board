@@ -184,9 +184,16 @@ A user can see three tabs on the classrooms page:
 </aside>
 
 <aside>
-💡 How can I delete a Category of a classroom ? 
+💡 Can I create a Category with the same name as any other existing category of a classroom? 
 
-→ To delete a category, delete all the channels under it. A category is auto-deleted if there are no channels under it.
+→ No, a validation error occurs. There cannot be duplicate categories with the same name in a classroom.
+
+</aside>
+
+<aside>
+💡 Can I create a Channel with the same name as any other existing channel in a category?
+
+→ No, a validation error occurs. There cannot be duplicate channels with the same name in a category of a classroom.
 
 </aside>
 
