@@ -44,12 +44,12 @@ const Register = () => {
         >
           <Form.Item
             name="id"
-            label="University ID"
-            tooltip="University ID should be unique"
+            label="University Enrollment ID"
+            tooltip="University Enrollment ID should be unique"
             rules={[
               {
                 required: true,
-                message: "Please input your University ID number!",
+                message: "Please input your University Enrollment ID!",
               },
             ]}
           >

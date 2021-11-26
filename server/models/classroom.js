@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     is_moderation_enabled: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: true
     },
     createdAt: {
       field: 'created_at',

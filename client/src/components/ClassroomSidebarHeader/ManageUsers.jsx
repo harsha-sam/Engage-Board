@@ -38,7 +38,7 @@ const ManageUsers = ({ showModal, onClose }) => {
     classroomsActions: { addUserToClassroom, leaveClassroom },
   } = useClassroomsContext();
 
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("student");
 
   useEffect(() => {
     if (showModal) {
@@ -75,7 +75,7 @@ const ManageUsers = ({ showModal, onClose }) => {
       closable={true}
       maskClosable={false}
     >
-      <Tabs defaultActiveKey="add_users" centered onChange={() => setRole("")}>
+      <Tabs defaultActiveKey="add_users" centered onChange={() => setRole("student")}>
         <TabPane tab="Add User" key="add_users">
           {usersLoading ? (
             // loader will be displayed, if the list of users is loading

@@ -105,7 +105,7 @@ export const ClassroomProvider = ({ children }) => {
     socketRef.current.on(DELETE_CLASSROOM, (payload) => {
       navigate("/error", {
         state: {
-          subTitle: "Classroom not found. Mush have been deleted",
+          subTitle: "Classroom not found. Must have been deleted",
         },
       });
     });

@@ -104,11 +104,11 @@ export const ClassroomsProvider = ({ children }) => {
         if (payload.user_id === user.id) {
           // if current user left
           message.success("Left the classroom");
+          window.location.reload(false);
         } else {
           // if another user was removed from classroom by the admin or monitor
           message.success("Removed from classroom");
         }
-        // window.location.reload(false);
       })
       .catch((err) => {
         message.error(err?.response?.data?.error || "something went wrong");

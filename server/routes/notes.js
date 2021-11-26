@@ -72,7 +72,8 @@ router.patch('/:id', verifyAccessToken, async (req, res) => {
     if (data) update_obj['data'] = data;
     let notes = await Note.update(update_obj, {
       where: {
-        id
+        id,
+        created_by: req.user.id
       },
       returning: true
     })
@@ -92,7 +93,8 @@ router.delete('/:id', verifyAccessToken, async (req, res) => {
     if (!id) throw new Error('id is required');
     await Note.destroy({
       where: {
-        id
+        id,
+        created_by: req.user.id
       }
     })
     res.sendStatus(204);

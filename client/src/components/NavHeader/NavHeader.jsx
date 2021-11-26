@@ -19,7 +19,7 @@ const NavHeader = () => {
   // content to be displayed on the accessibility menu
   const content = (
     <>
-      <Title level={4}>Accessibilty</Title>
+      <Title level={4}>Accessibility</Title>
       <Divider />
       <Text>
         If you have difficulty reading try using a font for dyslexia. Click to
@@ -55,7 +55,7 @@ const NavHeader = () => {
           <Avatar src={accessibility} style={{ backgroundColor: "#A0AEC0" }} />
         </Popover>
       ),
-      id: "accessibilty",
+      id: "accessibility",
       onClick: toggleDyslexiaFont,
     },
   ];
@@ -65,7 +65,7 @@ const NavHeader = () => {
       <MenuCustom
         items={headerOptions}
         mode="horizontal"
-        selectedKeys={dyslexiaFontToggled ? ["accessibilty"] : []}
+        selectedKeys={dyslexiaFontToggled ? ["accessibility"] : []}
       />
     </Header>
   );
