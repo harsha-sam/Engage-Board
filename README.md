@@ -2,8 +2,8 @@
 
 **Engage Board is an easy-to-use, all-in-one web application to create and manage virtual classroom communities for your university with an array of extra features and add-ons that enrich the discussions and makes the collaboration smooth.** 
 
-**App Link:**
-
+### App Link:
+**Note: The app can be a bit slow as it is deployed on free tier**
 [https://engage-board-frontend.herokuapp.com/](https://engage-board-frontend.herokuapp.com/)
 
 ---
