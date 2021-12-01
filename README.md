@@ -48,6 +48,8 @@
     In both client and server directory:
     
     - Fill the variables show in `.env.sample` file with required values/keys and rename the file to `.env`
+    
+    <br />
     Note: You can find the env file in supporting documents
 
 - Check / Run migrations on DB
