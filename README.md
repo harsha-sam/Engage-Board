@@ -5,7 +5,7 @@
 ### App Link:
 **Note: The app can be a bit slow as it is deployed on free tier**
 <br />
-[https://engage-board-frontend.herokuapp.com/](https://engage-board-frontend.herokuapp.com/)
+Frontend: [https://engage-board-frontend.herokuapp.com/](https://engage-board-frontend.herokuapp.com/)
 
 Backend: [https://engage-board-backend.herokuapp.com/](https://engage-board-backend.herokuapp.com/)
 
