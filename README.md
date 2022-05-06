@@ -33,12 +33,6 @@ Backend: [https://engage-board-backend.herokuapp.com/](https://engage-board-back
     - **React-Quill :** Text editor to manage notes
     - **Send grid:** To send emails
     - **Azure Cognitive Services Content Moderator :** For profanity check in messages
-
-**Deployment**
-
-- Frontend & Backend - Heroku
-- Database - Azure Database for PostgreSQL
-
 ---
 
 # How to install / run locally ?
